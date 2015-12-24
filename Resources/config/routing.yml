@@ -1,0 +1,28 @@
+fgms_survey_homepage:
+    path:     /
+    defaults: { _controller: FgmsSurveyBundle:Default:index }
+    
+fgms_survey_start:
+    path:     /{property}/start/
+    defaults: { _controller: FgmsSurveyBundle:Default:start }
+    
+fgms_survey_property:
+    path:     /{property}/survey/
+    defaults: { _controller: FgmsSurveyBundle:Default:survey }
+    
+fgms_survey_finish:
+    path:     /{property}/finish/
+    defaults: { _controller: FgmsSurveyBundle:Default:finish }
+    
+fgms_survey_results:
+    path: /{property}/results/
+    defaults : { _controller: FgmsSurveyBundle:Default:results}
+
+fgms_survey_emailpreview:
+    path: /{property}/email/
+    defaults : { _controller: FgmsSurveyBundle:Default:emailpreview}
+
+fgms_survey_csv:
+    path: /{property}/csv/
+    defaults : { _controller: FgmsSurveyBundle:Default:downloadcsv }
+    methods: [POST,GET]

@@ -1,0 +1,24 @@
+{
+    "name": "sturple/guest-survey-bundle",
+    "description": "Bundle to add a Guest Survey tool",
+    "type": "symfony-bundle",
+    "keywords": ["survey", "hotel", "symfony"],
+    "homepage": "https://github.com/sturple/GuestSurveyBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shawn Turple",
+            "email": "shawn@turple.ca"
+        }
+    ],
+    "require": {
+       
+    },
+    "minimum-stability": "dev",
+    "target-dir": "Fgms/Bundle/SurveyBundle",
+    "autoload" : {
+        "psr-0" : {"Fgms\\Bundle\\SurveyBundle" : ""}	
+    }
+
+   
+}

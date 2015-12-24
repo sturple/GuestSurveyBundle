@@ -1,0 +1,4 @@
+Resoursources/public/images/*
+vendor
+composer.lock
+composer.phar

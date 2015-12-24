@@ -1,0 +1,4 @@
+Date, Time, Property, "Room Number",Q1,Q2
+{% for row in data %}
+    {{ row.property }},{{ row.roomNumber }},{{ row.question1 }},{{ row.question2 }},{{ row.question3 }},{{ row.question4 }},{{ row.question5 }},{{ row.question6 }},{{ row.question7 }},{{ row.question8 }},{{ row.question9 }},{{ row.question10 }}
+{% endfor %}

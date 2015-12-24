@@ -1,0 +1,89 @@
+{% extends 'FgmsSurveyBundle:Default:admin.html.twig' %}
+{%block body%}
+	<div class="fade-in-out-wrapper">
+		
+
+	<div class="row" style="margin-bottom: 24px;">
+		<div class="col-sm-8">
+			<h1 style="">{{config.survey.text.results.title}}</h1>
+			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
+			<a href="/{{property.slug}}/start/" target="_blank">http://checkoutsurvey.hartlinggroup.com/{{property.slug}}/start/</a>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				
+				<select class="form-control" id="property-changer">
+					<option value="thepalms" {%if property.slug == 'thepalms'%}SELECTED{%endif%}>The Palms Turks & Caicos</option>
+					<option value="thesands" {%if property.slug == 'thesands'%}SELECTED{%endif%}>The Sands at Grace Bay</option>
+				</select>			
+			</div>			
+		</div>
+	</div>
+	
+
+
+		
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Question Id</th>
+				<th>Active</th>
+				<th>Content</th>
+				<th style="text-align: center" >Email<div>Trigger</div></th>
+				<th style="text-align: center" >Reporting<div>Threshold</div></th>				
+				<th colspan="3" style="text-align: center;">Average Value</th>
+			</tr>
+			
+		</thead>
+		<tbody>
+			<tr>
+				<td colspan="5"></td>
+				<td>Last 7 Days</td>
+				<td>Last 30 Days</td>
+				<td>Year to Date</td>
+			</tr>
+			{% for stat in stats %}
+				{% if stat.show > 0%}
+				<tr>
+					<td>{{stat.field}} </td>
+					<td>{{stat.active}}</td>
+					<td>{{stat.question | raw}}</td>
+					<td style="text-align: center"  >{{stat.emailtrigger | capitalize}}</td>
+					<td style="text-align: center"  >{%if stat.trigger > 5%}{{stat.trigger|round}}% ({%if stat.negative%}No{%else%}Yes{%endif%}){%else%}{{stat.trigger|round(1)}}{%endif%} </td>
+					
+					<td style="text-align: center" {% if stat.trigger > stat.last7 %}class="trigger-error"{%endif%}>{%if stat.last7 > 5%}{{stat.last7|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>{%else%}{{stat.last7|round(1)}}{%endif%}</td>
+					<td style="text-align: center" {% if stat.trigger > stat.last30 %}class="trigger-error"{%endif%}>{%if stat.last30 > 5%}{{stat.last30|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>{%else%}{{stat.last30|round(1)}}{%endif%}</td>
+					<td style="text-align: center" {% if stat.trigger > stat.yeartodate %}class="trigger-error"{%endif%}>{%if stat.yeartodate > 5%}{{stat.yeartodate|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>{%else%}{{stat.yeartodate|round(1)}}{%endif%}</td>
+				</tr>
+			{% endif %}
+			{% endfor %}
+		</tbody>
+
+	</table>
+
+	<div style="padding: 24px 0;">
+		<a class="btn btn-primary btn-md" href="/{{property.slug}}/csv/">Download Survey Results</a>
+	</div>
+	</div>
+{% endblock%}
+{%block styles %}
+<style>
+	.main { background: #fff; min-height: 635px !important; padding-top: 48px;}
+	.trigger-error {color: red; font-weight: bold;}
+	.trigger-error span {color: #666; font-weight: normal;}
+	h1 {padding-top: 0; margin-top: 0;}
+	.form-control {font-size: 1.4em;}
+</style>
+	
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+	$(function(){
+		$('#property-changer').on('change',function(){
+			$('table, h2, a').fadeOut();
+			location.href = '/'+ $(this).val() +'/results/'
+		});
+	})	
+</script>
+
+{% endblock %}

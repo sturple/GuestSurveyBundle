@@ -1,0 +1,186 @@
+reporting:
+    group:
+        name: Fifth Gear Marketing   
+        logo: 
+        properties:
+            -
+                name: Super User
+                token: 2e3ae70ad22b34cd146c0494c485f5ee
+       
+
+            -
+                name: Property Manager
+                token: 587508dcf386ee5b5fc0f8f569a6cd0d
+
+property:
+    name: "Property Template"
+    slug: property
+    contact:
+        address: Some where nice
+        province: British Columbia
+        city: Victoria
+        country: BC
+        tollfree: 800.123.4567
+        phone: 250.123.4567
+        email: info@guestfeedback.net
+        website: http://guestfeedback.net/           
+
+questions:
+    -
+        title: '<div class="small-text">How would you rate your overall experience at </div>Our Property'
+        type: rating
+        field: question1
+        trigger: 4.5
+        email:
+            trigger: 3
+            subject: "%s - ROOM %s RETURN"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+    -
+        title: 'Would you return for another<div> stay with us?</div>'
+        type: boolean
+        field: question2
+        trigger: 90
+    -
+        title: 'Would you recommend our resort to a friend or family member?'
+        type: boolean
+        field: question3
+        trigger: 90
+    -
+        title: 'How would you rate the friendliness of our staff?'
+        type: rating
+        field: question4
+        trigger: 4.5
+        email:
+            trigger: 3
+            subject: "%s - ROOM %s FRIENDLINESS"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+    -
+        title: 'How would you rate the cleanliness of your room?'
+        type: rating
+        field: question5
+        trigger: 4.5
+        email:
+            trigger: 1
+            subject: "%s - ROOM %s CLEANLINESS"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+    -
+        title: 'How would you rate the quality <span class="visible-lg-block visible-md-inline visible-sm-inline visible-xs-inline">of our food?</span>'
+        type: rating
+        field: question6
+        trigger: 4
+        email:
+            trigger: 1
+            subject: "%s - ROOM %s FOOD"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+    -
+        title: 'Did you experience any problems without resolution?'
+        type: boolean
+        field: question7
+        trigger: 90
+        negative: true
+        email:
+            trigger: yes
+            subject: "%s - ROOM %s PROBLEMS"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+    -
+        title:  'Do you have any comments or suggestions?'
+        type: comment
+        field: questionComment
+        email:
+            trigger: true
+            subject: "%s COMMENTS OR SUGGESTION"
+            recipient:
+                to:
+                    - shawn.turple@fifthgeardev.com
+                bcc:
+                    - webamster@fifthgeardev.com
+
+config:
+    survey:
+        resources:
+            google:
+                fonts: Raleway:400,700
+                analytics:
+    
+        text:
+            
+            start:
+                title: 'Enter Room # to Start Survey'
+                subtitle: 'Front Desk:'
+            finish:	
+                title: Thank You
+                subtitle: '<div class="small-text">If you are completing this survey upon checkout,<span class="visible-lg-block visible-md-inline visible-sm-inline visible-xs-inline"> please return this tablet to the front desk.</span></div>'
+            
+            results:
+                title: Checkout Survey Results
+    
+        images:
+            background:           
+                start: 
+                survey: 
+                finish: 
+                results: 
+            overlay: 
+            logos:
+                color: 
+                white: 
+                
+        css:
+            body:
+                background:
+                    color: '#f8f8f8'
+                font:
+                    family: Raleway, sans-serif
+                    color: '#666666'
+            buttons:
+                survey:
+                    background:
+                        color:
+                            normal: '#4A99AD'
+                            hover: '#8CCACC'
+                            active: '#8CCACC'
+                    font:
+                        family: "'Open Sans',helvetica,arial,sans-serif"
+                        color:
+                            normal: '#ffffff'
+                navigation:
+                    background:
+                        color:
+                            normal: '#4A99AD'
+                            hover: '#8CCACC'
+                            active: '#8CCACC'
+                    font:
+                        family: "'Open Sans',helvetica,arial,sans-serif"
+                        color:
+                            normal: '#ffffff'
+
+    email:
+        text:
+            title: CHECKOUT SURVEY NOTIFICATION
+            subtitle: 'The following guest response requires follow up:'
+        css:
+            link:
+                font:
+                    color: '#f89d64'
+        images:
+            logo:                    

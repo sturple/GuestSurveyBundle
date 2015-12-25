@@ -7,14 +7,14 @@
 		<div class="col-sm-8">
 			<h1 style="">{{config.survey.text.results.title}}</h1>
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
-			<a href="/{{property.slug}}/start/" target="_blank">http://checkoutsurvey.hartlinggroup.com/{{property.slug}}/start/</a>
+			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
 		</div>
 		<div class="col-sm-4">
 			<div class="form-group">
 				
 				<select class="form-control" id="property-changer">
-					<option value="thepalms" {%if property.slug == 'thepalms'%}SELECTED{%endif%}>The Palms Turks & Caicos</option>
-					<option value="thesands" {%if property.slug == 'thesands'%}SELECTED{%endif%}>The Sands at Grace Bay</option>
+					<option value="thepalms" {%if fullslug == 'thepalms'%}SELECTED{%endif%}>The Palms Turks & Caicos</option>
+					<option value="thesands" {%if fullslug == 'thesands'%}SELECTED{%endif%}>The Sands at Grace Bay</option>
 				</select>			
 			</div>			
 		</div>

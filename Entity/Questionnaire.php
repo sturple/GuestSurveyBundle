@@ -31,10 +31,16 @@ class Questionnaire
     /**
      * @var string
      *
-     * @ORM\Column(name="property", type="string", length=255)
+     * @ORM\Column(name="slug", type="string", length=255)
      */
-    private $property;
-
+    private $slug;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sluggroup", type="string", length=255, nullable=true)
+     */
+    private $sluggroup;
     /**
      * @var string
      *
@@ -143,7 +149,7 @@ class Questionnaire
      *
      * @return Questionnaire
      */
-    public function setCreateDate($createDate)
+    public function setCreateDate()
     {
         $this->createDate =  new \DateTime("now");
 
@@ -163,26 +169,53 @@ class Questionnaire
     /**
      * Set property
      *
-     * @param string $property
+     * @param string $slug
      *
      * @return Questionnaire
      */
-    public function setProperty($property)
+    public function setSlug($slug)
     {
-        $this->property = $property;
+        $this->slug = $slug;
 
         return $this;
     }
+    
+
 
     /**
      * Get property
      *
      * @return string
      */
-    public function getProperty()
+    public function getSlug()
     {
-        return $this->property;
+        return $this->slug;
     }
+    
+    
+     /**
+     * Set sluggroup
+     *
+     * @param string $sluggroup
+     *
+     * @return Questionnaire
+     */    
+    public function setSluggroup($sluggroup)
+    {
+        $this->sluggroup = $sluggroup;
+
+        return $this;
+    }
+
+    /**
+     * Get sluggroup
+     *
+     * @return string
+     */
+    public function getSluggroup()
+    {
+        return $this->sluggroup;
+    }    
 
     /**
      * Set roomNumber

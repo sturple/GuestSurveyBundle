@@ -25,14 +25,14 @@
 		.questionnaire-nav i:hover {color: {{config.survey.css.buttons.survey.background.color.hover}}}
 		
 		.button-text {	color: {{config.survey.css.buttons.survey.font.color.normal}}; font-family: {{config.survey.css.buttons.survey.font.family.normal | raw }};}
-		body { color: {{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family | raw }};  background-image: url('{{config.survey.images.background.survey}}');}
-		.wizard > .content{ background: url('{{config.survey.images.overlay}}') repeat top left;}
+		body { color: {{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family | raw }}; background-color: {{config.survey.css.body.background.color}};  background-image: url('{{images_path}}{{config.survey.images.background.survey}}');}
+		.wizard > .content{ background: url('{{images_path}}{{config.survey.images.overlay}}') repeat top left;}
 		.wizard a { color: {{config.survey.css.body.font.color}};}
 		
 		.form-control:focus {border-color: {{config.survey.css.buttons.survey.background.color.norma}}; }
 		.btn-primary {background-color: {{config.survey.css.buttons.navigation.background.color.normal}}; border-color: {{config.survey.css.buttons.navigation.background.color.normal}}; color: {{config.survey.css.buttons.navigation.font.color.normal}} !important;}
 		.btn-primary:hover {background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important; border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;}
-		.start-over-button a {background: url('{{config.survey.images.overlay}}') repeat top left ; color: {{config.survey.css.buttons.survey.background.color.normal}}; }
+		.start-over-button a {background: url('{{images_path}}{{config.survey.images.overlay}}') repeat top left ; color: {{config.survey.css.buttons.survey.background.color.normal}}; }
 		.start-over-button a:hover { color: {{config.survey.css.buttons.survey.font.color.normal}}; background-color: {{config.survey.css.buttons.survey.background.color.hover}} !important; background-image: none;}
 	</style>
 	{% block styles %}{%endblock%}
@@ -42,8 +42,8 @@
 	<div class="header">
 		<div class="column-wrapper">
 			<div class="row">
-				<div class="col-xs-6"><img style="" class="" src="{{config.survey.images.logos.white}}" alt="{{property.name}}" /></div>
-				<div class="col-xs-6" style="text-align: right;"><img style="" class="" src="{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" /></div>			
+				<div class="col-xs-6"><img style="" class="" src="{{images_path}}{{config.survey.images.logos.white}}" alt="{{property.name}}" /></div>
+				<div class="col-xs-6" style="text-align: right;"><img style="" class="" src="{{images_path}}{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" /></div>			
 			</div>				
 		</div>
 	</div>	

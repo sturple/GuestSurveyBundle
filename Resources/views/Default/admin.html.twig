@@ -18,7 +18,7 @@
 	
 		
 	<style>
-		body { color:{{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family}};  background-image: url('{{config.survey.images.background.results|default('background-results.jpg')}}');}
+		body { color:{{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family}}; background-color: {{config.survey.css.body.background.color}};  background-image: url('{{images_path}}{{config.survey.images.background.results|default('background-results.jpg')}}');}
 		.main {
 			min-height: 580px;
 			-webkit-border-radius: 5px;
@@ -36,7 +36,7 @@
 			<div class="row">
 				<div class="col-xs-6"></div>
 				<div class="col-xs-6" style="text-align: right;">
-					<img style="height: 80px" src="{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" />
+					<img style="height: 80px" src="{{images_path}}{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" />
 				</div>			
 			</div>				
 		</div>

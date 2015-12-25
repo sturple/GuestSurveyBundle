@@ -1,28 +1,60 @@
 fgms_survey_homepage:
     path:     /
     defaults: { _controller: FgmsSurveyBundle:Default:index }
-    
+
+# start routes    
 fgms_survey_start:
-    path:     /{property}/start/
-    defaults: { _controller: FgmsSurveyBundle:Default:start }
+    path:     /{slug}/start/
+    defaults: { _controller: FgmsSurveyBundle:Default:start, group: false }
     
+fgms_survey_start_with_group:
+    path:     /{group}/{slug}/start/
+    defaults: { _controller: FgmsSurveyBundle:Default:start }    
+
+# survey routes    
 fgms_survey_property:
-    path:     /{property}/survey/
+    path:     /{slug}/survey/
+    defaults: { _controller: FgmsSurveyBundle:Default:survey, group: false }
+    
+fgms_survey_property_with_group:
+    path:     /{group}/{slug}/survey/
     defaults: { _controller: FgmsSurveyBundle:Default:survey }
     
+# finish routes    
 fgms_survey_finish:
-    path:     /{property}/finish/
+    path:     /{slug}/finish/
+    defaults: { _controller: FgmsSurveyBundle:Default:finish, group: false }    
+    
+fgms_survey_finish_with_group:
+    path:     /{group}/{slug}/finish/
     defaults: { _controller: FgmsSurveyBundle:Default:finish }
     
+# Result routes   
 fgms_survey_results:
-    path: /{property}/results/
+    path: /{slug}/results/
+    defaults : { _controller: FgmsSurveyBundle:Default:results, group: false}
+    
+fgms_survey_results_with_group:
+    path: /{group}/{slug}/results/
     defaults : { _controller: FgmsSurveyBundle:Default:results}
-
+    
+# email preview routes
 fgms_survey_emailpreview:
-    path: /{property}/email/
+    path: /{slug}/email/
+    defaults : { _controller: FgmsSurveyBundle:Default:emailpreview, group: false}
+    
+fgms_survey_emailpreview_with_group:
+    path: /{group}/{slug}/email/
     defaults : { _controller: FgmsSurveyBundle:Default:emailpreview}
-
+    
+# csv routes
 fgms_survey_csv:
-    path: /{property}/csv/
+    path: /{slug}/csv/
+    defaults : { _controller: FgmsSurveyBundle:Default:downloadcsv, group: false }
+
+fgms_survey_csv_with_group:
+    path: /{group}/{slug}/csv/
     defaults : { _controller: FgmsSurveyBundle:Default:downloadcsv }
-    methods: [POST,GET]
+
+    
+    

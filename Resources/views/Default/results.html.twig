@@ -1,28 +1,30 @@
 {% extends 'FgmsSurveyBundle:Default:admin.html.twig' %}
 {%block body%}
 	<div class="fade-in-out-wrapper">
-		
-
 	<div class="row" style="margin-bottom: 24px;">
 		<div class="col-sm-8">
 			<h1 style="">{{config.survey.text.results.title}}</h1>
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
 			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
+			<div style="padding-top: 12px;"><a target="_blank" href="/{{fullslug}}/email/" class="btn btn-primary btn-sm">Preview Email</a></div>
 		</div>
 		<div class="col-sm-4">
-			<div class="form-group">
+			<div class="form-group">				
+				{% if reporting.group.properties|length > 0%}
+					{% for property in reporting.group.properties %}
+						{% if property.token == key and property.items|length > 0 %}						
+							<select class="form-control" id="property-changer">
+							{% for item in property.items %}
+							<option data-key="{{key}}" value="{{item.slug}}" {% if fullslug == item.slug%}SELECTED{%endif%}>{{item.name}}</option>
+							{% endfor %}
+							</select>
+						{% endif %}
+					{% endfor%}				
 				
-				<select class="form-control" id="property-changer">
-					<option value="thepalms" {%if fullslug == 'thepalms'%}SELECTED{%endif%}>The Palms Turks & Caicos</option>
-					<option value="thesands" {%if fullslug == 'thesands'%}SELECTED{%endif%}>The Sands at Grace Bay</option>
-				</select>			
+			{% endif %}
 			</div>			
 		</div>
 	</div>
-	
-
-
-		
 	<table class="table">
 		<thead>
 			<tr>
@@ -58,11 +60,9 @@
 			{% endif %}
 			{% endfor %}
 		</tbody>
-
 	</table>
-
 	<div style="padding: 24px 0;">
-		<a class="btn btn-primary btn-md" href="/{{property.slug}}/csv/">Download Survey Results</a>
+		<a class="btn btn-primary btn-md" href="/{{fullslug}}/csv/">Download Survey Results</a>
 	</div>
 	</div>
 {% endblock%}
@@ -81,7 +81,7 @@
 	$(function(){
 		$('#property-changer').on('change',function(){
 			$('table, h2, a').fadeOut();
-			location.href = '/'+ $(this).val() +'/results/'
+			location.href = '{{ app.request.getSchemeAndHttpHost() }}/'+ $(this).val() +'/results/?key='+ $(this).find('option[value="'+$(this).val()+'"]').data('key')
 		});
 	})	
 </script>

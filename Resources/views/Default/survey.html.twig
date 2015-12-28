@@ -1,9 +1,7 @@
 {% extends 'FgmsSurveyBundle:Default:base.html.twig' %}
 {%block body%}
-
 <div id="questionnaire" class="" style="display: none">
 {{ form_start(form)}}
-
 {{ form_end(form)}}
 	{% for question in questions %}
 		<div class="questionnaire-dots"></div>
@@ -69,32 +67,20 @@
 				</div>
 				<div class="form-group question-input-visual">
 					<a class="btn  btn-primary  btn-md finish-button" href="javascript:void(0);" >Finish</a>
-
 				</div>				
 			{% else %}
-			{% endif %}
-			
-		</section>
-		
+			{% endif %}			
+		</section>		
 	{% endfor %}
-
-
 </div>
-
-
 <div  class="questionnaire-nav">
 	<a href="javascript:void(0)" class="nav-prev" style="display:none;"><i class="fa fa-caret-left"></i></a>
 	<a href="javascript:void(0)" class="nav-next" style="display:none;"><i class="fa fa-caret-right"></i></a>
 	<div class="clearfix" style="clear:both;"></div>
 </div>
-
-
-
 {% endblock%}
-{%block footer%}	
-<div class="start-over-button">
-	<a href="/{{temp.property.slug}}/survey/?room={{room}}">Start Over</a>
-</div>
+{%block footer%}
+{#<div class="start-over-button"><a href="/{{fullslug}}/survey/?room={{room}}">Start Over</a></div>#}
 {% endblock %}
 {%block styles %}
 {% endblock %}
@@ -117,21 +103,14 @@
 			onStepChanging: function (event, currentIndex, newIndex) { return true; },
 			onStepChanged: function (event, currentIndex, priorIndex) {
 				setNavEnables(currentIndex);
-				/*
-				if (currentIndex == 0) {
-					$('.nav-prev').addClass('disabled');
-				}
-				else {
-					$('.nav-prev').removeClass('disabled');
-				}*/
-				
+				/*if (currentIndex == 0) {$('.nav-prev').addClass('disabled');}
+				else {	$('.nav-prev').removeClass('disabled');	}*/				
 			}, 
 			onCanceled: function (event) { },
 			onFinishing: function (event, currentIndex) {			
 				return true;
 			}, 
-			onFinished: function (event, currentIndex) {
-				
+			onFinished: function (event, currentIndex) {				
 				$('form').submit();
 			},
 			labels: {
@@ -151,8 +130,7 @@
 		$('textarea[data-field], input[data-field]').on('change',function(){
 			$('*[name="form['+ $(this).data('field') +']"]').val($(this).val());
 		})
-		$('a[data-field]').on('mouseup',function(e){
-			
+		$('a[data-field]').on('mouseup',function(e){			
 			$(this).closest('.question-input-visual').find('*[data-field]').removeClass('active');
 			var dataValue = $(this).data('value');			
 			$('*[name="form['+ $(this).data('field') +']"]').val(dataValue);
@@ -162,8 +140,7 @@
 			}
 			else {
 				$('a[href="#next"]').trigger('click');
-			}
-			
+			}			
 			return false;	
 		})
 		$('a[data-field]').on('touchstart',function(e){
@@ -177,13 +154,9 @@
 			}
 			else {
 				$('a[href="#next"]').trigger('click');
-			}
-			
+			}			
 			return false;	
 		});
-		
-		
-
 		//attaches triggers on the forward back nav arrows to move questionnaire
 		$('.nav-prev').on('click',function(){$('a[href="#previous"]').trigger('click');	})
 		$('.nav-next').on('click',function(){$('a[href="#next"]').trigger('click');	})
@@ -208,8 +181,7 @@
 				$('.nav-next').fadeOut();
 			}
 			if (currentIndex == 0) {$('.nav-prev').fadeOut();}
-		}
-		
+		}		
 	})
 </script>	
 {% endblock %}

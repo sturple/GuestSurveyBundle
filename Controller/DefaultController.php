@@ -163,8 +163,8 @@ class DefaultController extends Controller
 			$handle = fopen('php://output', 'w+');
 			fputcsv($handle, array('Date', 'Time','Group','Property','Room','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Comment','id'),',');			
 			foreach ($query->getResult() as $item){					
-				fputcsv($handle, array($item->getCreateDate()->format('y-m-d'),
-									   $item->getCreateDate()->format('H:i'),
+				fputcsv($handle, array($item->getCreateDate()->format('F j, Y'),
+									   $item->getCreateDate()->format('h:i A'),
 									   $item->getSluggroup(),
 									   $item->getSlug(),
 									   $item->getRoomNumber(),
@@ -184,10 +184,11 @@ class DefaultController extends Controller
 			}
             fclose($handle);
         });
+		
 		$response->setStatusCode(200);
 		$response->headers->set('Content-Type', 'application/force-download');
 		$response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv'));
+		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
 		$this->get('logger')->error(print_r($response->getStatusCode(),true));
 		$response->prepare($this->get('request'));        
         return $response;    
@@ -252,12 +253,12 @@ class DefaultController extends Controller
 				$item['title'] = strip_tags($item['title']);
 				$item['email']['recipient']['bcc'] = array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com'));
 				
-				$emailSubject = '** '. $param['property']['name'] . ' - '. sprintf($item['email']['subject'],  str_replace('question','Q',$item['field']), $room);          
+				$emailSubject = sprintf($item['email']['subject'], $room) .' ('.$param['property']['name'].')';          
 				$l->error('trigger '.$trigger. ' value ' . $data . $emailSubject);
 				$combined_array = array_merge($param, array('item'=>$item));					
 				$message = \Swift_Message::newInstance()
                     ->setSubject($emailSubject)
-                    ->setFrom('postmaster@guestfeedback.net');
+                    ->setFrom('guest.response@guestfeedback.net');
 				// setting up recipients
 				if ($this->getValue('recipient',$item['email']) != false){
 					if ($this->getValue('to',$item['email']['recipient']) != false){
@@ -288,46 +289,81 @@ class DefaultController extends Controller
 	 */
 	private function getConfiguration($slug, $group=false)
 	{
-		if ($this->logger === false){
-			$this->logger = $this->get('logger');
-		}
+		//setting up defaults
+		if ($this->logger === false){	$this->logger = $this->get('logger');	}
 		$this->fullSlug = ($group !== false) ? $group.'/': '';
 		$this->fullSlug .= $slug;
 		$config_defaults = array('images_path'=>'/web/assets/images/',
-								 'property_config_dir'=>$this->get('kernel')->getRootDir().'/config/property/');
-        $yaml = new Parser();
-		$config_file = $this->get('kernel')->getRootDir().'/config/survey.yml';
-		try {
-			$this->config = $yaml->parse(file_get_contents($config_file));
-			if (count($this->config) > 0){
-				$this->config['property_config_dir'] = $this->get('kernel')->getRootDir().$this->getValue('property_config_dir', $this->config,'/config/property/');				
-				$this->config['images_path'] = $this->getValue('images_path', $this->config,'/web/assets/images/').$this->fullSlug.'/';
-			}			
+								 'property_config_dir'=>$this->get('kernel')->getRootDir().'/config/property/');        		
+		
+		// getting system survey.yml config
+		$this->config = array_merge($config_defaults, $this->getYaml($this->get('kernel')->getRootDir().'/config/survey.yml'));	
+		if (count($this->config) > 0){
+			$this->config['property_config_dir'] = $this->get('kernel')->getRootDir().$this->getValue('property_config_dir', $this->config,'/config/property/');				
+			$this->config['images_path'] = $this->getValue('images_path', $this->config,'/web/assets/images/').$this->fullSlug.'/';
 		}
-		catch (ParseException $e){	$this->get('logger')->error('parse error '.print_R($e->getMessage(),true));}
-		$this->config = array_merge($config_defaults, $this->config);		
-		$param = array();
+		
+		//checks to make sure directory is valid	
 		if (!is_dir($this->config['property_config_dir'])){
 			$error_str = 'Property Config Directory "' . $this->config['property_config_dir'] .'" does not exists';
 			throw $this->createNotFoundException($error_str);
 		return array('error'=>$error_str );
 		}
 
-		$property_file = $this->config['property_config_dir'] .$this->fullSlug.".yml";		
-		if (!file_exists($property_file)){
-			$error_str = 'Property Config file "' . $property_file .'" does not exists';
+		// gets property yaml
+		$param = $this->getYaml($this->config['property_config_dir'] .$this->fullSlug.".yml");
+		// testing to make sure is a valid property yaml
+		$error_str = 'Yaml File is not a valid Property.. Could be an Admin file';
+		if ($this->getValue('property',$param) !== false){
+			if ($this->getValue('name',$param['property']) !== false){
+				//adds missing params	
+				$param['fullslug'] = $this->fullSlug;
+				$param['key'] = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : false;
+				
+				// means this is admin lets load admin file
+				if ($this->getValue('key',$param) !== false){
+					if (isset($param['config']['admin']['yamlfile']) ){
+						// gets admin yaml file and merges with any existing file
+						$adminYamlFile = $this->config['property_config_dir'] . $param['config']['admin']['yamlfile'];
+						$param['reporting'] = array_merge($this->getValue('reporting',$param,array()),$this->getYaml($adminYamlFile));
+					}
+				}				
+			}
+			else {
+				$this->logger->error($error_str);
+				throw $this->createNotFoundException($error_str);				
+			}
+		}
+		else {			
+			$this->logger->error($error_str);
 			throw $this->createNotFoundException($error_str);
-			return array('error'=>$error_str );
+		}		
+		return array_merge($param,$this->config);	
+	}
+	
+	/**
+	 * reads yaml files
+	 *
+	 * @param string filename
+	 */
+	private function getYaml($filename)
+	{
+		$yaml = new Parser();
+		$param = array();	
+		if (!file_exists($filename)){
+			$error_str = 'Yaml Config file "' . $filename .'" does not exists';
+			throw $this->createNotFoundException($error_str);
+			return array();
 		}
 		try {
-			$param = $yaml->parse(file_get_contents($property_file));
+			$param = $yaml->parse(file_get_contents($filename));
 		}catch (ParseException $e) {
-			$this->get('logger')->error('parse error '.print_R($e->getMessage(),true));
+			$this->get('logger')->error('Yaml Parse error '.print_R($e->getMessage(),true));
+			return array();
 		}
-		$this->logger->error('CONFIG File '.$property_file);
-		$param['fullslug'] = $this->fullSlug;
-		$param['key'] = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : '--no key--';
-		return array_merge($param,$this->config);	
+		$this->logger->info('Success Loading Yaml file '.$filename );
+		return $param;
+		
 	}
 	
 	/*

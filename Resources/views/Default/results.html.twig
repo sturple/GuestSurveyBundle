@@ -6,7 +6,10 @@
 			<h1 style="">{{config.survey.text.results.title}}</h1>
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
 			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
-			<div style="padding-top: 12px;"><a target="_blank" href="/{{fullslug}}/email/" class="btn btn-primary btn-sm">Preview Email</a></div>
+			<div style="padding-top: 12px;">
+				<a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Email</a>
+				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?sendtest=true&key={{key}}" class="btn btn-primary btn-sm">Send Test Emails</a>
+			</div>
 		</div>
 		<div class="col-sm-4">
 			<div class="form-group">				

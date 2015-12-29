@@ -85,29 +85,9 @@ class DefaultController extends Controller
 	{      
 		$param = $this->getConfiguration($slug,$group);
 		$showResultsFlag = false;
-		$key = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : '--no key--';
-		
-		if ($this->getValue('reporting',$param,false) != false){
-			$this->logger->error('Auth::level1');
-			if ($this->getValue('group',$param['reporting'],false) != false){
-				$this->logger->error('Auth::level2');
-				if ($this->getValue('properties',$param['reporting']['group'],false) != false){
-					$this->logger->error('Auth::level3 '.print_R($param['reporting']['group']['properties'],true));
-					foreach ($this->getValue('properties',$param['reporting']['group'],array() ) as $adminAuth){
-						$this->logger->error('AUTH::: '.$key.':'.$adminAuth['token']);
-						if ($key == $adminAuth['token']){
-							$showResultsFlag = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-        if ($showResultsFlag === false ){
-			$error_str = 'Authentication is not correct';
-			throw $this->createNotFoundException($error_str);
-			return;
-		}
+		// throws error if not authenticated
+		$this->checkIfAuthenticated($param);
+
         // getting each interval
         $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $param['questions']);
         $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $param['questions']);
@@ -148,17 +128,15 @@ class DefaultController extends Controller
 	 */
     public function downloadcsvAction($slug,$group=false)
     {
-		$param = $this->getConfiguration($slug, $group);		
+		//$param = $this->getConfiguration($slug, $group);		
         $repository = $this->getDoctrine()->getRepository('FgmsSurveyBundle:Questionnaire');
 		$sluggroup = ($group != false) ? $group : '';
 		$query = $repository->createQueryBuilder('q')		
 			->where('q.slug = :slug AND q.sluggroup = :sluggroup')
 			->setParameters(array('slug' =>$slug, 'sluggroup' =>$sluggroup))
 			->orderBy('q.createDate','ASC')
-			->getQuery();		
-		$this->logger->error('SQL: ' . $query->getSQL());
-		$response = new StreamedResponse();		
-	
+			->getQuery();				
+		$response = new StreamedResponse();			
 		$response->setCallback(function() use ($query){				
 			$handle = fopen('php://output', 'w+');
 			fputcsv($handle, array('Date', 'Time','Group','Property','Room','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Comment','id'),',');			
@@ -188,8 +166,7 @@ class DefaultController extends Controller
 		$response->setStatusCode(200);
 		$response->headers->set('Content-Type', 'application/force-download');
 		$response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
-		$this->get('logger')->error(print_r($response->getStatusCode(),true));
+		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));		
 		$response->prepare($this->get('request'));        
         return $response;    
     } 
@@ -203,7 +180,14 @@ class DefaultController extends Controller
 	public function emailpreviewAction($slug,$group=false)
 	{
 		$param = $this->getConfiguration($slug,$group);
-		$this->sendEmails($slug, $group,false,$param,'testroom');
+		// throws error if not authenticated
+		$this->checkIfAuthenticated($param);
+		
+		$sendTestFlag = $this->get('request')->query->has('sendtest') ? $this->get('request')->query->get('sendtest') : false;
+		if ($sendTestFlag == 'true'){
+			$this->sendEmails($slug, $group,false,$param,'000');
+		}
+		
 		return $this->render('FgmsSurveyBundle:Email:email-base.html.twig',$param ); 
 	}    
 	
@@ -218,25 +202,37 @@ class DefaultController extends Controller
 	 */
     private function sendEmails($slug, $group, $form,$param,$room)
 	{
-        $l = $this->get('logger');
-		$param = $this->getConfiguration($slug,$group);
+      	//$param = $this->getConfiguration($slug,$group);
+		// gets from survey.yml config file or defaults to array('webmaster@fifthgeardev.com'=>'Webmaster')
+		$fromEmail = array($this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com')=>$this->getValue('name',$this->config['email']['from'],'Webmaster'));
+		
         foreach ($param['questions'] as $item){
 			$emailFlag = false;
             $field = $item['field'];
             $data = array();       
+			// this means it is a test so we are going to fail all items to get emails
 			if ($form === false){
-				$data = '10';
+				$data = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat ex eget massa fermentum, sit amet venenatis massa fringilla. Nunc ut mi elementum, hendrerit augue a, pellentesque turpis. Nulla ultricies nisl volutpat, dignissim ipsum nec, iaculis lacus. Proin eleifend id nisl et molestie';
+				$type = $this->getValue('type',$item,'rating');
+				if ( $type == 'rating'){
+					$data = '1';
+				}
+				else if ($type == 'boolean'){
+					$data = ($this->getValue('negative',$item)) ? 'yes': 'no';
+				}			
+				
 			}
 			else {
 				$data = $form->get($field)->getData();    
 			}
+			//doesnt have an email trigger.
 			if ($this->getValue('email',$item,false) == false){
 				continue;
 			}
             $trigger = $this->getValue('trigger',$item['email']);
 			$triggerType = intval($data);
 			//comparison type
-			if (($triggerType > 0) && ($trigger != null)){				
+			if (($triggerType >= 0) && ($trigger != null)){				
 				if ($triggerType > 0 ){	$emailFlag = (intval($trigger) >= intval($data) );}
 				// equates type
 				else { $emailFlag = ($trigger == $data);}
@@ -245,7 +241,9 @@ class DefaultController extends Controller
 			if ( ($item['type'] == 'comment') && (strlen($data) > 0) ){
 				$emailFlag = true;
 			}
-            
+			$emailSubject = sprintf($item['email']['subject'], $room) .' ('.$param['property']['name'].')';
+			$emailSubject = ($form == false) ? 'Test - ' .$emailSubject : $emailSubject;
+            $this->logger->info(sprintf("Trigger: %s Type: %s Value: %s Flag: %s Subject: %s",$trigger, $triggerType, $data,($emailFlag ? 'true' : 'false'),$emailSubject));	
 			// this means that an email trigger has been tripped need to send email.
             if ($emailFlag){
 				$item['answer'] = $data;
@@ -253,12 +251,11 @@ class DefaultController extends Controller
 				$item['title'] = strip_tags($item['title']);
 				$item['email']['recipient']['bcc'] = array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com'));
 				
-				$emailSubject = sprintf($item['email']['subject'], $room) .' ('.$param['property']['name'].')';          
-				$l->error('trigger '.$trigger. ' value ' . $data . $emailSubject);
-				$combined_array = array_merge($param, array('item'=>$item));					
+				
+				$combined_array = array_merge($param, array('item'=>$item));				
 				$message = \Swift_Message::newInstance()
                     ->setSubject($emailSubject)
-                    ->setFrom('guest.response@guestfeedback.net');
+                    ->setFrom($fromEmail);
 				// setting up recipients
 				if ($this->getValue('recipient',$item['email']) != false){
 					if ($this->getValue('to',$item['email']['recipient']) != false){
@@ -279,6 +276,30 @@ class DefaultController extends Controller
             }  
         } 
     }
+	
+	/**
+	 * @param array $param
+	 *
+	 */	
+	private function checkIfAuthenticated($param)
+	{
+		if ($this->getValue('reporting',$param,false) != false){			
+			if ($this->getValue('group',$param['reporting'],false) != false){				
+				if ($this->getValue('properties',$param['reporting']['group'],false) != false){					
+					foreach ($this->getValue('properties',$param['reporting']['group'],array() ) as $adminAuth){						
+						if ($this->getValue('key',$param) == $adminAuth['token']){
+							return true;
+							
+						}
+					}
+				}
+			}
+		}		       
+		$error_str = 'Authentication is not correct';
+		throw $this->createNotFoundException($error_str);
+		return false;
+		
+	}
 	
 	/*
 	 * gets configurations for property and sets the images path 
@@ -445,9 +466,12 @@ class DefaultController extends Controller
 	 */
 	private function getValue($key, $array=array(), $default=false)
 	{
-		if (isset($array[$key])){
-			return $array[$key];
+		if (isset($array)){
+			if (isset($array[$key])){
+				return $array[$key];
+			}			
 		}
+
 		return $default;
 	}
 }

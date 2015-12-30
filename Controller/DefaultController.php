@@ -48,9 +48,8 @@ class DefaultController extends Controller
     public function surveyAction($slug,$group=false)
     {
         $room = $this->get('request')->query->has('room') ? $this->get('request')->query->get('room') : 'none';
-        $param = $this->getConfiguration($slug,$group);
-		$qset = (isset($param['questions']['set']['name'])) ? $param['questions']['set']['name'] : 'Default' ;
-        $form = $this->getForm($slug,$group,$room,$qset);        
+        $param = $this->getConfiguration($slug,$group);		
+        $form = $this->getForm($slug,$group,$room);        
 		$form->handleRequest($this->get('request'));
 		if ($form->isValid()){			
 			$em = $this->getDoctrine()->getManager();
@@ -89,7 +88,7 @@ class DefaultController extends Controller
 		$showResultsFlag = false;
 		// throws error if not authenticated
 		$this->checkIfAuthenticated($param);
-		$questions = $param['questions']['set']['questions'];
+		$questions = $param['questions'];
         // getting each interval
         $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $questions);
         $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $questions);
@@ -288,7 +287,8 @@ class DefaultController extends Controller
 				$message = $message                   
                     ->setBody($this->renderView('FgmsSurveyBundle:Email:email-base.html.twig', $combined_array ),'text/html')
 					->addPart($this->renderView('FgmsSurveyBundle:Email:email-base.txt.twig', $combined_array ),'text/plain');
-                $this->get('mailer')->send($message);	
+                $this->get('mailer')->send($message);
+				$this->logger->info('Mailer:: Sent Message Header ' .print_R($message->getHeaders()->toString(),true));
             }  
         } 
     }
@@ -303,8 +303,18 @@ class DefaultController extends Controller
 			if ($this->getValue('group',$param['reporting'],false) != false){				
 				if ($this->getValue('properties',$param['reporting']['group'],false) != false){					
 					foreach ($this->getValue('properties',$param['reporting']['group'],array() ) as $adminAuth){						
-						if ($this->getValue('key',$param) == $adminAuth['token']){
-							return true;							
+						if ($this->getValue('key',$param) == $this->getValue('token',$adminAuth)){
+							$slug  = $this->getValue('slug',$adminAuth);
+							// this means it is specific for a slug
+							if ($slug != false){
+								if ($slug == $this->getValue('fullslug',$param)){
+									return true;
+								}
+							}
+							else {
+								return true;
+							}
+														
 						}
 					}
 				}
@@ -357,7 +367,7 @@ class DefaultController extends Controller
 				$param['key'] = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : false;
 				$param['admin'] = $this->get('request')->query->has('admin');
 				$param['activequestions'] = array();
-				foreach($param['questions']['set']['questions'] as $questions){
+				foreach($param['questions'] as $questions){
 					if ($this->getValue('active',$questions,true)) {
 						$param['activequestions'][] = $questions;
 					}
@@ -435,7 +445,7 @@ class DefaultController extends Controller
 				$s[] = "(sum(if(s.{$field}='{$yesText}',1,0))/(sum(if(s.{$field}='{$yesText}',1,0))+sum(if(s.{$field}='{$noText}',1,0)))*100 ) as `{$field}M`";
 			}
 			else if ($type == 'open'){
-				$s[] = "(sum(IF (LENGTH(s.{$field}) > 5, 1,0))) as `{$field}M`";
+				$s[] = "(sum(IF (LENGTH(s.{$field}) > 2, 1,0))) as `{$field}M`";
 			}
 			else {
 				

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<!-- Made with PhileCMS -->
+	<meta charset="utf-8" />
+	<base href="" />
+	<title>{{title|default('Home')}}</title>
+	<meta name="description" content="">
+	<meta name="robots" content="noindex nofollow">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />	
+	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link href='https://fonts.googleapis.com/css?family=Raleway:400,700' rel='stylesheet' type='text/css'>		
+	<style>
+		body {
+			color:#666;
+			font-family: 'Raleway, sans-serif';
+			background-color: #f8f8f8;
+            font-size: 16px;
+			
+		}
+		.main {
+			min-height: 580px;
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+		}
+		h1 {font-weight: 600; font-size: 38px;}
+	</style>
+	{% block styles %}{%endblock%}
+</head>
+<body class="admin">
+	<div class="header">
+		<div class="column-wrapper">
+			<div class="row">
+				<div class="col-xs-6"></div>
+				<div class="col-xs-6" style="text-align: right;">
+					
+				</div>			
+			</div>				
+		</div>
+	</div>
+	<div class="container">
+		<div class="main">
+			<div class="column-wrapper">
+				<div class="row">		
+					<div class="col-sm-12">	{%block body %}{%endblock%}	</div>		
+				</div>					
+			</div>
+		</div>	
+	</div>
+	<div class="footer">
+		<div class="column-wrapper">
+			{%block footer %}{% endblock %}
+		</div>
+	</div>
+</body>
+{% block javascript %}{% endblock %}
+</html>

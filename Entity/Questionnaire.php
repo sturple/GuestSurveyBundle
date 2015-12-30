@@ -51,72 +51,105 @@ class Questionnaire
     /**
      * @var string
      *
-     * @ORM\Column(name="question1", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question1", type="string", length=1000, nullable=true)
      */
     private $question1;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question2", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question2", type="string", length=1000, nullable=true)
      */
     private $question2;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question3", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question3", type="string", length=1000, nullable=true)
      */
     private $question3;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question4", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question4", type="string", length=1000, nullable=true)
      */
     private $question4;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question5", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question5", type="string", length=1000, nullable=true)
      */
     private $question5;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question6", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question6", type="string", length=1000, nullable=true)
      */
     private $question6;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question7", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question7", type="string", length=1000, nullable=true)
      */
     private $question7;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question8", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question8", type="string", length=1000, nullable=true)
      */
     private $question8;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question9", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question9", type="string", length=1000, nullable=true)
      */
     private $question9;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="question10", type="string", length=100, nullable=true)
+     * @ORM\Column(name="question10", type="string", length=1000, nullable=true)
      */
     private $question10;
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="question11", type="string", length=1000, nullable=true)
+     */
+    private $question11;
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="question12", type="string", length=1000, nullable=true)
+     */
+    private $question12;	   
+  
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question13", type="string", length=1000, nullable=true)
+     */
+    private $question13;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question14", type="string", length=1000, nullable=true)
+     */
+    private $question14;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question15", type="string", length=1000, nullable=true)
+     */
+    private $question15;	   
 
     /**
      * @var string
@@ -125,12 +158,7 @@ class Questionnaire
      */
     private $questionSet;
 	
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="questionComment", type="text", nullable=true)
-     */
-    private $questionComment;	
+
 	
     /**
      * Get id
@@ -482,6 +510,129 @@ class Questionnaire
     }
 
     /**
+     * Set question11
+     *
+     * @param string $question11
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion11($question11)
+    {
+        $this->question11 = $question11;
+
+        return $this;
+    }    
+    
+    /**
+     * Get question11
+     *
+     * @return string
+     */
+    public function getQuestion11()
+    {
+        return $this->question11;
+    }
+
+    /**
+     * Set question12
+     *
+     * @param string $question12
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion12($question12)
+    {
+        $this->question12 = $question12;
+
+        return $this;
+    }
+
+    /**
+     * Get question12
+     *
+     * @return string
+     */
+    public function getQuestion12()
+    {
+        return $this->question12;
+    }
+
+    /**
+     * Set question13
+     *
+     * @param string $question13
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion13($question13)
+    {
+        $this->question13 = $question13;
+
+        return $this;
+    }
+
+    /**
+     * Get question13
+     *
+     * @return string
+     */
+    public function getQuestion13()
+    {
+        return $this->question13;
+    }
+
+    /**
+     * Set question4
+     *
+     * @param string $question14
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion14($question14)
+    {
+        $this->question14 = $question14;
+
+        return $this;
+    }
+
+    /**
+     * Get question14
+     *
+     * @return string
+     */
+    public function getQuestion14()
+    {
+        return $this->question14;
+    }
+
+    /**
+     * Set question15
+     *
+     * @param string $question15
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion15($question15)
+    {
+        $this->question15 = $question15;
+
+        return $this;
+    }
+
+    /**
+     * Get question15
+     *
+     * @return string
+     */
+    public function getQuestion15()
+    {
+        return $this->question15;
+    }
+   
+    
+    
+    
+    /**
      * Set questionSet
      *
      * @param string $questionSet
@@ -505,27 +656,5 @@ class Questionnaire
         return $this->questionSet;
     }
 	
-    /**
-     * Set questionComment
-     *
-     * @param string $questionComment
-     *
-     * @return Questionnaire
-     */
-    public function setQuestionComment($questionComment)
-    {
-        $this->questionComment = $questionComment;
 
-        return $this;
-    }
-
-    /**
-     * Get questionComment
-     *
-     * @return string
-     */
-    public function getQuestionComment()
-    {
-        return $this->questionComment;
-    }	
 }

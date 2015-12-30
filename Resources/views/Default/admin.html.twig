@@ -12,9 +12,14 @@
 	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />	
 	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<link href='https://fonts.googleapis.com/css?family={{config.survey.resources.google.fonts}}' rel='stylesheet' type='text/css'>		
+	<link href='https://fonts.googleapis.com/css?family={{reporting.resources.google.fonts|default('Raleway:400,700,Open+Sans')}}' rel='stylesheet' type='text/css'>		
 	<style>
-		body { color:{{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family}}; background-color: {{config.survey.css.body.background.color}};  background-image: url('{{images_path}}{{config.survey.images.background.results}}');}
+		body {
+			color:{{reporting.css.body.font.color|default('#666')}};
+			font-family: {{reporting.css.body.font.family|default('Raleway, sans-serif')}};
+			background-color: {{reporting.css.body.background.color|default('#f8f8f8')}};
+			background-image: url('{{images_path}}{{reporting.images.background.results}}');
+		}
 		.main {
 			min-height: 580px;
 			-webkit-border-radius: 5px;

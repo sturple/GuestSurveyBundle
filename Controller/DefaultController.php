@@ -48,8 +48,9 @@ class DefaultController extends Controller
     public function surveyAction($slug,$group=false)
     {
         $room = $this->get('request')->query->has('room') ? $this->get('request')->query->get('room') : 'none';
-        $param = $this->getConfiguration($slug,$group);		
-        $form = $this->getForm($slug,$group,$room);        
+        $param = $this->getConfiguration($slug,$group);
+		$qset = (isset($param['questions']['set']['name'])) ? $param['questions']['set']['name'] : 'Default' ;
+        $form = $this->getForm($slug,$group,$room,$qset);        
 		$form->handleRequest($this->get('request'));
 		if ($form->isValid()){			
 			$em = $this->getDoctrine()->getManager();
@@ -58,7 +59,8 @@ class DefaultController extends Controller
 			$em->flush();          
 			return $this->redirect("/". $this->fullSlug. "/finish/");
 		}        
-        $param['form'] = $form->createView();       
+        $param['form'] = $form->createView();
+		
         return $this->render('FgmsSurveyBundle:Default:survey.html.twig', $param );
     }	
 	
@@ -87,35 +89,44 @@ class DefaultController extends Controller
 		$showResultsFlag = false;
 		// throws error if not authenticated
 		$this->checkIfAuthenticated($param);
-
+		$questions = $param['questions']['set']['questions'];
         // getting each interval
-        $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $param['questions']);
-        $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $param['questions']);
-        $surveyYear = $this->getSurveyRollup($slug,$group,'1 YEAR', $param['questions']);              
+        $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $questions);
+        $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $questions);
+        $surveyYear = $this->getSurveyRollup($slug,$group,'1 YEAR', $questions);              
         
         $stats = array();
         // setting up stats.
-        foreach($param['questions'] as $allquestion){           
-            $active = 'Yes';
-            $field = str_replace('question','Q',$allquestion['field']);
+        foreach($questions as $allquestion){           
+            $active = isset($allquestion['active']) ? $allquestion['active'] : true;
+			
+            //$field = str_replace('question','Q',$allquestion['field']);
+			//$field = str_replace('Comment','O',$allquestion['field']);
+			$field = $allquestion['field'];
 			$emailtrigger = 'none';
 			if ($this->getValue('email',$allquestion) !== false){
 				$emailtrigger = $this->getValue('trigger', $allquestion['email'], 'none');
 			}
-            $stats[] = array('field'=>$field,
+			$type = $allquestion['type'];
+            $stats[] = array('field'=>str_replace('question','Q',$field),
                              'active'=>$active,
+							 'type'=>$type,
                              'question'=>strip_tags($allquestion['title']),
 							 'negative'=>$this->getValue('negative',$allquestion,false),
                              'show'=>(strlen($field) < 4) ,
-                             'last7'=>$this->getValue($field,$survey7),
-                             'last30'=>$this->getValue($field,$survey30),
-                             'yeartodate'=>$this->getValue($field,$surveyYear),
+                             'last7'=>$this->getValue($field.'M',$survey7),							
+                             'last30'=>$this->getValue($field.'M',$survey30),							
+                             'yeartodate'=>$this->getValue($field.'M',$surveyYear),							 
                              'trigger'=>$this->getValue('trigger',$allquestion),
 							 'emailtrigger'=>$emailtrigger
                             );                            
             
         }
         $param['stats'] = $stats;
+		$param['statCounts'] = array('last7' =>$this->getValue('count',$survey7),
+									 'last30'=>$this->getValue('count',$survey30),
+									 'yeartodate'=>$this->getValue('count',$surveyYear)
+									 );
         return $this->render('FgmsSurveyBundle:Default:results.html.twig',$param ); 
     }
     
@@ -132,18 +143,19 @@ class DefaultController extends Controller
         $repository = $this->getDoctrine()->getRepository('FgmsSurveyBundle:Questionnaire');
 		$sluggroup = ($group != false) ? $group : '';
 		$query = $repository->createQueryBuilder('q')		
-			->where('q.slug = :slug AND q.sluggroup = :sluggroup')
+			->where('q.slug = :slug AND q.sluggroup = :sluggroup' )
 			->setParameters(array('slug' =>$slug, 'sluggroup' =>$sluggroup))
 			->orderBy('q.createDate','ASC')
 			->getQuery();				
 		$response = new StreamedResponse();			
 		$response->setCallback(function() use ($query){				
 			$handle = fopen('php://output', 'w+');
-			fputcsv($handle, array('Date', 'Time','Group','Property','Room','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Comment','id'),',');			
+			fputcsv($handle, array('Survey#','Date', 'Time','Group','Property','Room','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q14','Q15'),',');			
 			foreach ($query->getResult() as $item){					
-				fputcsv($handle, array($item->getCreateDate()->format('F j, Y'),
-									   $item->getCreateDate()->format('h:i A'),
-									   $item->getSluggroup(),
+				fputcsv($handle, array($item->getId(),
+									   $item->getCreateDate()->format('F j, Y'),
+									   $item->getCreateDate()->format('h:i A'),									   
+									   $item->getSluggroup(),									   
 									   $item->getSlug(),
 									   $item->getRoomNumber(),
 									   $item->getQuestion1(),
@@ -156,8 +168,12 @@ class DefaultController extends Controller
 									   $item->getQuestion8(),
 									   $item->getQuestion9(),
 									   $item->getQuestion10(),
-									   $item->getQuestionComment(),
-									   $item->getId()						
+									   $item->getQuestion11(),
+									   $item->getQuestion12(),
+									   $item->getQuestion13(),
+									   $item->getQuestion14(),
+									   $item->getQuestion15()
+									   					
 						));		
 			}
             fclose($handle);
@@ -206,7 +222,7 @@ class DefaultController extends Controller
 		// gets from survey.yml config file or defaults to array('webmaster@fifthgeardev.com'=>'Webmaster')
 		$fromEmail = array($this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com')=>$this->getValue('name',$this->config['email']['from'],'Webmaster'));
 		
-        foreach ($param['questions'] as $item){
+        foreach ($param['activequestions'] as $item){
 			$emailFlag = false;
             $field = $item['field'];
             $data = array();       
@@ -249,8 +265,8 @@ class DefaultController extends Controller
 				$item['answer'] = $data;
 				$item['roomNumber'] = $room;
 				$item['title'] = strip_tags($item['title']);
-				$item['email']['recipient']['bcc'] = array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com'));
-				
+				// adds webmaster to bcc
+				$item['email']['recipient']['bcc'] = isset($item['email']['recipient']['bcc']) ? array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com')) : array('webmaster@fifthgeardev.com');
 				
 				$combined_array = array_merge($param, array('item'=>$item));				
 				$message = \Swift_Message::newInstance()
@@ -288,8 +304,7 @@ class DefaultController extends Controller
 				if ($this->getValue('properties',$param['reporting']['group'],false) != false){					
 					foreach ($this->getValue('properties',$param['reporting']['group'],array() ) as $adminAuth){						
 						if ($this->getValue('key',$param) == $adminAuth['token']){
-							return true;
-							
+							return true;							
 						}
 					}
 				}
@@ -340,6 +355,13 @@ class DefaultController extends Controller
 				//adds missing params	
 				$param['fullslug'] = $this->fullSlug;
 				$param['key'] = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : false;
+				$param['admin'] = $this->get('request')->query->has('admin');
+				$param['activequestions'] = array();
+				foreach($param['questions']['set']['questions'] as $questions){
+					if ($this->getValue('active',$questions,true)) {
+						$param['activequestions'][] = $questions;
+					}
+				}
 				
 				// means this is admin lets load admin file
 				if ($this->getValue('key',$param) !== false){
@@ -397,24 +419,28 @@ class DefaultController extends Controller
     private function getSurveyRollup($slug, $group, $timeInterval="7 DAY", $allquestions)
     {        
         $em = $this->getDoctrine()->getManager();
-        $sql = "SELECT createDate,   ";
-        $count = 1;
-        $limit = 9;  
-            
-        $s = array();
-        while ($count < $limit){
-            // this logic is required for a negative question response
-            $negativeFlag = false;
-            foreach ($allquestions as $question){
-                if ($question['field'] == 'question'.$count){
-                    $negativeFlag = (isset($question['negative']) ) ? $question['negative'] : false;
-                }
-            }           
-            $yesText = $negativeFlag ? 'No' : 'Yes';
-            $noText = $negativeFlag ? 'Yes' : 'No' ;             
-            $s[] = "IF ( (s.question{$count} REGEXP '[0-9]') = 1 , AVG(s.question{$count}), (sum(if(s.question{$count}='{$yesText}',1,0))/(sum(if(s.question{$count}='{$yesText}',1,0))+sum(if(s.question{$count}='{$noText}',1,0)))*100)) as `Q{$count}`" ;
-            ++$count;
-        }
+        $sql = "SELECT createDate, count(*) as `count`,  ";            
+        $s = array();       
+
+		foreach ($allquestions as $question){
+			$type = strtolower($this->getValue('type',$question,'open'));
+			$field = $question['field'];
+			if ($type == 'rating'){
+				$s[] = "AVG(s.{$field}) as `{$field}M`";
+			}
+			else if ($type == 'polar'){
+				$negativeFlag =  $this->getValue('negative',$question,false);
+				$yesText = $negativeFlag ? 'No' : 'Yes';
+				$noText = $negativeFlag ? 'Yes' : 'No' ; 					
+				$s[] = "(sum(if(s.{$field}='{$yesText}',1,0))/(sum(if(s.{$field}='{$yesText}',1,0))+sum(if(s.{$field}='{$noText}',1,0)))*100 ) as `{$field}M`";
+			}
+			else if ($type == 'open'){
+				$s[] = "(sum(IF (LENGTH(s.{$field}) > 5, 1,0))) as `{$field}M`";
+			}
+			else {
+				
+			}
+		}   
         $sql .= implode(', ',$s) .' ';
         $sql .= "FROM questionnaire s  WHERE s.createDate > (NOW() - INTERVAL {$timeInterval}) AND s.slug = '{$slug}'";
 		if ($group != false){
@@ -431,12 +457,13 @@ class DefaultController extends Controller
 	 * @param array $questions this is an array of all the questions
 	 * @return form
 	 */
-    private function getForm($slug,$group, $roomNumber='none')
+    private function getForm($slug,$group, $roomNumber='none', $set="Default")
 	{         
         $questionObject = new Questionnaire();
         $questionObject->setCreateDate();
         $questionObject->setSlug($slug);
 		$questionObject->setSluggroup($group);
+		$questionObject->setQuestionSet($set);
 		if ($questionObject->getRoomNumber() == null){   
             $questionObject->setRoomNumber($roomNumber);
 		}
@@ -452,7 +479,11 @@ class DefaultController extends Controller
 			->add('question8','hidden')
 			->add('question9','hidden')
 			->add('question10','hidden')
-			->add('questionComment','hidden')
+			->add('question11','hidden')
+			->add('question12','hidden')
+			->add('question13','hidden')
+			->add('question14','hidden')
+			->add('question15','hidden')
 			->getForm();
 		return $form;		
 	}

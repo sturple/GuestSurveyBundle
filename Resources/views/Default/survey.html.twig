@@ -1,14 +1,15 @@
 {% extends 'FgmsSurveyBundle:Default:base.html.twig' %}
 {%block body%}
-<div id="questionnaire" class="" style="display: none">
+<div id="questionnaire" class="" style="display: block">
 {{ form_start(form)}}
 {{ form_end(form)}}
-	{% for question in questions %}
+	{% set count = 0 %}
+	{% for question in activequestions %}		
 		<div class="questionnaire-dots"></div>
 		<section>
 			<div class="question-index">{{loop.index}} of {{loop.length}}</div>
 			<div class="question-title">{{question.title | raw}}</div>
-			{% if question.type == 'boolean' %}
+			{% if question.type == 'polar'  %}
 				<div class="question-input-visual ">
 					<a href="javascript:void(0)" data-field="{{question.field}}" data-value="Yes">
 						<span class="fa-stack fa-lg button-circle">
@@ -23,7 +24,7 @@
 						</span>							
 					</a>
 				</div>
-			{% elseif question.type == 'rating'%}
+			{% elseif question.type == 'rating'  %}
 				<div class="question-input-visual">
 					<a href="javascript:void(0)" data-field="{{question.field}}" data-value="5">
 						<span class="fa-stack fa-lg button-circle">
@@ -60,17 +61,24 @@
 						<div class="rating-text">Poor</div>
 					</a>
 				</div>
-			{% elseif question.type == 'comment' %}
+			{% elseif question.type == 'open'   %}
 				
 				<div class="form-group form-comment">					
 					<textarea class="form-control" data-field="{{question.field}}" ></textarea>
 				</div>
-				<div class="form-group question-input-visual">
-					<a class="btn  btn-primary  btn-md finish-button" href="javascript:void(0);" >Finish</a>
-				</div>				
+				{% if loop.index == loop.length%}
+					<div class="form-group question-input-visual">
+						<a class="btn  btn-primary  btn-md finish-button" href="javascript:void(0);" >Finish</a>
+					</div>
+				{% else %}
+					<div class="form-group question-input-visual">
+						<a class="btn  btn-primary  btn-md" onclick="$('.nav-next').trigger('click')" href="javascript:void(0);" >Next</a>
+					</div>					
+				{% endif %}
 			{% else %}
 			{% endif %}			
-		</section>		
+		</section>
+
 	{% endfor %}
 </div>
 <div  class="questionnaire-nav">

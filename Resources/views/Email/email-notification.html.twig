@@ -1,0 +1,101 @@
+{% extends 'FgmsSurveyBundle:Email:email-base.html.twig' %}
+{%block body%}
+     <!-- TITLES AND INTRO -->
+    <table class="row" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;">
+      <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+        <td class="wrapper last" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 0px;" align="left" valign="top">
+          <table class="twelve columns" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="center title" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #606060; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 26px; font-size: 22px; margin: 0; padding: 0px;" align="center" valign="top">
+                <center style="width: 100%; min-width: 580px;">{{config.email.text.title}}</center>
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <table class="row" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;">
+      <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+        <td class="wrapper last" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 0px;" align="left" valign="top">
+          <table class="twelve columns" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="center subtitle" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: center; color: #606060; font-family: georgia,times,serif; font-weight: normal; line-height: 24px; font-size: 16px; font-style: italic; margin: 0; padding: 0px 0px 10px;" align="center" valign="top">
+                <center style="width: 100%; min-width: 580px;">{{config.email.text.subtitle}}</center>
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <!-- NOTIFICATION DETAILS -->
+    <table class="row" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 100%; position: relative; display: block; padding: 0px;">
+      <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+        <td class="wrapper text-pad last" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; position: relative; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 10px 0px 0px;" align="left" valign="top">
+          <table class="twelve columns" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Room #
+              </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                {{item.roomNumber|default('None')}}
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Date
+              </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                {{item.createDate|date('F j, Y', timezone)}}
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Time
+              </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                {{item.createDate|date('g:i A',timezone)}}
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Question
+                </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                {{item.title|default('No Question')}}
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+
+                                      {% if data.answer > 0 %}
+            <!-- BELOW IS WHEN A MESSAGE (Q8) IS FILLED OUT -->
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Message
+              </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                {{item.answer |default('--answer missing--')}}
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>
+                                  {% else %}
+            <!-- BELOW IS WHEN RESPONSES TO Q1,Q4,Q5,Q6 OR Q7 TRIGGER AN EMAIL -->
+            <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
+              <td class="panel three sub-columns body-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 25%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                Response
+              </td>
+              <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
+                <em> {%if item.type == 'rating'%}({{item.answer| default('--answer missing--')}} out of 5){%else%}{{item.answer| default('--answer missing--')}}{%endif%} </em>
+              </td>
+              <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
+            </tr>													
+                                  {% endif %}
+          </table>
+        </td>
+      </tr>
+    </table>
+{% endblock %}

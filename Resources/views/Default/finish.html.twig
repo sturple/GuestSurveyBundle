@@ -2,17 +2,32 @@
 {%block body%}
 <div id="questionnaire" class=" wizard question-finish " style="display: none;">
 	<div class="content">
-		<div class="body">						
-			<div class="question-title">				
-				{{config.survey.text.finish.title | raw}}
-				{{config.survey.text.finish.subtitle | raw}}	
-			</div>			
-			<div style="text-align: center;">
-				<a class="btn btn-lg btn-primary" href="/{{fullslug}}/start/">Restart</a>
-			</div>
-		</div>		
+		<div class="body">
+			{% if conditionalFinish %}
+				<div class="question-title">
+					{{config.survey.text.finish.conditional.title | raw }}
+					{{config.survey.text.finish.conditional.subtitle | raw}}
+					{{config.survey.text.finish.conditional.content | raw}}
+				</div>
+				<div style="text-align: center;">
+					<a class="{{config.survey.text.finish.conditional.button.class}}" target="_blank" href="{{config.survey.text.finish.conditional.button.link}}">{{config.survey.text.finish.conditional.button.text}}</a>
+				</div>
+			{% else %}
+				<div class="question-title">
+					{{config.survey.text.finish.title | raw}}
+					{{config.survey.text.finish.subtitle | raw}}
+				</div>
+				<div style="text-align: center;">
+					<a class="btn btn-lg btn-primary" href="/{{fullslug}}/start/">Restart</a>
+				</div>
+			{% endif %}
+
+		</div>
 	</div>
 </div>
 {% endblock%}
+{%block footer%}
+{% if conditionalFinish %}<div class="start-over-button"><a href="/{{fullslug}}/start/">Restart</a></div>{% endif %}
+{% endblock %}
 {%block styles %}{% endblock %}
 {% block javascript %}<script type="text/javascript">	$(function(){	$('#questionnaire').fadeIn(1000);})</script>{% endblock %}

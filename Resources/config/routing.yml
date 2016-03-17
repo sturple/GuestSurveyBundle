@@ -56,5 +56,15 @@ fgms_survey_csv_with_group:
     path: /{group}/{slug}/csv/
     defaults : { _controller: FgmsSurveyBundle:Default:downloadcsv }
 
+#cron routes
+fgms_survey_cron:
+    path: /cron/
+    defaults: {_controller: FgmsSurveyBundle:Default:crontrigger }
+
+fgms_survey_cron_property:
+    path: /cron/{slug}/
+    defaults: {_controller: FgmsSurveyBundle:Default:cron, group: false }
     
-    
+fgms_survey_cron_property_with_group:
+    path: /cron/{group}/{slug}/
+    defaults: {_controller: FgmsSurveyBundle:Default:cron, group: false }

@@ -5,11 +5,14 @@
 		<div class="col-sm-8">
 			<h1 style="">{{config.survey.text.results.title}}</h1>
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
+			<p>All result time periods are UTC</p>
 			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
 			{% if admin %}
 			<div style="padding-top: 12px;">
-				<a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Email</a>
-				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?sendtest=true&key={{key}}" class="btn btn-primary btn-sm">Send Test Emails</a>
+				<a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Survey Email</a>
+				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?survey=true&key={{key}}" class="btn btn-primary btn-sm">Send Survey Test Emails</a>
+				<a target="_blank" href="/{{fullslug}}/email/?template=email-rollup&key={{key}}" class="btn btn-primary btn-sm">Preview Rollup Email</a>
+				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?rollup=true&template=email-rollup&key={{key}}" class="btn btn-primary btn-sm">Send Rollup Email</a>				
 			</div>
 		{% endif %}
 		</div>

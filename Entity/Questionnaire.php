@@ -179,7 +179,7 @@ class Questionnaire
      */
     public function setCreateDate()
     {
-        $this->createDate =  new \DateTime("now");
+        $this->createDate =  new \DateTime("now",new \DateTimeZone('UTC'));
 
         return $this;
     }

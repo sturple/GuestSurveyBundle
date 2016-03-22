@@ -47,7 +47,7 @@
                      <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
                          <td class="body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; margin: 0; padding: 12px 0px 10px;"
                              align="left" valign="top">
-                             Reporting Period: <strong>{{"now"|date_modify("-24 hour")|date('F j, Y' , timezone)}}  </strong> 
+                             Reporting Period: <strong>{{"now"|date_modify("-24 hour")|date('F j, Y' , timezone)}}  </strong>
                          </td>
                          <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #666666; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;"
                              align="left" valign="top"></td>
@@ -55,7 +55,7 @@
                      <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
                          <td class="body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; margin: 0; padding: 0px 0px 10px;"
                              align="left" valign="top">
-                             Number of Surveys Completed: <strong>{{statCounts.day | default('000')}}</strong>
+                             Number of Surveys Completed: <strong>{{statCounts.day | default('000')}}</strong> {% if statCounts.day == 0 %}<span style="color:red;">(No surveys were completed on this day)</span>{% endif %}
                          </td>
                          <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #666666; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;"
                              align="left" valign="top"></td>

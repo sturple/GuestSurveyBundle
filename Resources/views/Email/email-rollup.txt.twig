@@ -1,8 +1,8 @@
  DAILY CHECKOUT SURVEY REPORT
 {{property.name}}
 
-{{"now"|date_modify("-24 hour")|date('F j, Y' , timezone)}} 
-Number of Surveys Completed: {{statCounts.day | default('000')}}
+{{"now"|date_modify("-24 hour")|date('F j, Y' , timezone)}}
+Number of Surveys Completed: {{statCounts.day | default('000')}} {% if statCounts.day == 0}(No surveys were completed on this day){% endif %}
 
 {% for stat in stats %}
 {% if stat.active %}

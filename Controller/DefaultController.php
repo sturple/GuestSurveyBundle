@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Parser;
@@ -54,7 +55,7 @@ class DefaultController extends Controller
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($form->getData());
 			$this->checkSurveyResults($slug,$group,$form,$room);
-			$em->flush();			
+			$em->flush();
 			$conditional = $this->getConditionalFinish($form) ? '?conditional' : '';
 			return $this->redirect("/". $this->fullSlug. "/finish/".$conditional);
 		}
@@ -95,7 +96,6 @@ class DefaultController extends Controller
 	}
 
 
-
 	/**
 	 * route to finish survey
 	 * @param string $slug
@@ -122,13 +122,33 @@ class DefaultController extends Controller
 		$showResultsFlag = false;
 		// throws error if not authenticated
 		$this->checkIfAuthenticated();
-		$questions = $this->param['questions'];
-        // getting each interval
-        $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $questions);
-        $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $questions);
-        $surveyYear = $this->getSurveyRollup($slug,$group,'1 YEAR', $questions);
+        return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$this->getStats($slug,$group)) );
+    }
 
-        $stats = array();
+	/**
+	* Gets stats, depending on $dayFlag either gets email ($dayFlag == true) or gets 7, 30 and year to date stats.
+	* @param $slug string
+	* @param $group string
+	* @param $dayFlag boolean
+	*/
+	private function getStats($slug, $group, $dayFlag=false)
+	{
+		$questions = $this->param['questions'];
+		$statsCount = array();
+		if ($dayFlag){
+			$survey24Hours =  $this->getSurveyRollup($slug,$group,'24 HOUR', $questions);
+			$statsCount = array('day'=>$this->getValue('count',$survey24Hours));
+		}
+		else {
+			$survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $questions);
+	        $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $questions);
+	        $surveyYear = $this->getSurveyRollup($slug,$group,'1 YEAR', $questions);
+			$statsCount = array('last7' =>$this->getValue('count',$survey7),
+								'last30'=>$this->getValue('count',$survey30),
+								'yeartodate'=>$this->getValue('count',$surveyYear)
+							);
+		}
+		$stats = array();
         // setting up stats.
         foreach($questions as $allquestion){
             $active = isset($allquestion['active']) ? $allquestion['active'] : true;
@@ -140,28 +160,35 @@ class DefaultController extends Controller
 				$emailtrigger = $this->getValue('trigger', $allquestion['email'], 'none');
 			}
 			$type = $allquestion['type'];
-            $stats[] = array('field'=>str_replace('question','Q',$field),
+            $array = array(  'field'=>str_replace('question','Q',$field),
                              'active'=>$active,
 							 'type'=>$type,
                              'question'=>strip_tags($allquestion['title']),
 							 'negative'=>$this->getValue('negative',$allquestion,false),
-                             'show'=>(strlen($field) < 4) ,
-                             'last7'=>$this->getValue($field.'M',$survey7),
-                             'last30'=>$this->getValue($field.'M',$survey30),
-                             'yeartodate'=>$this->getValue($field.'M',$surveyYear),
+                             'show'=>(strlen($field) < 4),
                              'trigger'=>$this->getValue('trigger',$allquestion),
 							 'emailtrigger'=>$emailtrigger
                             );
 
+			// add last 24 hour stat
+			if ($dayFlag){
+				$array['day'] = $this->getValue($field.'M',$survey24Hours);
+			}
+			// add last 7 , last 30 and year to date stats
+			else {
+				$array = array_merge($array,array(
+					'last7'=>$this->getValue($field.'M',$survey7),
+					'last30'=>$this->getValue($field.'M',$survey30),
+					'yeartodate'=>$this->getValue($field.'M',$surveyYear),
+				));
+			}
+			$stats[] = $array;
         }
-        $this->param['stats'] = $stats;
-		$this->param['statCounts'] = array('last7' =>$this->getValue('count',$survey7),
-									 'last30'=>$this->getValue('count',$survey30),
-									 'yeartodate'=>$this->getValue('count',$surveyYear)
-									 );
-        return $this->render('FgmsSurveyBundle:Default:results.html.twig',$this->param );
-    }
+		return array('stats'=>$stats,
+					 'statCounts'=>$statsCount
+				 );
 
+	}
 	/**
 	 * route to download CSV file
 	 * @param string $slug
@@ -216,16 +243,45 @@ class DefaultController extends Controller
         return $response;
     }
 
-
-	public function crontrigger()
+	/**
+	* This is to access all via a cron job an array of groups and slugs.
+	*/
+	public function crontriggerAction()
 	{
-		//$filename
-		$this->getYaml($filename);
+		$key = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : '';
+		$checkKey = 'A3CCEBA83235DC95F750108D22C14731';
+		// lets add simple key just to prevent crons being accidently triggered.
+		if ($key === $checkKey){
+			$crons = array(
+				array('slug'=>'thepalmsturksandcaicos', 'group'=>'thehartlinggroup'),
+				array('slug'=>'thesandsatgracebay', 'group'=>'thehartlinggroup'),
+			);
+
+			foreach ($crons as $cron){
+				$this->getConfiguration($cron['slug'],$cron['group']);
+				$this->param = array_merge($this->param, $this->getStats($cron['slug'],$cron['group'],true));
+				$this->emailRollup();
+			}
+
+			// this gets the daily stats
+			return new Response("cron success");
+		}
+		else {
+			return new Response("cron failed");
+		}
+
 	}
 
+	/**
+	* This is to access directly
+	*/
 	public function cronAction($slug,$group)
 	{
+		$this->checkIfAuthenticated();
 		$this->getConfiguration($slug,$group);
+		$this->param = array_merge($this->param, $this->getStats($slug,$group,true));
+		$this->emailRollup();
+		return new Response("cron success");
 	}
 
 	/**
@@ -240,16 +296,32 @@ class DefaultController extends Controller
 		$this->checkIfAuthenticated();
 		$template = $this->get('request')->query->has('template') ? $this->get('request')->query->get('template') : 'email-notification';
 		$surveytest = $this->get('request')->query->has('survey') ? $this->get('request')->query->get('survey') : false;
-
+		$emailFlag = $this->get('request')->query->has('email') ? true : false;
 		if ($surveytest == 'true'){
 			$this->checkSurveyResults($slug, $group,false,'000');
 		}
-		return $this->render('FgmsSurveyBundle:Email:'. $template .'.html.twig',array_merge($this->param,array('showstats'=>true,'rollupCount'=>'100000')) );
+		else {
+			$this->param = array_merge($this->param, $this->getStats($slug,$group,true));
+		}
+		if ($emailFlag){
+			$this->emailRollup(true);
+		}
+		return $this->render('FgmsSurveyBundle:Email:'. $template .'.html.twig',$this->param );
 	}
 
-	private function emailRollup()
+	private function emailRollup($testFlag=false)
 	{
-		//$email
+		$emailParam = array();
+		$emailParam['fromEmail'] = array($this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com')=>$this->getValue('name',$this->config['email']['from'],'Webmaster'));
+		$emailParam['subject'] = sprintf($this->param['config']['rollup']['subject'], $this->param['property']['name']) ;
+		if ($testFlag){
+			$emailParam['recipient']['to'] = array('webmaster@fifthgeardev.com');
+		}
+		else {
+			$emailParam['recipient'] = $this->param['config']['rollup']['recipient'];
+		}
+
+		$this->sendEmail($emailParam, $this->param,'email-rollup');
 	}
 
 	/**
@@ -278,7 +350,6 @@ class DefaultController extends Controller
 				else if ($type == 'boolean'){
 					$data = ($this->getValue('negative',$item)) ? 'yes': 'no';
 				}
-
 			}
 			else {
 				$data = $form->get($field)->getData();
@@ -305,7 +376,6 @@ class DefaultController extends Controller
 				$this->sendEmail($emailParam, $combined_array,'email-notification');
 			}
 		}
-
 	}
 
 	/**
@@ -334,8 +404,7 @@ class DefaultController extends Controller
 			->setBody($this->renderView('FgmsSurveyBundle:Email:'.$template.'.html.twig', $data ),'text/html')
 			->addPart($this->renderView('FgmsSurveyBundle:Email:'.$template.'.txt.twig', $data ),'text/plain');
 		$this->get('mailer')->send($message);
-		$this->logger->info('Mailer:: Sent Message Header ' .print_R($message->getHeaders()->toString(),true));
-
+		//$this->logger->info('Mailer:: Sent Message Header ' .print_R($message->getHeaders()->toString(),true));
 	}
 
 	/**
@@ -358,7 +427,6 @@ class DefaultController extends Controller
 							else {
 								return true;
 							}
-
 						}
 					}
 				}
@@ -367,9 +435,7 @@ class DefaultController extends Controller
 		$error_str = 'Authentication is not correct';
 		throw $this->createNotFoundException($error_str);
 		return false;
-
 	}
-
 
 	/*
 	 * gets configurations for property and sets the images path
@@ -415,7 +481,6 @@ class DefaultController extends Controller
 						$param['activequestions'][] = $questions;
 					}
 				}
-
 				// means this is admin lets load admin file
 				if ($this->getValue('key',$param) !== false){
 					if (isset($param['config']['admin']['yamlfile']) ){

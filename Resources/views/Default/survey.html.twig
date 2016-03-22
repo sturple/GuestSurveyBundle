@@ -4,7 +4,7 @@
 {{ form_start(form)}}
 {{ form_end(form)}}
 	{% set count = 0 %}
-	{% for question in activequestions %}		
+	{% for question in activequestions %}
 		<div class="questionnaire-dots"></div>
 		<section>
 			<div class="question-index">{{loop.index}} of {{loop.length}}</div>
@@ -15,13 +15,13 @@
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-boolean button-text" >Yes</i>
-						</span>						
+						</span>
 					</a>
 					<a href="javascript:void(0)" data-field="{{question.field}}" data-value="No">
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-boolean button-text" >No</i>
-						</span>							
+						</span>
 					</a>
 				</div>
 			{% elseif question.type == 'rating'  %}
@@ -37,7 +37,7 @@
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >4</i>
-						</span>						
+						</span>
 					</a>
 					<a href="javascript:void(0)" data-field="{{question.field}}"  data-value="3">
 						<span class="fa-stack fa-lg button-circle">
@@ -50,9 +50,9 @@
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >2</i>
-						</span>						
-					</a>					
-					
+						</span>
+					</a>
+
 					<a href="javascript:void(0)" data-field="{{question.field}}"  data-value="1">
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
@@ -62,8 +62,8 @@
 					</a>
 				</div>
 			{% elseif question.type == 'open'   %}
-				
-				<div class="form-group form-comment">					
+
+				<div class="form-group form-comment">
 					<textarea class="form-control" data-field="{{question.field}}" ></textarea>
 				</div>
 				{% if loop.index == loop.length%}
@@ -73,10 +73,10 @@
 				{% else %}
 					<div class="form-group question-input-visual">
 						<a class="btn  btn-primary  btn-md" onclick="$('.nav-next').trigger('click')" href="javascript:void(0);" >Next</a>
-					</div>					
+					</div>
 				{% endif %}
 			{% else %}
-			{% endif %}			
+			{% endif %}
 		</section>
 
 	{% endfor %}
@@ -93,10 +93,10 @@
 {%block styles %}
 {% endblock %}
 {% block javascript %}
-<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery.steps.min.js"></script>	
+<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery.steps.min.js"></script>
 <script type="text/javascript">
 	$(function(){
-		
+
 		$("#questionnaire").steps({
 			headerTag: ".questionnaire-dots",
 			titleTemplate : '#title#',
@@ -106,19 +106,19 @@
 			autoFocus: true,
 			onInit: function(event, currentIndex){
 				setNavEnables(currentIndex);
-				
+
 			},
 			onStepChanging: function (event, currentIndex, newIndex) { return true; },
 			onStepChanged: function (event, currentIndex, priorIndex) {
 				setNavEnables(currentIndex);
 				/*if (currentIndex == 0) {$('.nav-prev').addClass('disabled');}
-				else {	$('.nav-prev').removeClass('disabled');	}*/				
-			}, 
+				else {	$('.nav-prev').removeClass('disabled');	}*/
+			},
 			onCanceled: function (event) { },
-			onFinishing: function (event, currentIndex) {			
+			onFinishing: function (event, currentIndex) {
 				return true;
-			}, 
-			onFinished: function (event, currentIndex) {				
+			},
+			onFinished: function (event, currentIndex) {
 				$('form').submit();
 			},
 			labels: {
@@ -129,7 +129,7 @@
 				next: "Next",
 				previous: "Previous",
 				loading: "Loading ..."
-			}			
+			}
 		});
 		$('#questionnaire').fadeIn(1000);
 		$('.finish-button').on('click',function(){
@@ -138,22 +138,22 @@
 		$('textarea[data-field], input[data-field]').on('change',function(){
 			$('*[name="form['+ $(this).data('field') +']"]').val($(this).val());
 		})
-		$('a[data-field]').on('mouseup',function(e){			
+		$('a[data-field]').on('mouseup',function(e){
 			$(this).closest('.question-input-visual').find('*[data-field]').removeClass('active');
-			var dataValue = $(this).data('value');			
+			var dataValue = $(this).data('value');
 			$('*[name="form['+ $(this).data('field') +']"]').val(dataValue);
-			$(this).addClass('active');			
+			$(this).addClass('active');
 			if ($('a[href="#next"]').parent().attr('aria-disabled') == 'true') {
 				$('a[href="#finish"]').trigger('click');
 			}
 			else {
 				$('a[href="#next"]').trigger('click');
-			}			
-			return false;	
+			}
+			return false;
 		})
 		$('a[data-field]').on('touchstart',function(e){
 			$(this).closest('.question-input-visual').find('*[data-field]').removeClass('active');
-			var dataValue = $(this).data('value')				
+			var dataValue = $(this).data('value')
 			$('*[name="form['+ $(this).data('field') +']"]').val(dataValue);
 			$(this).addClass('active');
 			console.log($('a[href="#next"]').parent().attr('aria-disabled'))
@@ -162,13 +162,13 @@
 			}
 			else {
 				$('a[href="#next"]').trigger('click');
-			}			
-			return false;	
+			}
+			return false;
 		});
 		//attaches triggers on the forward back nav arrows to move questionnaire
 		$('.nav-prev').on('click',function(){$('a[href="#previous"]').trigger('click');	})
 		$('.nav-next').on('click',function(){$('a[href="#next"]').trigger('click');	})
-		
+
 		function setNavEnables(currentIndex) {
 			var prevIndex = currentIndex - 1;
 			var nextIndex = currentIndex + 1;
@@ -189,7 +189,7 @@
 				$('.nav-next').fadeOut();
 			}
 			if (currentIndex == 0) {$('.nav-prev').fadeOut();}
-		}		
+		}
 	})
-</script>	
+</script>
 {% endblock %}

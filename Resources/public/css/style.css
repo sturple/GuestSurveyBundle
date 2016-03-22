@@ -14,7 +14,7 @@ a:focus {  outline:none;  outline-offset: -2px;}
 
 .question-title {font-size: 56px; text-align: center;	padding-top: 32px;	min-height: 200px;	line-height: 1.2em; font-weight: 600; padding-left: 24px; padding-right: 24px;}
 .question-title .small-text {font-size: 34px;line-height: 1em; padding-bottom: 12px;}
-.question-title .content { font-size: 18px; margin: -15px 0 12px; line-height: 1.3em;}
+.question-title .content { font-size: 18px; margin: -21px 0 24px; line-height: 1.3em;}
 .question-input-visual {padding-top: 12px;	text-align: center;}
 
 .questionnaire-nav {position: relative;	height: 0px;}
@@ -96,8 +96,8 @@ a:focus {  outline:none;  outline-offset: -2px;}
 	height: 1.2em;;
 	padding: 8px 0px;
 	width: 124px;
-	left: 2px;
-	top: 60px;
+	left: 0px;
+	top: -84px;
 }
 .question-input-visual a {	text-decoration: none;}
 .button-boolean {	font-size: 32px; font-weight: 700 !important; }

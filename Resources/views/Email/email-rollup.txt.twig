@@ -1,1 +1,25 @@
-{{config.email.text.title}}
+ DAILY CHECKOUT SURVEY REPORT
+{{property.name}}
+
+{{"now"|date_modify("-24 hour")|date('F j, Y' , timezone)}} 
+Number of Surveys Completed: {{statCounts.day | default('000')}}
+
+{% for stat in stats %}
+{% if stat.active %}
+ID: {{stat.field}}
+
+Question:  {{stat.question}}
+
+Email Trigger: {% if stat.type == 'open' %}{% if stat.emailtrigger %}Input{% else %}None{% endif %}{% else %}{{stat.emailtrigger | capitalize}}{% endif %}
+
+Reporting Threshold: {% if stat.type == 'open' %}N/A{% else %}{% if stat.trigger > 5 %}{{stat.trigger|round}}% ({% if stat.negative %}No{% else %}Yes{% endif %}){% else %}{{stat.trigger|round(1)}}{% endif %}{% endif %}
+
+Average Value:  {% if stat.type == 'open' %}{{stat.day}} (Entr{% if stat.day == 1 %}y{% else %}ies{% endif %}){% else %}{% if stat.day > 5 %}{{stat.day|round}}%({% if stat.negative %}No{% else %}Yes{% endif %}){% else %}{{stat.day|round(1)}}{% endif %}{% endif %}
+
+{% endif %}
+
+{% endfor %}
+
+{{property.name}}
+{{property.contact.address}}, {{property.contact.province}}, {{property.contact.country}}
+{{property.contact.phone}}| TF: {{property.contact.tollfree}} | {{property.contact.email}} | {{property.contact.website}}

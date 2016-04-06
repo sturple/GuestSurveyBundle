@@ -70,14 +70,16 @@
                 align="left" valign="top">
                 <table class="twelve columns" style="border-spacing: 0; border-collapse: collapse; vertical-align: top; text-align: left; width: 580px; margin: 0 auto; padding: 0;">
                     <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
-                        <td class="panel one sub-columns grid-text label" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 8.333333%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+                        <td class="panel two sub-columns grid-text label" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                             align="center" bgcolor="#ffffff" valign="top">
                             ID
                         </td>
-                        <td class="panel five sub-columns grid-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 41.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+
+                        <td class="panel seven sub-columns grid-text label" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 58.33333%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                             align="left" bgcolor="#ffffff" valign="top">
                             Question
                         </td>
+                        {#
                         <td class="panel two sub-columns grid-text label" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                             align="center" bgcolor="#ffffff" valign="top">
                             Email Trigger
@@ -86,7 +88,8 @@
                             align="center" bgcolor="#ffffff" valign="top">
                             Reporting Threshold
                         </td>
-                        <td class="panel two sub-columns grid-text label" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+                        #}
+                        <td class="panel three sub-columns grid-text label" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 24.999999%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: bold; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                             align="center" bgcolor="#ffffff" valign="top">
                             Average Value
                         </td>
@@ -96,14 +99,15 @@
                     {% for stat in stats %}
                         {% if stat.active %}
                         <tr style="vertical-align: top; text-align: left; padding: 0;" align="left">
-                            <td class="panel one sub-columns grid-text" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 8.333333%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+                            <td class="panel two sub-columns grid-text" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.66666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                                 align="center" bgcolor="#ffffff" valign="top">
                                 {{stat.field}}
                             </td>
-                            <td class="panel five sub-columns grid-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 41.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+                            <td class="panel six sub-columns grid-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 58.33333%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                                 align="left" bgcolor="#ffffff" valign="top">
                                 {{stat.question}}
                             </td>
+                            {#
                             <td class="panel two sub-columns grid-text" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                                 align="center" bgcolor="#ffffff" valign="top">
                                 {%if stat.type == 'open'%}
@@ -125,7 +129,8 @@
         							{%endif%}
         						{%endif%}
                             </td>
-                            <td class="panel two sub-columns grid-text" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 16.666666%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
+                            #}
+                            <td class="panel four sub-columns grid-text" style="text-align: center; word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; min-width: 0px; width: 24.999999%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 16px; font-size: 11px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;"
                                 align="center" bgcolor="#ffffff" valign="top">
                                 {% if stat.type == 'open' %}
         							{{stat.day}} <span>(Entr{%if stat.day == 1%}y{%else%}ies{%endif%})</span>

@@ -31,7 +31,7 @@
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >5</i>
 						</span>
-						<div class="rating-text">Excellent</div>
+						<div class="rating-text"><strong><i class="fa fa-smile-o "></i></strong> Excellent</div>
 					</a>
 					<a href="javascript:void(0)" data-field="{{question.field}}"  data-value="4">
 						<span class="fa-stack fa-lg button-circle">
@@ -44,7 +44,7 @@
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >3</i>
 						</span>
-						<div class="rating-text">Average</div>
+						<div class="rating-text"><strong><i class="fa fa-meh-o"></i></strong> Average</div>
 					</a>
 					<a href="javascript:void(0)" data-field="{{question.field}}"  data-value="2">
 						<span class="fa-stack fa-lg button-circle">
@@ -58,7 +58,7 @@
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >1</i>
 						</span>
-						<div class="rating-text">Poor</div>
+						<div class="rating-text"><strong><i class="fa fa-frown-o"></i></strong> Poor</div>
 					</a>
 				</div>
 			{% elseif question.type == 'open'   %}
@@ -182,12 +182,18 @@
 			else {
 				$('.nav-prev').fadeOut();
 			}
-			if ( ($('*[name="form['+inputFieldNext+']"]').val().length > 0) || ($('*[name="form['+inputFieldCurrent+']"]').val().length > 0) ){
-				$('.nav-next').fadeIn();
+			if ($('*[name="form['+inputFieldNext+']"]').length > 0){
+				if ( ($('*[name="form['+inputFieldNext+']"]').val().length > 0) || ($('*[name="form['+inputFieldCurrent+']"]').val().length > 0) ){
+					$('.nav-next').fadeIn();
+				}
+				else {
+					$('.nav-next').fadeOut();
+				}
 			}
 			else {
 				$('.nav-next').fadeOut();
 			}
+
 			if (currentIndex == 0) {$('.nav-prev').fadeOut();}
 		}
 	})

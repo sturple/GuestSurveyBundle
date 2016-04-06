@@ -2,28 +2,39 @@
 {%block body%}
 <div id="questionnaire" class="wizard question-start  " style="display: none;">
 	<div class="content">
-		<div class="body">						
+		<div class="body">
 			<div class="question-title">
 				<div class="small-text">{{config.survey.text.start.subtitle |raw}}</div>
-				{{config.survey.text.start.title|raw}}				
-			</div>			
+				{{config.survey.text.start.title|raw}}
+			</div>
 			<form action="/{{fullslug}}/survey/" method="GET" accept-charset="UTF_8" class="form-inline" style="text-align: center;">
 				<div class="form-group">
 					<input type="text" class="form-control input-lg" name="room" />
 				</div>
-				<div class="form-group question-input-visual">						
-					<a href="javascript:void(0)" onclick="$('form').submit()">
+				<div class="form-group question-input-visual">
+					<a href="javascript:void(0)" id="script-go-button" >
 						<span class="fa-stack fa-lg button-circle">
 							<i class="fa  fa-circle fa-stack-2x"></i>
 							<i class="fa  fa-stack-1x button-rating button-text" >GO</i>
-						</span>						
-					</a>										
-				</div>			
+						</span>
+					</a>
+				</div>
 			</form>
-		</div>		
+		</div>
 	</div>
 </div>
 {% endblock%}
 {%block styles %}{% endblock %}
-{% block javascript %}<script type="text/javascript">$(function(){	$('#questionnaire').fadeIn(1000);})	</script>
+{% block javascript %}
+<script type="text/javascript">
+	$(function(){
+		$('#questionnaire').fadeIn(1000);
+		$('#script-go-button').on('touchstart click',function(e){
+			e.stopPropagation();
+			e.preventDefault();
+			$(this).replaceWith('<i style="margin-left: 24px; font-size: 80px; color: {{config.survey.css.buttons.survey.background.color.normal}}" class="fa fa-spinner fa-spin"></i>');
+			$('form').submit();
+		});
+	})
+</script>
 {% endblock %}

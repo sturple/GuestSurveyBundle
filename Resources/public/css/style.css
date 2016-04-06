@@ -12,7 +12,7 @@ a:focus {  outline:none;  outline-offset: -2px;}
 
 .question-index {font-weight: 300; font-style: italic; font-size: 1.2em;}
 
-.question-title {font-size: 56px; text-align: center;	padding-top: 32px;	min-height: 200px;	line-height: 1.2em; font-weight: 600; padding-left: 24px; padding-right: 24px;}
+.question-title {font-size: 56px; text-align: center;	padding-top: 20px;	min-height: 200px;	line-height: 1.1em; font-weight: 600; padding-left: 24px; padding-right: 24px;}
 .question-title .small-text {font-size: 34px;line-height: 1em; padding-bottom: 12px;}
 .question-title .content { font-size: 18px; margin: -21px 0 24px; line-height: 1.3em;}
 .question-input-visual {padding-top: 12px;	text-align: center;}
@@ -96,8 +96,14 @@ a:focus {  outline:none;  outline-offset: -2px;}
 	height: 1.2em;;
 	padding: 8px 0px;
 	width: 124px;
-	left: 0px;
+	left: 4px;
 	top: -84px;
+}
+.rating-text i {
+	font-size: 18px;
+	position: relative;
+	top: 2px;
+
 }
 .question-input-visual a {	text-decoration: none;}
 .button-boolean {	font-size: 32px; font-weight: 700 !important; }

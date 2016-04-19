@@ -7,13 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
 	<meta name="robots" content="noindex,nofollow">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />
-	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
+	
+	<!-- Bootstrap -->
+	<link href="/web/bundles/fgmssurvey/framework/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- font awesome -->
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/framework/font-awesome-4.6.1/css/font-awesome.min.css">
+	
 	<link href='https://fonts.googleapis.com/css?family={{config.survey.resources.google.fonts}}' rel='stylesheet' type='text/css'>
-	<style>
+	<!--style>
 		.question-input-visual a .button-circle {color: {{config.survey.css.buttons.survey.background.color.normal}} ; background-color: {{config.survey.css.buttons.survey.background.color.normal}} ;	}
 		.question-input-visual a:hover .button-circle {	color:{{config.survey.css.buttons.survey.background.color.hover}};background-color: {{config.survey.css.buttons.survey.background.color.hover}};}
 		.question-input-visual a.active .button-circle{	color:{{config.survey.css.buttons.survey.background.color.active}};background-color: {{config.survey.css.buttons.survey.background.color.active}};}
@@ -31,8 +34,10 @@
 		.btn-primary:hover {background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important; border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;}
 		.start-over-button a {background: url('{{images_path}}{{config.survey.images.overlay}}') repeat top left ; color: {{config.survey.css.buttons.survey.background.color.normal}}; }
 		.start-over-button a:hover { color: {{config.survey.css.buttons.survey.font.color.normal}}; background-color: {{config.survey.css.buttons.survey.background.color.hover}} !important; background-image: none;}
-	</style>
+	</style-->
 	{% block styles %}{%endblock%}
+	
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />
 </head>
 <body>
 	<div class="header">
@@ -59,6 +64,14 @@
 			{%block footer %}{% endblock %}
 		</div>
 	</div>
+	
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
+	
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<!-- bootstrap -->
+	<script src="/web/bundles/fgmssurvey/framework/bootstrap-3.3.6/js/bootstrap.min.js"></script>
 </body>
 {% block javascript %}{% endblock %}
 </html>

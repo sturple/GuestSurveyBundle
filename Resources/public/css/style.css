@@ -1,6 +1,561 @@
-body {
-  color: red;
-  background-color: white;
-  font-family: Buenard, serif;
-  font-size: 16px;
+/* beginning of styles.less */
+/* beginning of variables.less */
+.button-border-radius {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
 }
+.button-circle-border-radius {
+  -webkit-border-radius: 60px;
+  -moz-border-radius: 60px;
+  -ms-border-radius: 60px;
+  -o-border-radius: 60px;
+  border-radius: 60px;
+}
+.button-box-shadow {
+  -webkit-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -ms-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -o-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+}
+.button-circle-box-shadow {
+  -webkit-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -ms-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -o-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+}
+.button-bg-color-transition {
+  -webkit-transition: background-color 200ms ease;
+  -moz-transition: background-color 200ms ease;
+  -ms-transition: background-color 200ms ease;
+  -o-transition: background-color 200ms ease;
+  transition: background-color 200ms ease;
+}
+.i-opacity {
+  -moz-opacity: 0.80;
+  -khtml-opacity: 0.80;
+  opacity: 0.80;
+}
+.disabled-opacity {
+  -moz-opacity: 0.10;
+  -khtml-opacity: 0.10;
+  opacity: 0.10;
+}
+/* end of variables.less */
+/* beginning global.less */
+body {
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: left top;
+  background-color: #f8f9f8;
+  background-size: 100% auto;
+  font-family: 'Roboto', helvetica, arial, sans-serif;
+}
+@media screen and (max-width: 1199px) {
+  body {
+    background-size: 120%, auto;
+  }
+}
+@media screen and (max-width: 991px) {
+  body {
+    background-size: 180%, auto;
+  }
+}
+a:focus {
+  outline: none;
+  outline-offset: -2px;
+}
+@media screen and (max-width: 1199px) {
+  .container {
+    width: 100%;
+  }
+}
+.column-wrapper {
+  padding: 24px ;
+  position: relative;
+}
+@media screen and (max-width: 589px) {
+  .column-wrapper {
+    padding: 15px;
+  }
+}
+.main .column-wrapper {
+  padding: 12px 24px;
+}
+@media screen and (max-width: 589px) {
+  .main .column-wrapper {
+    padding: 0;
+  }
+}
+.survey-results-wrapper {
+  background-color: #fff;
+  min-height: 400px;
+  padding: 24px;
+}
+.table {
+  font-size: 13px;
+}
+@media screen and (max-width: 1199px) {
+  .header img {
+    display: none;
+    visibility: hidden;
+  }
+}
+@media screen and (max-width: 991px) {
+  .header img {
+    height: 100%;
+  }
+}
+@media screen and (max-width: 767px) {
+  .header img {
+    height: 100px;
+  }
+}
+@media screen and (max-width: 589px) {
+  .header img {
+    height: 70px;
+  }
+}
+@media screen and (max-width: 1199px) {
+  .header .column-wrapper {
+    padding: 18px 0 0;
+  }
+}
+.footer {
+  position: fixed ;
+  bottom: 0;
+}
+/* end global.less */
+/* beginning _buttons.less */
+.btn-lg {
+  padding: 24px 52px;
+  font-size: 48px;
+}
+@media screen and (max-width: 589px) {
+  .btn-lg {
+    margin-top: 24px;
+    padding: 12px 36px;
+    font-size: 32px;
+  }
+}
+.btn-md {
+  padding: 18px 36px;
+  font-size: 26px;
+}
+.start-over-button {
+  padding: 12px 0;
+}
+.start-over-button a {
+  padding: 12px 48px;
+  margin-top: 12px;
+  text-decoration: none;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+.start-over-button a:hover {
+  -webkit-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -ms-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -o-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -webkit-transition: background-color 200ms ease;
+  -moz-transition: background-color 200ms ease;
+  -ms-transition: background-color 200ms ease;
+  -o-transition: background-color 200ms ease;
+  transition: background-color 200ms ease;
+}
+.button-boolean {
+  font-size: 32px;
+  font-weight: 700 !important;
+}
+@media screen and (max-width: 589px) {
+  .button-boolean {
+    font-size: 22px;
+  }
+}
+.button-text {
+  font-weight: 700 !important;
+}
+/* end _buttons.less */
+/* beginning _forms.less*/
+.rating-text {
+  position: absolute;
+  height: 1.2em;
+  padding: 8px 0px;
+  width: 124px;
+  left: 4px;
+  top: -84px;
+}
+@media screen and (max-width: 1199px) {
+  .rating-text {
+    top: 50px;
+    left: -4px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .rating-text {
+    left: -10px;
+  }
+}
+@media screen and (max-width: 589px) {
+  .rating-text {
+    top: 30px;
+    left: -32px;
+    font-size: 0.9em;
+  }
+}
+.rating-text i {
+  font-size: 18px;
+  position: relative;
+  top: 2px;
+}
+.input-lg {
+  font-size: 70px;
+  line-height: 1.2em;
+  height: 100px;
+  width: 300px ! important;
+  position: relative;
+  top: 6px;
+}
+@media screen and (max-width: 589px) {
+  .input-lg {
+    font-size: 35px;
+    height: 60px;
+    width: 100% !important;
+  }
+}
+.form-group.form-comment {
+  margin: -20px 100px 13px;
+}
+.form-group.form-comment .form-control {
+  font-size: 18px;
+}
+/* end _forms.less */
+/* beginning _questions.less */
+@media screen and (max-width: 1199px) {
+  #questionnaire {
+    height: 26em;
+  }
+}
+.question-index {
+  font-weight: 300;
+  font-style: italic;
+  font-size: 1.2em;
+}
+.question-title {
+  font-size: 56px;
+  text-align: center;
+  padding-top: 20px;
+  min-height: 200px;
+  line-height: 1.1em;
+  font-weight: 600;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+@media screen and (max-width: 1199px) {
+  .question-title {
+    min-height: 140px;
+    padding-top: 12px;
+    font-size: 42px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .question-title {
+    min-height: 130px;
+    padding-top: 12px;
+    font-size: 36px;
+    line-height: 1.2em;
+  }
+}
+@media screen and (max-width: 589px) {
+  .question-title {
+    min-height: 100px;
+    padding-top: 8px;
+    font-size: 28px;
+    line-height: 1.2em;
+  }
+}
+.question-title .small-text {
+  font-size: 34px;
+  line-height: 1em;
+  padding-bottom: 12px;
+}
+@media screen and (max-width: 1199px) {
+  .question-title .small-text {
+    font-size: 28px;
+  }
+}
+@media screen and (max-width: 589px) {
+  .question-title .small-text {
+    font-size: 24px;
+    line-height: 1em;
+  }
+}
+.question-title .content {
+  font-size: 18px;
+  margin: -21px 0 24px;
+  line-height: 1.3em;
+}
+.question-input-visual {
+  padding-top: 12px;
+  text-align: center;
+}
+.question-input-visual a {
+  position: relative;
+  text-decoration: none;
+}
+.question-input-visual a .button-circle {
+  font-size: 52px;
+  -webkit-border-radius: 60px;
+  -moz-border-radius: 60px;
+  -ms-border-radius: 60px;
+  -o-border-radius: 60px;
+  border-radius: 60px;
+  -webkit-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -ms-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  -o-box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  box-shadow: 10px 10px 38px -17px rgba(0, 0, 0, 0.75);
+  margin: 0 12px;
+}
+@media screen and (max-width: 1199px) {
+  .question-input-visual a .button-circle {
+    font-size: 42px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .question-input-visual a .button-circle {
+    font-size: 36px;
+  }
+}
+@media screen and (max-width: 589px) {
+  .question-input-visual a .button-circle {
+    font-size: 24px;
+    margin: 0 3px;
+  }
+}
+.question-input-visual a:hover .button-circle {
+  -webkit-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -ms-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  -o-box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+  box-shadow: 5px 5px 38px -17px rgba(0, 0, 0, 0.75);
+}
+.questionnaire-nav {
+  position: relative;
+  height: 0px;
+}
+@media screen and (max-width: 589px) {
+  .questionnaire-nav {
+    display: none;
+    visibility: hidden;
+  }
+}
+.questionnaire-nav i {
+  font-size: 130px;
+  -moz-opacity: 0.80;
+  -khtml-opacity: 0.80;
+  opacity: 0.80;
+}
+.questionnaire-nav a.disabled i {
+  color: #f8f9f8 !important;
+  -moz-opacity: 0.10;
+  -khtml-opacity: 0.10;
+  opacity: 0.10;
+}
+.questionnaire-nav .nav-next {
+  position: absolute;
+  right: -24px;
+  top: -296px;
+}
+@media screen and (max-width: 1199px) {
+  .questionnaire-nav .nav-next {
+    top: -260px;
+  }
+}
+@media screen and (max-width: 991px) {
+  .questionnaire-nav .nav-next {
+    top: -285px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .questionnaire-nav .nav-next {
+    top: -255px;
+  }
+}
+.questionnaire-nav .nav-prev {
+  position: absolute;
+  left: -24px;
+  top: -296px;
+}
+@media screen and (max-width: 1199px) {
+  .questionnaire-nav .nav-prev {
+    top: -260px;
+  }
+}
+@media screen and (max-width: 991px) {
+  .questionnaire-nav .nav-prev {
+    top: -285px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .questionnaire-nav .nav-prev {
+    top: -255px;
+  }
+}
+.question-finish .small-text {
+  padding: 12px 0 36px;
+  line-height: 1.2em;
+}
+.question-start .question-title {
+  padding: 46px 0 0;
+}
+.question-start form {
+  padding-top: 12px;
+}
+/* end _questions.less */
+/* beginning _admin.less */
+.admin .main {
+  padding-top: 16px;
+}
+.admin .form-control {
+  font-size: 1.2em;
+}
+/* end _admin.less */
+/* beginning _wizard.less */
+.wizard,
+.tabcontrol {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+.wizard a,
+.tabcontrol a {
+  outline: 0;
+}
+.wizard ul,
+.tabcontrol ul {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+  display: none;
+  visibility: hidden;
+}
+.wizard ul > li,
+.tabcontrol ul > li {
+  display: block;
+  padding: 0;
+}
+.wizard > .steps .current-info,
+.tabcontrol > .steps .current-info {
+  position: absolute;
+  left: -999em;
+}
+.wizard > .content,
+.tabcontrol > .content {
+  display: block;
+  margin: 0.5em 2.5%;
+  min-height: 32em;
+  overflow: hidden;
+  position: relative;
+  width: auto;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+@media screen and (max-width: 1199px) {
+  .wizard > .content,
+  .tabcontrol > .content {
+    margin: 0.5em 2.8%;
+    min-height: 26em;
+  }
+}
+@media screen and (max-width: 991px) {
+  .wizard > .content,
+  .tabcontrol > .content {
+    min-height: 30em;
+  }
+}
+@media screen and (max-width: 767px) {
+  .wizard > .content,
+  .tabcontrol > .content {
+    margin: 0.5em 4.2%;
+    min-height: 26em;
+  }
+}
+@media screen and (max-width: 589px) {
+  .wizard > .content,
+  .tabcontrol > .content {
+    margin: 0.5em 0%;
+    min-height: 22em;
+  }
+}
+.wizard > .content > .body,
+.tabcontrol > .content > .body {
+  float: left;
+  position: absolute;
+  width: 100%;
+  height: 95%;
+  padding: 2.5%;
+}
+.wizard > .content > .body ul,
+.tabcontrol > .content > .body ul {
+  list-style: disc !important;
+}
+.wizard > .content > .body ul > li,
+.tabcontrol > .content > .body ul > li {
+  display: list-item;
+}
+.wizard > .content > .body > iframe,
+.tabcontrol > .content > .body > iframe {
+  border: 0 none;
+  width: 100%;
+  height: 100%;
+}
+.wizard > .content > .body input,
+.tabcontrol > .content > .body input {
+  display: block;
+  border: 1px solid #ccc;
+}
+.wizard > .content > .body input[type="checkbox"],
+.tabcontrol > .content > .body input[type="checkbox"] {
+  display: inline-block;
+}
+.wizard > .content > .body input.error,
+.tabcontrol > .content > .body input.error {
+  background: #fbe3e4;
+  border: 1px solid #fbc2c4;
+  color: #8a1f11;
+}
+.wizard > .content > .body label,
+.tabcontrol > .content > .body label {
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+.wizard > .content > .body label.error,
+.tabcontrol > .content > .body label.error {
+  color: #8a1f11;
+  display: inline-block;
+  margin-left: 1.5em;
+}
+.wizard > .content > .title,
+.tabcontrol > .content > .title {
+  position: absolute;
+  left: -999em;
+}
+.wizard > .actions,
+.tabcontrol > .actions {
+  position: relative;
+  display: block;
+  text-align: left;
+  width: 100%;
+  height: 0;
+}
+/* end _wizard.less */

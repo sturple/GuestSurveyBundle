@@ -1,0 +1,51 @@
+/* beginning _buttons.less */
+
+button, .btn {
+    
+} //button, .btn (standard bootstrap button wrapper)
+
+.btn-lg {
+    padding: 24px 52px;
+    font-size: 48px;
+        
+    @media screen and (max-width: @samsung-max){
+        margin-top: 24px;padding: 12px 36px;	font-size: 32px;
+    }
+} //.btn-lg
+
+.btn-md {
+    padding: 18px 36px;
+    font-size: 26px;
+} // .btn-md
+
+
+.start-over-button {
+	padding: 12px 0;
+    
+    a {
+        padding: 12px 48px;
+        margin-top: 12px;
+        text-decoration: none;
+        .button-border-radius; //mixin
+        
+        &:hover {
+            .button-box-shadow; //mixin
+            .button-bg-color-transition;  //mixin
+        }
+    }
+}
+
+.button-boolean {
+    font-size: 32px;
+    font-weight: 700 !important;
+    
+    @media screen and (max-width: @samsung-max){
+        font-size: 22px;
+    }
+} //.button-boolean
+
+.button-text {
+    font-weight: 700 !important;
+} //.button-text
+
+/* end _buttons.less */

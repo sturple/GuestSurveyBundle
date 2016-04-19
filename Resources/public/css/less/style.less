@@ -1,7 +1,15 @@
-body {
-	color: red;
-	background-color: white;
-	font-family: Buenard, serif;
-	font-size: 16px;
-}
+/* beginning of styles.less */
+//SASS variables
+@import "_variables.less";
+
+//less partials
+//components
+@import "components/_global.less";
+@import "components/_buttons.less";
+@import "components/_forms.less";
+@import "components/_questions.less";
+@import "components/_admin.less";
+
+//plugins
+@import "plugins/_wizard.less";
 

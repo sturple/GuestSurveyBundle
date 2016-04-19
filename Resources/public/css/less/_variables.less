@@ -1,0 +1,88 @@
+/* beginning of variables.less */
+
+//Breakpoints
+@xl-min: 1500px;
+@lg-max: 1499px;
+@lg-min: 1200px;
+@md-max: 1199px;
+@md-min: 992px;
+@sm-max: 991px;
+@sm-min: 768px;
+@xs-max: 767px;
+@xs-min: 590px;
+@samsung-max: 589px;
+@samsung-min: 360px;
+@iphone-max: 359px;
+@iphone-min: 320px;
+
+//fonts
+
+@font-default: 'Roboto', helvetica, arial, sans-serif;
+@font-title: 'Roboto', helvetica, arial, sans-serif;
+
+//colors
+@white: #fff;
+@white-alt: #f8f9f8;
+@grey-light: #ccc;
+@grey: #888;
+@grey-dark: #444;
+@black: #000;
+@see-thru-black: rgba(0,0,0,0.75);
+@red-lighter: rgb(251, 227, 228);
+@red-light: #fbc2c4;
+@red-dark: #8a1f11;
+
+//mixins
+.button-border-radius {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.button-circle-border-radius {
+    -webkit-border-radius: 60px;
+    -moz-border-radius: 60px;
+    -ms-border-radius: 60px;
+    -o-border-radius: 60px;
+    border-radius: 60px;
+}
+
+.button-box-shadow {
+    -webkit-box-shadow: 5px 5px 38px -17px @see-thru-black;
+    -moz-box-shadow: 5px 5px 38px -17px @see-thru-black;
+    -ms-box-shadow: 5px 5px 38px -17px @see-thru-black;
+    -o-box-shadow: 5px 5px 38px -17px @see-thru-black;
+    box-shadow: 5px 5px 38px -17px @see-thru-black;
+}
+
+.button-circle-box-shadow {
+    -webkit-box-shadow: 10px 10px 38px -17px @see-thru-black;
+    -moz-box-shadow: 10px 10px 38px -17px @see-thru-black;
+    -ms-box-shadow: 10px 10px 38px -17px @see-thru-black;
+    -o-box-shadow: 10px 10px 38px -17px @see-thru-black;
+    box-shadow: 10px 10px 38px -17px @see-thru-black;
+}
+
+
+.button-bg-color-transition {
+    -webkit-transition: background-color 200ms ease;
+    -moz-transition: background-color 200ms ease;
+    -ms-transition: background-color 200ms ease;
+    -o-transition: background-color 200ms ease;
+    transition: background-color 200ms ease;
+}
+
+.i-opacity {
+    -moz-opacity: 0.80;
+    -khtml-opacity: 0.80;
+    opacity: 0.80;
+}
+
+.disabled-opacity {
+    -moz-opacity: 0.10;
+    -khtml-opacity: 0.10;
+    opacity: 0.10;
+}
+/* end of variables.less */

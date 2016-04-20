@@ -115,7 +115,7 @@ class DefaultController extends Controller
     public function finishAction($slug,$group=false)
     {
 		$param = $this->getConfiguration($slug, $group);
-		$param['conditionalFinish'] = $this->request->query->has('conditional');
+		$param['conditionalFinish'] = $this->get('request')->query->has('conditional');
 		return $this->render('FgmsSurveyBundle:Default:finish.html.twig', $param);
     }
 
@@ -249,7 +249,7 @@ class DefaultController extends Controller
 		$response->headers->set('Content-Type', 'application/force-download');
 		$response->headers->set('Content-Type', 'text/csv; charset=utf-8');
 		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
-		$response->prepare($this->request);
+		$response->prepare($this->get('request'));
         return $response;
     }
 
@@ -258,7 +258,7 @@ class DefaultController extends Controller
 	*/
 	public function crontriggerAction()
 	{
-		$key = $this->request->query->has('key') ? $this->request->query->get('key') : '';
+		$key = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : '';
 		$checkKey = 'A3CCEBA83235DC95F750108D22C14731';
 		// lets add simple key just to prevent crons being accidently triggered.
 		if ($key === $checkKey){
@@ -304,9 +304,9 @@ class DefaultController extends Controller
 		$this->getConfiguration($slug,$group);
 		// throws error if not authenticated
 		$this->checkIfAuthenticated();
-		$template = $this->request->query->has('template') ? $this->request->query->get('template') : 'email-notification';
-		$surveytest = $this->request->query->has('survey') ? $this->request->query->get('survey') : false;
-		$emailFlag = $this->request->query->has('email') ? true : false;
+		$template = $this->get('request')->query->has('template') ? $this->get('request')->query->get('template') : 'email-notification';
+		$surveytest = $this->get('request')->query->has('survey') ? $this->get('request')->query->get('survey') : false;
+		$emailFlag = $this->get('request')->query->has('email') ? true : false;
 		if ($surveytest == 'true'){
 			$this->checkSurveyResults($slug, $group,false,'000');
 		}

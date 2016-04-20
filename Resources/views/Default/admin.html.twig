@@ -7,11 +7,15 @@
 	<title>Results</title>
 	<meta name="description" content="">
 	<meta name="robots" content="noindex nofollow">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />	
-	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
+	
+	<!-- Bootstrap -->
+	<link href="/web/bundles/fgmssurvey/framework/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- font awesome -->
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/framework/font-awesome-4.6.1/css/font-awesome.min.css">
+	
+	
 	<link href='https://fonts.googleapis.com/css?family={{reporting.resources.google.fonts|default('Raleway:400,700,Open+Sans')}}' rel='stylesheet' type='text/css'>		
 	<style>
 		body {
@@ -31,30 +35,26 @@
 	{% block styles %}{%endblock%}
 </head>
 <body class="admin">
-	<div class="header">
-		<div class="column-wrapper">
-			<div class="row">
-				<div class="col-xs-6"></div>
-				<div class="col-xs-6" style="text-align: right;">
-					<img style="height: 80px" src="{{images_path}}{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" />
-				</div>			
-			</div>				
-		</div>
-	</div>
-	<div class="container">
-		<div class="main">
-			<div class="column-wrapper">
-				<div class="row">		
-					<div class="col-sm-12">	{%block body %}{%endblock%}	</div>		
-				</div>					
+	<div class="wrapper">
+		<header>
+			<div class="logo-block secondary-logo">
+				<img class="logo" src="{{images_path}}{{config.survey.images.logos.group}}" alt="{{reporting.group.name}}  Logo" />
 			</div>
-		</div>	
-	</div>
-	<div class="footer">
-		<div class="column-wrapper">
+		</header>
+		<section>
+			{%block body %}{%endblock%}
+		</section>
+		<footer>
 			{%block footer %}{% endblock %}
-		</div>
+		</footer>
 	</div>
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
+	
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<!-- bootstrap -->
+	<script src="/web/bundles/fgmssurvey/framework/bootstrap-3.3.6/js/bootstrap.min.js"></script>
 </body>
 {% block javascript %}{% endblock %}
 </html>

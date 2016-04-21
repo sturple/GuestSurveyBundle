@@ -4,25 +4,17 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: left top;
-	background-color: red;
-	background-size: 100% auto;
-    font-family: @font-default;
+	background-color: @white;
+	background-size: cover;
+	height: 100%;
 	height: 100vh;
 	margin: 0;
 	padding: 0;
-    
-    @media screen and (max-width: @md-max){
-        background-size: 120%, auto;
-    }
-    
-    @media screen and (max-width: @sm-max){
-        background-size: 180%, auto;
-    }
 }
 
-a {
-    &:focus {
-        outline:none;  outline-offset: -2px;
+a, .btn {
+    &:focus, &:active  {
+        outline: none !important;  outline-offset: -2px;
     }
 }
 
@@ -33,11 +25,21 @@ a {
 	border-radius: 0;
 	
 	@media (min-width: @sm-min) {
-		width: 80%;
+		width: 90%;
 		height: 80%;
-		left: 10%;
+		left: 5%;
 		border-radius: 10px;
 		.vertical-align;
+	}
+	
+	@media (min-width: @md-min)  and (max-width: @md-max) {
+		width: 86%;
+		left: 7%;
+	}
+	
+	@media (min-width: @lg-min) {
+		width: 76%;
+		left: 12%;
 	}
 	
 	position: absolute;
@@ -48,8 +50,8 @@ a {
 			position: absolute;
 			z-index: 1;
 			top: 10px;
-			width: 20%;
-			height: 20%;
+			width: 40%;
+			height: 15%;
 			padding: 0;
 			margin: 0;
 			

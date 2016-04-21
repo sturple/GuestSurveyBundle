@@ -1,183 +1,385 @@
 /* beginning _questions.less */
 
-#questionnaire {
-    @media screen and (max-width: @md-max){
-        height: 26em;
+section.question-section {
+    width: 100%;
+    height: auto;
+   // .vertical-align;
+    top: 25%;
+    position: absolute;
+    height: 60%;
+    z-index: 1;
+    //background-color: rgba(123,123,123,0.5);
+    
+    //special media queries for iphone wide
+    @media (min-width: @xs-min) and (max-width: @xs-max) {
+        @media (min-height: @iphone-min) and (max-height: @samsung-max) {
+            top: 17%;
+            height: 70%;
+           // background-color: purple;
+        }
     }
-}
+    
+    #questionnaire {
+       > .content {
+            margin: 0;
+            height: 250px;
+            
+            @media (min-width: @xs-min) and (max-width: @xs-max) {
+                @media (min-height: @iphone-min) and (max-height: @samsung-max) {
+                    padding-top: 20px;
+                   // background-color: purple;
+                }
+            }
+            
+            @media (min-width: @sm-min) {
+                height: 400px;
+                padding-top: 30px;
+            }
+            
+            .body {
+                padding: 5%;
+                margin: 0;
+                overflow: visible;
+                
+                @media (min-width: @xs-min) {
+                    padding: 0 10%;
+                }
+                
+                @media (min-width: @md-min) {
+                    padding: 0 9%;
+                }
+                
+                .question-title {
+                    text-align: center;
+                    
+                    h1 {
+                        margin-top: 0;
+                        
+                        @media (min-width: @md-min) {
+                            font-size: 50px;
+                        }
+                    }
+                    
+                    h2 {
+                        margin-top: 0;
+                        line-height: 1.3;
+                        
+                        @media (max-width: @xs-max) {
+                            font-size: 20px;
+                        }
+                        
+                        .small-text {
+                            font-size: 80%;
+                        } //.small-text
+                        
+                        @media (min-width: @md-min) {
+                            font-size: 40px;
+                        }
+                    }
+                    
+                    h3 {
+                        margin-top: 0;
+                        line-height: 1.3;
+                        
+                        @media (max-width: @xs-max) {
+                            font-size: 16px;
+                        }
+                        
+                        @media (min-width: @md-min) {
+                            font-size: 34px;
+                        }
+                    }
+                    
+                    p,  > .content {
+                        @media (min-width: @md-min) {
+                            font-size: 22px;
+                        }
+                    }
+                    
+                    .btn {
+                        margin-top: 30px;
+                        
+                        @media (min-width: @xs-min) and (max-width: @xs-max) {
+                            @media (min-height: @iphone-min) and (max-height: @samsung-max) {
+                                margin-top: 5px;
+                            }
+                        }
+                    }
+                    
+                    
+                } //.question-title
+                
+                .question-index {
+                    position: fixed;
+                    bottom: 5px;
+                    right: 5px;
+                    
+                    @media (min-width: @sm-min) {
+                        bottom: 30px;
+                        right: 30px;
+                        font-size: 16px;
+                    }
+                } //question-index
+                
+                > form, .form-group {
+                    text-align: center;
+                    
+                    textarea {
+                        min-height: 50px;
+                        
+                        @media (min-width: @sm-min) {
+                            width: 80%;
+                            margin-left: 10%;
+                            height: 150px;
+                            padding: 15px;
+                            font-size: 20px;
+                        }
+                    }
+                }
+                
+                .question-input-visual {
+                    width: 100%;
+                    position: relative;
+                    z-index: 5;
+                    text-align: center;
+                    
+                    .btn-circle {
+                        display: block;
+                        float: left;
+                        margin-right: 5px;
+                        width: 56px;
+                        height: 56px;
+                        border-radius: 112px;
+                        padding: 14px;
+                        font-size: 18px;
+                        
+                        &:last-child {
+                            margin-right: 0;
+                        }
+                        
+                        @media (min-width: @sm-min) and (max-width: @sm-max) {
+                            width: 76px;
+                            height: 76px;
+                            border-radius: 186px;
+                            font-size: 24px;
+                            padding: 18px;
+                            margin-right: 8px;
+                        }
+                        
+                        @media (min-width: @md-min) {
+                            width: 100px;
+                            height: 100px;
+                            border-radius: 200px;
+                            font-size: 34px;
+                            padding: 24px;
+                            margin-right: 10px;
+                            
+                            &[data-value="Yes"] {
+                                padding: 24px 24px 24px 22px;
+                            }
+                        }
+                    } //  .btn-circle
+                    
+                    .rating-group {
+                        display: block;
+                        width: 300px;
+                        height: 100px;
+                        margin-left: ~"calc(50% - 150px)";
+                        margin-top: 15px;
+                        
+                        @media (min-width: @sm-min) and (max-width: @sm-max) {
+                            width: 412px;
+                            height: 200px;
+                            margin-left: ~"calc(50% - 206px)";
+                            margin-top: 25px;
+                        }
+                        
+                        @media (min-width: @md-min) {
+                            width: 540px;
+                            height: 160px;
+                            margin-left: ~"calc(50% - 270px)";
+                            margin-top: 30px;
+                        }
+                    
+                        .rating-text-group {
+                            width: 300px;
+                            height: 30px;
+                            position: relative;
+                            margin-bottom: 5px;
+                            margin-left: ~"calc(50% - 150px)";
+                            
+                            @media (min-width: @sm-min) and (max-width: @sm-max) {
+                                width: 412px;
+                                height: 40px;
+                                margin-left: ~"calc(50% - 206px)";
+                            }
+                            
+                            @media (min-width: @md-min) {
+                                width: 540px;
+                                margin-left: ~"calc(50% - 270px)";
+                                height: 50px;
+                            }
+                            
+                            .rating-text {
+                                position: absolute;
+                                top: 0;
+                                z-index: 1;
+                                font-size: 10px;
+                                text-align: center;
+                                line-height: 0.9;
+                                
+                                @media (min-width: @md-min) {
+                                    font-size: 14px;
+                                }
+                                
+                                strong {
+                                    display: block;
+                                    font-size: 14px;
+                                    
+                                    @media (min-width: @md-min) {
+                                        font-size: 18px;
+                                    }
+                                }
+                                
+                                &:first-child {
+                                    left: 7px;
+                                    .vertical-align;
+                                    position: absolute;
+                                    
+                                    @media (min-width: @sm-min) and (max-width: @sm-max) {
+                                        left: 18px;
+                                    }
+                                    
+                                    @media (min-width: @md-min) {
+                                        left: 22px;
+                                    }
+                                }
+                                
+                                &:nth-child(2) {
+                                    .center-align;
+                                    position: absolute;
+                                }
+                                
+                                &:nth-child(3) {
+                                    right: 18px;
+                                    .vertical-align;
+                                    position: absolute;
+                                    
+                                    @media (min-width: @sm-min) and (max-width: @sm-max) {
+                                        right: 28px;
+                                    }
+                                    
+                                    @media (min-width: @md-min) {
+                                        right: 37px;
+                                    }
+                                }
+                            } //.rating-text
+                        } //.rating-text-group
+                    }//.rating-group
+                    
+                    .polar-group {
+                        width: 118px;
+                        margin-left: ~"calc(50% - 59px)";
+                        height: 100px;
+                        margin-top: 15px;
+                        
+                        @media (min-width: @sm-min) and (max-width: @sm-max) {
+                            width: 160px;
+                            margin-left: ~"calc(50% - 80px)";
+                            height: 200px;
+                            margin-top: 25px;
+                        }
+                        
+                        @media (min-width: @md-min) {
+                            width: 210px;
+                            margin-left: ~"calc(50% - 105px)";
+                            height: 150px;
+                            margin-top: 30px;
+                        }
+                    } //.polar-group
+                    
+                    .form-comment {
+                        margin-top: 15px;
+                        
+                        @media (min-width: @md-min) {
+                            margin-top: 30px;
+                        }
+                    }
+                } //question-input-visual
+            } //.body
+        } //.content
+    
+    &.question-finish {
+        @media (min-width: @xs-min) {
+            margin-top: -25px;
+        }
+        
+        .btn-primary {
+            @media (min-width: @md-min) {
+                border-radius: 6px;
+                font-size: 22px;
+                line-height: 1.33333;
+                padding: 10px 16px;
+            }
+        }
+    } //question-finish
+    
+    &.question-start {
+        .form-group {
+            > input {
+                @media (min-width: @sm-min) {
+                    font-size: 30px;
+                    height: 70px;
+                    margin-left: 25%;
+                    padding: 15px;
+                    text-align: center;
+                    width: 50%;
+                    margin-top: 25px;
+                }
+            }
+        } //.form-group
+    } //question-start
+    
+    } // #questionnaire
+    
+    .questionnaire-nav {
+        > a {
+            position: fixed;
+            font-size: 70px;
+            z-index: 99;
+            bottom: 15px;
+            
+            &.nav-prev {
+                left: 15px;
+            }
+            
+            &.nav-next {
+                right: 15px;
+            }
+            
+            //styling for mobile wide and up
+            @media (min-width: @xs-min) and (max-width: @xs-max) {
+               top: ~"calc(50% - 35px)";
+            }
+            
+            @media (min-width: @sm-min) and (max-width: @sm-max) {
+                font-size: 90px;
+               top: ~"calc(50% - 45px)";
+            }
+            
+            @media (min-width: @md-min)  {
+                font-size: 120px;
+               top: ~"calc(50% - 60px)";
+            }
+        }
+    } //questionnaire-nav
+} //section.question-section
 
-.question-index  {
-    font-weight: 300;
-    font-style: italic;
-    font-size: 1.2em;
-} //.question-index
-
-
-.question-title {
-    font-size: 56px;
+.start-over-button {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
     text-align: center;
-    padding-top: 20px;
-    min-height: 200px;
-    line-height: 1.1em;
-    font-weight: 600;
-    padding-left: 24px;
-    padding-right: 24px;
-    
-    @media screen and (max-width: @md-max){
-        min-height: 140px;
-        padding-top: 12px;
-        font-size: 42px;
-    }
-    
-    @media screen and (max-width: @xs-max){
-        min-height: 130px;
-        padding-top: 12px;
-        font-size: 36px;
-        line-height: 1.2em;
-    }
-    
-    @media screen and (max-width: @samsung-max){
-        min-height: 100px;
-        padding-top: 8px;
-        font-size: 28px;
-        line-height: 1.2em;
-    }
-    
-    .small-text {
-        font-size: 34px;
-        line-height: 1em;
-        padding-bottom: 12px;
-        
-        @media screen and (max-width: @md-max){
-            font-size: 28px;
-        }
-        
-        @media screen and (max-width: @samsung-max){
-            font-size: 24px;
-            line-height: 1em;
-        }
-    } //.small-text
-    
-    .content {
-        font-size: 18px;
-        margin: -21px 0 24px;
-        line-height: 1.3em;
-    }
-} //.question-title
-
-.question-input-visual {
-    padding-top: 12px;
-    text-align: center;
-    
-    a {
-        position: relative;
-        text-decoration: none;
-        
-        .button-circle {
-            font-size: 52px;
-            .button-circle-border-radius;
-            .button-circle-box-shadow;
-            margin: 0 12px;
-            
-            @media screen and (max-width: @md-max){
-                font-size: 42px;
-            }
-            
-            @media screen and (max-width: @xs-max){
-                font-size: 36px;
-            }
-            
-            @media screen and (max-width: @samsung-max){
-                font-size: 24px; 
-                margin: 0 3px;
-            }
-        }
-        
-        &:hover {
-            .button-circle {
-                .button-box-shadow;
-            }
-        }
-    } //a 
-    
-} //.question-input-visual
-
-.questionnaire-nav {
-    position: relative;
-    height: 0px;
-    
-    @media screen and (max-width: @samsung-max){
-        display:none;
-        visibility: hidden;
-    }
-    
-    i {
-        font-size: 130px;
-        .i-opacity;
-    } // i
-    
-    a {
-        &.disabled {
-            i {
-                color: @white-alt !important;
-                .disabled-opacity;
-            } //i
-        } //&.disabled 
-    } //a
-    
-    .nav-next {
-        position: absolute;
-        right: -24px;
-        top: -296px;
-        
-        @media screen and (max-width: @md-max){
-            top: -260px;
-        }
-        
-        @media screen and (max-width:  @sm-max){
-            top: -285px;
-        }
-        
-        @media screen and (max-width: @xs-max){
-            top: -255px;
-        }
-    } //.nav-next
-    
-    .nav-prev {
-        position: absolute;
-        left: -24px;
-        top: -296px;
-        
-        @media screen and (max-width: @md-max){
-            top: -260px;
-        }
-        
-        @media screen and (max-width:  @sm-max){
-            top: -285px;
-        }
-        
-        @media screen and (max-width: @xs-max){
-            top: -255px;
-        }
-    } //.nav-prev
-
-} //.questionnaire-nav
-
-.question-finish {
-    .small-text {
-        padding: 12px 0 36px;
-        line-height: 1.2em;
-    } //.small-text 
-}  //.question-finish
-
-.question-start {
-    .question-title {
-        padding: 46px 0 0;
-    } //.question-title
-    
-    form {
-        padding-top: 12px;
-    } //form
-} //.question-start
-
+    z-index: 99;
+} //start-over-button
 /* end _questions.less */

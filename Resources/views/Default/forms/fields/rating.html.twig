@@ -1,35 +1,26 @@
 <div class="question-input-visual">
-    <a href="javascript:void(0)" data-field="{{field}}" data-value="5">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-rating button-text" >5</i>
-        </span>
-        <div class="rating-text"><strong><i class="fa fa-smile-o "></i></strong> Excellent</div>
-    </a>
-    <a href="javascript:void(0)" data-field="{{field}}"  data-value="4">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-rating button-text" >4</i>
-        </span>
-    </a>
-    <a href="javascript:void(0)" data-field="{{field}}"  data-value="3">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-rating button-text" >3</i>
-        </span>
-        <div class="rating-text"><strong><i class="fa fa-meh-o"></i></strong> Average</div>
-    </a>
-    <a href="javascript:void(0)" data-field="{{field}}"  data-value="2">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-rating button-text" >2</i>
-        </span>
-    </a>
-    <a href="javascript:void(0)" data-field="{{field}}"  data-value="1">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-rating button-text" >1</i>
-        </span>
-        <div class="rating-text"><strong><i class="fa fa-frown-o"></i></strong> Poor</div>
-    </a>
+    <div class="rating-group">
+        <div class="rating-text-group">
+            <div class="rating-text"><strong><i class="fa fa-smile-o "></i></strong> Excellent</div>
+            <div class="rating-text"><strong><i class="fa fa-meh-o"></i></strong> Average</div>
+            <div class="rating-text"><strong><i class="fa fa-frown-o"></i></strong> Poor</div>
+        </div>
+    
+   
+        <a href="javascript:void(0)" data-field="{{field}}" data-value="5" class="btn btn-primary btn-circle">
+            5
+        </a>
+        <a href="javascript:void(0)" data-field="{{field}}" data-value="4" class="btn btn-primary btn-circle">
+            4
+        </a>
+        <a href="javascript:void(0)" data-field="{{field}}" data-value="3" class="btn btn-primary btn-circle">
+            3
+        </a>
+        <a href="javascript:void(0)" data-field="{{field}}" data-value="2" class="btn btn-primary btn-circle">
+            2
+        </a>
+        <a href="javascript:void(0)" data-field="{{field}}" data-value="1" class="btn btn-primary btn-circle">
+            1
+        </a>
+    </div>
 </div>

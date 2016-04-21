@@ -19,7 +19,7 @@
 	
 		
 	<!-- main stylesheet -->
-	<link rel="stylesheet" href="/web/bundles/fgmssurvey//css/style.css" type="text/css" />
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />
 	
 	<style>
 		/* styles defined by the user */
@@ -27,20 +27,28 @@
 			color: {{config.survey.css.buttons.survey.background.color.normal}};
 			background-color: {{config.survey.css.buttons.survey.background.color.normal}} ;
 		} /*.question-input-visual a .button-circle*/
+		
 		.question-input-visual a:hover .button-circle {
 			color:{{config.survey.css.buttons.survey.background.color.hover}};
 			background-color: {{config.survey.css.buttons.survey.background.color.hover}};
 		} /* .question-input-visual a:hover .button-circle */
+		
 		.question-input-visual a.active .button-circle {
 			color:{{config.survey.css.buttons.survey.background.color.active}};
 			background-color: {{config.survey.css.buttons.survey.background.color.active}};
 		} /* .question-input-visual a.active .button-circle */
-		.questionnaire-nav i {
-			color: #f8f8f8;
-		} /*.questionnaire-nav i  */
-		.questionnaire-nav i:hover {
+		
+		.questionnaire-nav a {
+			color: {{config.survey.css.buttons.survey.background.color.normal}};
+		}
+		
+		.questionnaire-nav a:hover {
 			color: {{config.survey.css.buttons.survey.background.color.hover}};
-		} /*.questionnaire-nav i:hover*/
+		}
+		
+		.questionnaire-nav a.active {
+			color: {{config.survey.css.buttons.survey.background.color.active}};
+		}
 		
 		{% if config.survey.css.title.letterspacing %}
 			.question-title {
@@ -101,7 +109,7 @@
 				</div>
 			{% endif %}
 		</header>
-		<section>
+		<section class="question-section">
 			{%block body %}{%endblock%}
 		</section>
 		<footer>

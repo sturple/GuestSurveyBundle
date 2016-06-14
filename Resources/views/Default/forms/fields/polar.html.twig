@@ -1,14 +1,10 @@
 <div class="question-input-visual ">
-    <a href="javascript:void(0)" data-field="{{field}}" data-value="Yes">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-boolean button-text" >Yes</i>
-        </span>
-    </a>
-    <a href="javascript:void(0)" data-field="{{field}}" data-value="No">
-        <span class="fa-stack fa-lg button-circle">
-            <i class="fa  fa-circle fa-stack-2x"></i>
-            <i class="fa  fa-stack-1x button-boolean button-text" >No</i>
-        </span>
-    </a>
+    <div class="polar-group">
+        <a class="btn btn-primary btn-circle" href="javascript:void(0)" data-field="{{field}}" data-value="Yes">
+            Yes
+        </a>
+        <a class="btn btn-primary btn-circle" href="javascript:void(0)" data-field="{{field}}" data-value="No">
+            No
+        </a>
+    </div>
 </div>

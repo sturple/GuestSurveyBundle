@@ -1,0 +1,12 @@
+<div class="form-group form-comment">
+    <textarea class="form-control" data-field="{{field}}" ></textarea>
+</div>
+{% if loop.index == loop.length%}
+    <div class="form-group question-input-visual">
+        <a class="btn  btn-primary  btn-lg finish-button" href="javascript:void(0);" >Finish</a>
+    </div>
+{% else %}
+    <div class="form-group question-input-visual">
+        <a class="btn  btn-primary  btn-lg" onclick="$('.nav-next').trigger('click')" href="javascript:void(0);" >Next</a>
+    </div>
+{% endif %}

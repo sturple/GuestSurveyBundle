@@ -4,19 +4,16 @@
 	<div class="content">
 		<div class="body">
 			<div class="question-title">
-				<div class="small-text">{{config.survey.text.start.subtitle |raw}}</div>
-				{{config.survey.text.start.title|raw}}
+				<div class="h3">{{config.survey.text.start.subtitle |raw}}</div>
+				<div class="h2">{{config.survey.text.start.title|raw}}</div>
 			</div>
-			<form action="/{{fullslug}}/survey/" method="GET" accept-charset="UTF_8" class="form-inline" style="text-align: center;">
+			<form action="/{{fullslug}}/survey/" method="GET" accept-charset="UTF_8">
 				<div class="form-group">
 					<input type="text" class="form-control input-lg" name="room" />
 				</div>
 				<div class="form-group question-input-visual">
-					<a href="javascript:void(0)" id="script-go-button" >
-						<span class="fa-stack fa-lg button-circle">
-							<i class="fa  fa-circle fa-stack-2x"></i>
-							<i class="fa  fa-stack-1x button-rating button-text" >GO</i>
-						</span>
+					<a href="javascript:void(0)" id="script-go-button" class="btn btn-primary btn-lg">
+						START
 					</a>
 				</div>
 			</form>

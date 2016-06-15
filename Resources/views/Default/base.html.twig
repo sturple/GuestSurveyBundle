@@ -7,58 +7,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
 	<meta name="robots" content="noindex,nofollow">
+	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" type="text/css" />
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="/web/bundles/fgmssurvey/css/style.css" type="text/css" />		
 	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<link href='https://fonts.googleapis.com/css?family={{config.survey.resources.google.fonts}}' rel='stylesheet' type='text/css'>
+	
 	<style>
-		.question-input-visual a .button-circle {color: {{config.survey.css.buttons.survey.background.color.normal}} ; background-color: {{config.survey.css.buttons.survey.background.color.normal}} ;	}
-		.question-input-visual a:hover .button-circle {	color:{{config.survey.css.buttons.survey.background.color.hover}};background-color: {{config.survey.css.buttons.survey.background.color.hover}};}
-		.question-input-visual a.active .button-circle{	color:{{config.survey.css.buttons.survey.background.color.active}};background-color: {{config.survey.css.buttons.survey.background.color.active}};}
-		.questionnaire-nav i {	color: #f8f8f8; }
-		.questionnaire-nav i:hover {color: {{config.survey.css.buttons.survey.background.color.hover}}}
+		/* styles defined by the user */
+		.question-input-visual a .button-circle {
+			color: {{config.survey.css.buttons.survey.background.color.normal}};
+			background-color: {{config.survey.css.buttons.survey.background.color.normal}} ;
+		} /*.question-input-visual a .button-circle*/
+		
+		.question-input-visual a:hover .button-circle {
+			color:{{config.survey.css.buttons.survey.background.color.hover}};
+			background-color: {{config.survey.css.buttons.survey.background.color.hover}};
+		} /* .question-input-visual a:hover .button-circle */
+		
+		.question-input-visual a.active .button-circle {
+			color:{{config.survey.css.buttons.survey.background.color.active}};
+			background-color: {{config.survey.css.buttons.survey.background.color.active}};
+		} /* .question-input-visual a.active .button-circle */
+		
+		.questionnaire-nav a {
+			color: {{config.survey.css.buttons.survey.background.color.normal}};
+		}
+		
+		.questionnaire-nav a:hover {
+			color: {{config.survey.css.buttons.survey.background.color.hover}};
+		}
+		
+		.questionnaire-nav a.active {
+			color: {{config.survey.css.buttons.survey.background.color.active}};
+		}
+		
 		{% if config.survey.css.title.letterspacing %}
-		.question-title { letter-spacing: {{config.survey.css.title.letterspacing}}; }
+			.question-title {
+				letter-spacing: {{config.survey.css.title.letterspacing}};
+			}
 		{% endif %}
-		.button-text {	color: {{config.survey.css.buttons.survey.font.color.normal}}; font-family: {{config.survey.css.buttons.survey.font.family.normal | raw }};}
-		body { color: {{config.survey.css.body.font.color}}; font-family: {{config.survey.css.body.font.family | raw }}; background-color: {{config.survey.css.body.background.color}};  background-image: url('{{images_path}}{{config.survey.images.background.survey}}');}
-		.wizard > .content{ background: url('{{images_path}}{{config.survey.images.overlay}}') repeat top left;}
-		.wizard a { color: {{config.survey.css.body.font.color}};}
-		.form-control:focus {border-color: {{config.survey.css.buttons.survey.background.color.norma}}; }
-		.btn-primary {background-color: {{config.survey.css.buttons.navigation.background.color.normal}}; border-color: {{config.survey.css.buttons.navigation.background.color.normal}}; color: {{config.survey.css.buttons.navigation.font.color.normal}} !important;}
-		.btn-primary:hover {background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important; border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;}
-		.start-over-button a {background: url('{{images_path}}{{config.survey.images.overlay}}') repeat top left ; color: {{config.survey.css.buttons.survey.background.color.normal}}; }
-		.start-over-button a:hover { color: {{config.survey.css.buttons.survey.font.color.normal}}; background-color: {{config.survey.css.buttons.survey.background.color.hover}} !important; background-image: none;}
+		
+		.button-text {
+			color: {{config.survey.css.buttons.survey.font.color.normal}};
+			font-family: {{config.survey.css.buttons.survey.font.family.normal | raw }};
+		} /*.button-text */
+		
+		body {
+			color: {{config.survey.css.body.font.color}};
+			font-family: {{config.survey.css.body.font.family | raw }};
+			background-color: {{config.survey.css.body.background.color}};
+			background-image: url('{{images_path}}{{config.survey.images.background.survey}}');
+		} /*body*/
+		.wizard a {
+			color: {{config.survey.css.body.font.color}};
+		}
+		.form-control:focus {
+			border-color: {{config.survey.css.buttons.survey.background.color.norma}};
+		}
+		.btn-primary {
+			background-color: {{config.survey.css.buttons.navigation.background.color.normal}};
+			border-color: {{config.survey.css.buttons.navigation.background.color.normal}};
+			color: {{config.survey.css.buttons.navigation.font.color.normal}} !important;
+		}
+		
+		.btn-primary:hover {
+			background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;
+			border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;
+		}
+		.start-over-button a {
+			color: {{config.survey.css.buttons.survey.background.color.normal}};
+		}
+		
+		.start-over-button a:hover {
+			color: {{config.survey.css.buttons.survey.font.color.normal}};
+			background-color: {{config.survey.css.buttons.survey.background.color.hover}} !important;
+			background-image: none;
+		}
 	</style>
 	{% block styles %}{%endblock%}
+
+	
 </head>
 <body>
-	<div class="header">
-		<div class="column-wrapper">
-			<div class="row">
-				<div class="col-xs-6"><img style="" class="" src="{{images_path}}{{config.survey.images.logos.white}}" alt="{{property.name}}" /></div>
-				{% if config.survey.images.logos.group %}
-				<div class="col-xs-6" style="text-align: right;"><img style="" class="" src="{{images_path}}{{config.survey.images.logos.group}}" alt="{{reporting.group.name}}  Logo" /></div>
-				{% endif %}
+	<div class="wrapper">
+		<header>
+			<div class="logo-block main-logo">
+				<img class="logo" src="{{images_path}}{{config.survey.images.logos.white}}" alt="{{property.name}}" />
 			</div>
-		</div>
-	</div>
-	<div class="container">
-		<div class="main">
-			<div class="column-wrapper">
-				<div class="row">
-					<div class="col-sm-12">	{%block body %}{%endblock%}	</div>
+			{% if config.survey.images.logos.group %}
+				<div class="logo-block secondary-logo">
+					<img class="logo" src="{{images_path}}{{config.survey.images.logos.group}}" alt="{{reporting.group.name}}  Logo" />
 				</div>
-			</div>
-		</div>
-	</div>
-	<div class="footer">
-		<div class="column-wrapper">
+			{% endif %}
+		</header>
+		<section class="question-section">
+			{%block body %}{%endblock%}
+		</section>
+		<footer>
 			{%block footer %}{% endblock %}
-		</div>
+		</footer>
 	</div>
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script type="text/javascript" src="/web/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
+	
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<!-- bootstrap -->
 </body>
 {% block javascript %}{% endblock %}
 </html>

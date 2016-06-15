@@ -2,3 +2,4 @@ Resoursources/public/images/*
 vendor
 composer.lock
 composer.phar
+node_modules

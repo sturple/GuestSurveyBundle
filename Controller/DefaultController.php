@@ -12,14 +12,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Parser;
-
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class DefaultController extends Controller
 {
 
 	var $config = array();
 	var $logger = false;
 	var $param = array();
-
+	var $request = null;
+	
 	/**
 	 * route to show home page
 	 *
@@ -37,6 +38,7 @@ class DefaultController extends Controller
     public function startAction($slug,$group=false)
     {
 		$param = $this->getConfiguration($slug,$group);
+
         return $this->render('FgmsSurveyBundle:Default:start.html.twig', $param);
     }
 
@@ -47,10 +49,18 @@ class DefaultController extends Controller
 	 */
     public function surveyAction($slug,$group=false)
     {
-        $room = $this->get('request')->query->has('room') ? $this->get('request')->query->get('room') : 'none';
-        $param = $this->getConfiguration($slug,$group);
-        $form = $this->getForm($slug,$group,$room);
-		$form->handleRequest($this->get('request'));
+
+		$param = $this->getConfiguration($slug,$group);
+        $room = $this->request->query->has('room') ? $this->request->query->get('room') : 'none';
+
+
+		if ($this->has('request')){
+			$form = $this->getForm($slug,$group,$room);
+		}
+		else {
+			$form = $this->getFormSymfony3($slug,$group,$room);
+		}
+		$form->handleRequest($this->request);
 		if ($form->isValid()){
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($form->getData());
@@ -105,7 +115,7 @@ class DefaultController extends Controller
     public function finishAction($slug,$group=false)
     {
 		$param = $this->getConfiguration($slug, $group);
-		$param['conditionalFinish'] = $this->get('request')->query->has('conditional');
+		$param['conditionalFinish'] = $this->request->query->has('conditional');
 		return $this->render('FgmsSurveyBundle:Default:finish.html.twig', $param);
     }
 
@@ -239,7 +249,7 @@ class DefaultController extends Controller
 		$response->headers->set('Content-Type', 'application/force-download');
 		$response->headers->set('Content-Type', 'text/csv; charset=utf-8');
 		$response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
-		$response->prepare($this->get('request'));
+		$response->prepare($this->request);
         return $response;
     }
 
@@ -248,7 +258,7 @@ class DefaultController extends Controller
 	*/
 	public function crontriggerAction()
 	{
-		$key = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : '';
+		$key = $this->request->query->has('key') ? $this->request->query->get('key') : '';
 		$checkKey = 'A3CCEBA83235DC95F750108D22C14731';
 		// lets add simple key just to prevent crons being accidently triggered.
 		if ($key === $checkKey){
@@ -294,9 +304,9 @@ class DefaultController extends Controller
 		$this->getConfiguration($slug,$group);
 		// throws error if not authenticated
 		$this->checkIfAuthenticated();
-		$template = $this->get('request')->query->has('template') ? $this->get('request')->query->get('template') : 'email-notification';
-		$surveytest = $this->get('request')->query->has('survey') ? $this->get('request')->query->get('survey') : false;
-		$emailFlag = $this->get('request')->query->has('email') ? true : false;
+		$template = $this->request->query->has('template') ? $this->request->query->get('template') : 'email-notification';
+		$surveytest = $this->request->query->has('survey') ? $this->request->query->get('survey') : false;
+		$emailFlag = $this->request->query->has('email') ? true : false;
 		if ($surveytest == 'true'){
 			$this->checkSurveyResults($slug, $group,false,'000');
 		}
@@ -445,6 +455,12 @@ class DefaultController extends Controller
 	private function getConfiguration($slug, $group=false)
 	{
 		//setting up defaults
+		if ( $this->has('request')){
+			$this->request = $this->get('request');
+		}
+		else {
+			$this->request = $this->container->get('request_stack')->getCurrentRequest();
+		}
 		if ($this->logger === false){	$this->logger = $this->get('logger');	}
 		$this->fullSlug = ($group !== false) ? $group.'/': '';
 		$this->fullSlug .= $slug;
@@ -473,8 +489,8 @@ class DefaultController extends Controller
 			if ($this->getValue('name',$param['property']) !== false){
 				//adds missing params
 				$param['fullslug'] = $this->fullSlug;
-				$param['key'] = $this->get('request')->query->has('key') ? $this->get('request')->query->get('key') : false;
-				$param['admin'] = $this->get('request')->query->has('admin');
+				$param['key'] = $this->request->query->has('key') ? $this->request->query->get('key') : false;
+				$param['admin'] = $this->request->query->has('admin');
 				$param['activequestions'] = array();
 				foreach($param['questions'] as $questions){
 					if ($this->getValue('active',$questions,true)) {
@@ -612,6 +628,37 @@ class DefaultController extends Controller
 			->getForm();
 		return $form;
 	}
+
+	private function getFormSymfony3($slug,$group, $roomNumber='none', $set="Default")
+	{
+		$questionObject = new Questionnaire();
+		$questionObject->setCreateDate();
+        $questionObject->setSlug($slug);
+		$questionObject->setSluggroup($group);
+		$questionObject->setQuestionSet($set);
+		if ($questionObject->getRoomNumber() == null){
+            $questionObject->setRoomNumber($roomNumber);
+		}
+		$form = $this->createFormBuilder($questionObject, array('csrf_protection' => true))
+			->add('question1',HiddenType::class)
+			->add('question2',HiddenType::class)
+			->add('question3',HiddenType::class)
+			->add('question4',HiddenType::class)
+			->add('question5',HiddenType::class)
+			->add('question6',HiddenType::class)
+			->add('question7',HiddenType::class)
+			->add('question8',HiddenType::class)
+			->add('question9',HiddenType::class)
+			->add('question10',HiddenType::class)
+			->add('question11',HiddenType::class)
+			->add('question12',HiddenType::class)
+			->add('question13',HiddenType::class)
+			->add('question14',HiddenType::class)
+			->add('question15',HiddenType::class)
+			->getForm();
+		return $form;
+	}
+
 
 	/**
 	 *

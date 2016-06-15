@@ -1,0 +1,28 @@
+{% if question %}
+    <div class="questionnaire-dots"></div>
+    <section>
+        <div class="question-index">{{loop.index}} of {{loop.length}}</div>
+        <div class="question-title">
+            <h2>{{question.title | raw}}</h2>
+        </div>
+        {% if question.type == 'polar'  %}
+            {% include "FgmsSurveyBundle:Default:forms/fields/polar.html.twig" with { 'field' : question.field | default('')} %}
+
+        {% elseif question.type == 'rating'  %}
+            {% include "FgmsSurveyBundle:Default:forms/fields/rating.html.twig" with { 'field' : question.field | default('') } %}
+
+        {% elseif question.type == 'open'   %}
+            {% include "FgmsSurveyBundle:Default:forms/fields/open.html.twig" with { 'field' : question.field | default(''), 'loop' : loop } %}
+        {% else %}
+            <div class="alert alert-danger">
+                <p>{{ 'Question type is not defined!' | trans }}</p>
+            </div>
+        {% endif %}
+    </section>
+{% else %}
+    <div class="alert alert-danger">
+        <p>{{ 'Question is null!' | trans }}</p>
+    </div>
+{% endif %}
+
+

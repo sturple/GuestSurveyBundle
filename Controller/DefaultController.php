@@ -625,6 +625,7 @@ class DefaultController extends Controller
 			->add('question13','hidden')
 			->add('question14','hidden')
 			->add('question15','hidden')
+			->add('testimonialData','hidden')
 			->getForm();
 		return $form;
 	}
@@ -655,6 +656,7 @@ class DefaultController extends Controller
 			->add('question13',HiddenType::class)
 			->add('question14',HiddenType::class)
 			->add('question15',HiddenType::class)
+			->add('testimonialData',HiddenType::class)
 			->getForm();
 		return $form;
 	}

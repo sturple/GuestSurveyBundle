@@ -65,6 +65,14 @@
 
 				<div class="form-group form-comment">
 					<textarea class="form-control" data-field="{{question.field}}" ></textarea>
+					{% if question.testimonial %}
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" class="script-testimonial" data-question="{{question.field}}" value="true" /> Use as Testimonial
+							</label>
+						</div>
+						
+					{% endif %}
 				</div>
 				{% if loop.index == loop.length%}
 					<div class="form-group question-input-visual">
@@ -132,12 +140,28 @@
 			}
 		});
 		$('#questionnaire').fadeIn(1000);
+		
+		{# 	When testimonial input box is clicked will create json object of all testimonial checboxes that are enabled in hidden field name="testimonialData", which gets saves in database #}
+		$('.script-testimonial').on('change',function(){
+			var testimonialData = [];
+			$('.script-testimonial').each(function(){
+				
+				if ($(this).is(':checked')) {
+					var fieldObj = new Object();
+					fieldObj.field = $(this).attr('data-question');
+					testimonialData.push(fieldObj);
+				}
+				
+			})
+			$('#form_testimonialData').val(JSON.stringify(testimonialData))
+			
+		});
 		$('.finish-button').on('click',function(){
 			$('a[href="#finish"]').trigger('click');
-		})
+		});
 		$('textarea[data-field], input[data-field]').on('change',function(){
 			$('*[name="form['+ $(this).data('field') +']"]').val($(this).val());
-		})
+		});
 		$('a[data-field]').on('mouseup',function(e){
 			$(this).closest('.question-input-visual').find('*[data-field]').removeClass('active');
 			var dataValue = $(this).data('value');

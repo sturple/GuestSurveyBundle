@@ -633,6 +633,7 @@ class DefaultController extends Controller
             ->add('question13','hidden')
             ->add('question14','hidden')
             ->add('question15','hidden')
+            ->add('testimonialData','hidden')
             ->getForm();
         return $form;
     }
@@ -663,6 +664,7 @@ class DefaultController extends Controller
             ->add('question13',HiddenType::class)
             ->add('question14',HiddenType::class)
             ->add('question15',HiddenType::class)
+            ->add('testimonialData',HiddenType::class)
             ->getForm();
         return $form;
     }
@@ -1341,5 +1343,48 @@ class DefaultController extends Controller
         $res->setContent($csv);
         return $res;
     }
+
+
+	/**
+	 *
+	 * @param string $key
+	 * @param array $array
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	private function getValue($key, $array=array(), $default=false)
+	{
+		if (isset($array)){
+			if (isset($array[$key])){
+				return $array[$key];
+			}
+		}
+		return $default;
+	}
+
+
+	/**
+	* compares value and trigger.
+	* @param mixed $value
+	* @param mixed $trigger
+	* @param boolean $triggerIsGreaterActive normal should be true except on a positive trigger like tripadvisor output screen
+	**/
+	private function check_trigger($value, $trigger, $triggerIsGreaterActive = true)
+	{
+		$valueAsInt = intval($value);
+		$triggerAsInt = intval($trigger);
+		$triggerFlag = false;
+		//comparison type
+		if (($valueAsInt >= 0) && ($trigger != null)){
+			if ($valueAsInt > 0 ){
+				$triggerFlag = $triggerIsGreaterActive ? ($triggerAsInt >= $valueAsInt ) : ($triggerAsInt <= $valueAsInt );
+			}
+			// equates type
+			else {
+				$triggerFlag = ($trigger == $value);
+			}
+		}
+		return $triggerFlag;
+	}
 
 }

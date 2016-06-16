@@ -158,8 +158,21 @@ class Questionnaire
      */
     private $questionSet;
 	
+    
 
-	
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="testimonialData", type="string", length=1000, nullable=true)
+     */
+	private $testimonialData;
+    
+   
+   
+ 
+   
+   
+    
     /**
      * Get id
      *
@@ -688,6 +701,27 @@ class Questionnaire
     {
         return $this->questionSet;
     }
-	
+    /**
+     * Set testimonialData
+     *
+     * @param string $testimonialData
+     * @return Questionnaire
+     */
+    public function setTestimonialData($jsonstring)
+    {
+        $this->testimonialData = $jsonstring;
+
+        return $this;
+    }
+
+    /**
+     * Get testimonialData
+     *
+     * @return string 
+     */
+    public function getTestimonialData()
+    {
+        return $this->testimonialData;
+    }  	
 
 }

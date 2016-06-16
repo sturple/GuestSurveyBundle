@@ -1,0 +1,60 @@
+<h2>Survey Configuration</h2>
+
+{% if admin or true %}
+{# pills are Preview Checkout Survey, Preview Survey Email, Preview Daily Rollup Email, Preview Testimonial Tool #}   
+    
+ <!-- Nav tabs -->
+<ul class="nav nav-pills" role="tablist">
+    <li role="presentation" class="active"><a href="#previewCheckoutSurvey" aria-controls="home" role="tab" data-toggle="tab">Preview Checkout Survey</a></li>
+    <li role="presentation"><a href="#previewSurveyEmail" aria-controls="profile" role="tab" data-toggle="tab">Preview Survey Email</a></li>
+    <li role="presentation"><a href="#previewDailyRollupEmail" aria-controls="messages" role="tab" data-toggle="tab">Preview Daily Rollup Email</a></li>
+    <li role="presentation"><a href="#previewTestimonialTool" aria-controls="settings" role="tab" data-toggle="tab">Preview Testimonial Tool</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    {# Checkout Survey #}
+    <div role="tabpanel" class="tab-pane active" id="previewCheckoutSurvey">
+        <h2>Preview Checkout Survey</h2>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="/{{fullslug}}/start/"></iframe>
+        </div>
+        <div class="padding-top: 24px;">          
+           <a href="/{{fullslug}}/start/" class="btn btn-primary" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
+        </div>    
+    </div>
+    {# Checkout Survey Email #}
+    <div role="tabpanel" class="tab-pane" id="previewSurveyEmail">
+        <h2>Preview Survey Email</h2>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="/{{fullslug}}/email/?key={{key}}"></iframe>
+        </div>
+        <div class="padding-top: 24px;">
+            <a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Survey Email</a>
+            <a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?survey=true&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Survey Test Emails</a>
+        </div>             
+    </div>
+    {# Daily Rollup Email #}
+    <div role="tabpanel" class="tab-pane" id="previewDailyRollupEmail">
+        <h2>Preview Daily Rollup Email</h2>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="/{{fullslug}}/email/?template=email-rollup&key={{key}}"></iframe>
+        </div>         
+        <div style="padding-top:24px;">   
+            <a target="_blank" href="/{{fullslug}}/email/?template=email-rollup&key={{key}}" class="btn btn-primary btn-sm">Preview Rollup Email</a>
+            <a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?rollup=true&template=email-rollup&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Rollup Email</a>
+        </div>        
+    </div>
+    {# Testimonial Tool #}
+    <div role="tabpanel" class="tab-pane" id="previewTestimonialTool">
+        <h2>Preview Testimonal Widget</h2>
+        <h3>Preview</h3>
+        <h3>Embed Code</h3>
+        <a class="btn btn-primary">Get Embed Code</a>
+        <h3>Style Guide</h3>
+        
+    </div>
+</div>    
+    
+
+{% endif %}

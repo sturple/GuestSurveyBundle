@@ -1,5 +1,7 @@
 {% extends 'FgmsSurveyBundle:Default:admin.html.twig' %}
+
 {%block body%}
+	
 	<div class="fade-in-out-wrapper">
 	<div class="row" style="margin-bottom: 24px;">
 		<div class="col-sm-8">
@@ -7,14 +9,9 @@
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
 			<p>All result time periods are UTC</p>
 			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
-			{% if admin %}
-			<div style="padding-top: 12px;">
-				<a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Survey Email</a>
-				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?survey=true&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Survey Test Emails</a>
-				<a target="_blank" href="/{{fullslug}}/email/?template=email-rollup&key={{key}}" class="btn btn-primary btn-sm">Preview Rollup Email</a>
-				<a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?rollup=true&template=email-rollup&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Rollup Email</a>
-			</div>
-		{% endif %}
+			<div style="padding: 24px 0;">
+				<a class="btn btn-primary btn-sm" href="/{{fullslug}}/csv/">Download Survey Results</a>
+			</div> 
 		</div>
 		<div class="col-sm-4">
 			<div class="form-group">
@@ -33,82 +30,32 @@
 			</div>
 		</div>
 	</div>
-	<table class="table">
-		<thead>
-			<tr>
-				<th>ID#</th>
-				<th>Type</th>
-				<th>Question</th>
-				<th style="text-align: center" >Email<div>Trigger</div></th>
-				<th style="text-align: center" >Reporting<div>Threshold</div></th>
-				<th colspan="3" style="text-align: center;">Average Value</th>
-			</tr>
-
-		</thead>
-		<tbody>
-			<tr>
-				<td colspan="5"></td>
-				<td style="text-align: center">Last 7 Days<div class="record-count">Records: {{statCounts.last7}}</div></td>
-				<td style="text-align: center">Last 30 Days<div class="record-count">Records: {{statCounts.last30}}</div></td>
-				<td style="text-align: center">Year to Date<div class="record-count">Records: {{statCounts.yeartodate}}</div></td>
-			</tr>
-			{% for stat in stats %}
-				{% if stat.active %}
-				<tr>
-					<td>{{stat.field}}</td>
-					<td>{{stat.type|capitalize}}</td>
-					<td>{{stat.question | raw}}</td>
-					<td class="stats email-trigger"  >
-						{%if stat.type == 'open'%}
-							{%if stat.emailtrigger %}Input{% else %}None{%endif%}
-						{%else%}
-							{{stat.emailtrigger | capitalize}}
-						{%endif%}
-					</td>
-					<td class="stats trigger"   >
-						{%if stat.type == 'open'%}
-							N/A
-						{%else%}
-							{%if stat.trigger > 5%}
-								{{stat.trigger|round}}%
-								<span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>
-							{%else%}
-								{{stat.trigger|round(1)}}
-							{%endif%}
-						{%endif%}
-					</td>
-					<td class="stats last7 {% if stat.trigger > stat.last7 %} trigger-error {%endif%}" >
-						{% if stat.type == 'open' %}
-							{{stat.last7}} <span>(Entr{%if stat.last7 == 1%}y{%else%}ies{%endif%})</span>
-						{%else%}
-							{%if stat.last7 > 5%}{{stat.last7|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>
-							{%else%}{{stat.last7|round(1)}}{%endif%}
-						{%endif%}
-					</td>
-					<td class="stats last30 {% if stat.trigger > stat.last30 %} trigger-error {%endif%} ">
-						{% if stat.type == 'open' %}
-							{{stat.last30}} <span>(Entr{%if stat.last30 == 1%}y{%else%}ies{%endif%})</span>
-						{%else%}
-							{%if stat.last30 > 5%}{{stat.last30|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>
-							{%else%}{{stat.last30|round(1)}}{%endif%}
-						{%endif%}
-					</td>
-					<td class="stats yeartodate {% if stat.trigger > stat.yeartodate %}trigger-error {%endif%}">
-						{% if stat.type == 'open' %}
-							{{stat.yeartodate}} <span>(Entr{%if stat.yeartodate == 1%}y{%else%}ies{%endif%})</span>
-						{%else%}
-							{%if stat.yeartodate > 5%}{{stat.yeartodate|round}}%  <span>({%if stat.negative%}No{%else%}Yes{%endif%})</span>
-							{%else%}{{stat.yeartodate|round(1)}}{%endif%}
-						{%endif%}
-					</td>
-				</tr>
-			{% endif %}
-			{% endfor %}
-		</tbody>
-	</table>
-	<div style="padding: 24px 0;">
-		<a class="btn btn-primary btn-md" href="/{{fullslug}}/csv/">Download Survey Results</a>
-	</div>
+	
+	//Summary Report, Performance Charting, Guest Feedback, Surey Configuration
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+	  <li role="presentation" class="active"><a href="#summaryReport" aria-controls="home" role="tab" data-toggle="tab">Summary Report</a></li>
+	  <li role="presentation"><a href="#performanceCharting" aria-controls="profile" role="tab" data-toggle="tab">Performance Charting</a></li>
+	  <li role="presentation"><a href="#guestFeedback" aria-controls="messages" role="tab" data-toggle="tab">Guest Feedback</a></li>
+	  <li role="presentation"><a href="#surveyConfiguration" aria-controls="settings" role="tab" data-toggle="tab">Survey Configuration</a></li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class"tab-pane active" id="summaryReport">			
+			{% include 'includes/admin-summary-report.html.twig' ignore missing %}
+		
+		</div>
+		<div role="tabpanel" class"tab-pane" id="performanceCharting">			
+			{% include 'includes/admin-performance-charting.html.twig' ignore missing %}
+		</div>
+		<div role="tabpanel" class"tab-pane" id="guestFeedback">			
+			{% include 'includes/admin-guest-feedback.html.twig' ignore missing %}
+		
+		</div>
+		<div role="tabpanel" class"tab-pane" id="surveyConfiguration">			
+			{% include 'includes/admin-survey-configuration.html.twig' ignore missing %}
+		
+		</div>		
+	</div>	
 	</div>
 {% endblock%}
 {%block styles %}

@@ -12,14 +12,19 @@
 </ul>
 
 <!-- Tab panes -->
-<div class="tab-content">
+<style>
+    .embed-responsive.embed-responsive-16by9 {
+           
+    }
+</style>
+<div class="tab-content" >
     {# Checkout Survey #}
     <div role="tabpanel" class="tab-pane active" id="previewCheckoutSurvey">
         <h2>Preview Checkout Survey</h2>
         <div class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" src="/{{fullslug}}/start/"></iframe>
         </div>
-        <div class="padding-top: 24px;">          
+        <div style="padding-top: 24px;">          
            <a href="/{{fullslug}}/start/" class="btn btn-primary" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
         </div>    
     </div>
@@ -29,7 +34,7 @@
         <div class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" src="/{{fullslug}}/email/?key={{key}}"></iframe>
         </div>
-        <div class="padding-top: 24px;">
+        <div style="padding-top: 24px;">
             <a target="_blank" href="/{{fullslug}}/email/?key={{key}}" class="btn btn-primary btn-sm">Preview Survey Email</a>
             <a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?survey=true&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Survey Test Emails</a>
         </div>             

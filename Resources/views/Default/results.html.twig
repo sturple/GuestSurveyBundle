@@ -30,8 +30,7 @@
 			</div>
 		</div>
 	</div>
-	
-	//Summary Report, Performance Charting, Guest Feedback, Surey Configuration
+
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">
 	  <li role="presentation" class="active"><a href="#summaryReport" aria-controls="home" role="tab" data-toggle="tab">Summary Report</a></li>
@@ -40,19 +39,19 @@
 	  <li role="presentation"><a href="#surveyConfiguration" aria-controls="settings" role="tab" data-toggle="tab">Survey Configuration</a></li>
 	</ul>
 	<div class="tab-content">
-		<div role="tabpanel" class"tab-pane active" id="summaryReport">			
-			{% include 'includes/admin-summary-report.html.twig' ignore missing %}
+		<div role="tabpanel" class="tab-pane active" id="summaryReport">			
+			{% include 'FgmsSurveyBundle:Default:includes/admin-summary-report.html.twig' ignore missing %}
 		
 		</div>
-		<div role="tabpanel" class"tab-pane" id="performanceCharting">			
-			{% include 'includes/admin-performance-charting.html.twig' ignore missing %}
+		<div role="tabpanel" class="tab-pane" id="performanceCharting">			
+			{% include 'FgmsSurveyBundle:Default:includes/admin-performance-charting.html.twig' ignore missing %}
 		</div>
-		<div role="tabpanel" class"tab-pane" id="guestFeedback">			
-			{% include 'includes/admin-guest-feedback.html.twig' ignore missing %}
+		<div role="tabpanel" class="tab-pane" id="guestFeedback">			
+			{% include 'FgmsSurveyBundle:Default:includes/admin-guest-feedback.html.twig' ignore missing %}
 		
 		</div>
-		<div role="tabpanel" class"tab-pane" id="surveyConfiguration">			
-			{% include 'includes/admin-survey-configuration.html.twig' ignore missing %}
+		<div role="tabpanel" class="tab-pane" id="surveyConfiguration">			
+			{% include 'FgmsSurveyBundle:Default:includes/admin-survey-configuration.html.twig' ignore missing %}
 		
 		</div>		
 	</div>	

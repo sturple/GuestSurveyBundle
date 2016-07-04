@@ -702,4 +702,36 @@ class DefaultController extends Controller
 		return $triggerFlag;
 	}
 
+	private function getLastDays($days, $slug, $group = false)
+	{
+		$timezone = $this->getValue('timezone',$this->param['property'],'America/Vancouver');
+		$now = new \DateTime('now',new \DateTimeZone($timezone));
+		$now->setTime(0,0,0);
+		$interval = new \DateInterval(sprintf('P%dD',$days));
+		$then = clone $now;
+		$then->sub($interval);
+		$utc=new \DateTimeZone('UTC');
+		$now->setTimezone($utc);
+		$then->setTimezone($utc);
+		$from = $then->format('Y-m-d H:i:s');
+		$to = $now->format('Y-m-d H:i:s');
+		$repo = $this->getDoctrine()->getRepository(\Fgms\Bundle\SurveyBundle\Entity\Questionnaire::class);
+		$qb = $repo->createQueryBuilder('q')
+			->andWhere('q.createDate BETWEEN :from AND :to')
+			->andWhere('q.slug = :slug')
+			->andWhere('q.sluggroup = :sluggroup')
+			->setParameter('from',$from)
+			->setParameter('to',$to)
+			->setParameter('slug',$slug)
+			//	I'm not so sure empty string should be used instead of
+			//	NULL here, but it's done that way above so I'm just
+			//	continuing the practice
+			->setParameter('sluggroup',($group===false) ? '' : $group)
+		;
+		$q = $qb->getQuery();
+		$retr = $q->getResult();
+		if (!is_array($retr)) $retr = [$retr];
+		return $retr;
+	}
+
 }

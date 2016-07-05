@@ -15,7 +15,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					report_error(e);
 					return;
 				}
-				var table=new visualization.DataTable();
+				var table = new visualization.DataTable();
 				//	TODO: Make this "date" type
 				table.addColumn('date','Date');
 				//	TODO: Set to question number

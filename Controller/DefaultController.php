@@ -807,12 +807,10 @@ class DefaultController extends Controller
 
     private function ratingToChart($question, $days)
     {
-        foreach ($days as $day)
-        {
+        foreach ($days as $day) {
             $sum = 0;
             $count = 0;
-            foreach ($day->results as $result)
-            {
+            foreach ($day->results as $result) {
                 $rating = $result->getQuestion($question);
                 if (!is_numeric($rating)) throw new \RuntimeException(
                     sprintf(

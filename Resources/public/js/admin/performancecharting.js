@@ -1,13 +1,8 @@
 define(['jquery','google/visualization','moment-timezone'],function ($, visualization, moment) {
-	return function (root) {
-		var self = this;
+	return function (root, get_data, report_error) {
 		root = $(root);
-		//	This should be overriden: Default implementation
-		//	just unconditionally produces an error
-		self.getData = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
-		//	This should be overriden: Default implementation
-		//	does nothing
-		self.reportError = function (e) {	};
+		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
+		report_error = report_error || function (e) {	};
 		var select = root.find('select').first();
 		var div = root.find('div').first();
 		var chart = new visualization.LineChart(div[0]);
@@ -15,9 +10,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			var days = select.val();
 			var num = parseInt(days);
 			//	TODO: Get question number dynamically
-			self.getData(10,isNaN(num) ? days : num,function (data, e) {
+			get_data(10,isNaN(num) ? days : num,function (data, e) {
 				if (e) {
-					self.reportError(e);
+					report_error(e);
 					return;
 				}
 				var table=new visualization.DataTable();
@@ -31,10 +26,16 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				});
 				chart.draw(table,{
 					hAxis: {title: 'Date'},
-					vAxis: {title: (data.max === 100) ? '%' : 'Rating'}
+					vAxis: {
+						title: (data.max === 100) ? '%' : 'Rating',
+						maxValue: data.max,
+						minValue: data.min
+					}
 				});
 			});
 		};
 		select.change(impl);
+		//	Load initial data
+		impl();
 	};
 });

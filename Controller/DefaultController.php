@@ -716,7 +716,7 @@ class DefaultController extends Controller
         return $retr;
     }
 
-    private function getBeginningOfPastDay(\DateTime $when, $days)
+    private function getBeginningOfPastDayInt(\DateTime $when, $days)
     {
         if ($days <= 0) throw new \InvalidArgumentException(sprintf('Expected strictly positive integer, got %d',$days));
         $when = clone $when;
@@ -725,6 +725,27 @@ class DefaultController extends Controller
             $when->sub($interval);
         }
         return $this->getBeginningOfDay($when);
+    }
+
+    private function getBeginningOfPastDayString(\DateTime $when, $days)
+    {
+        if ($days !== 'yeartodate') throw new \InvalidArgumentException(
+            sprintf(
+                'Unexpected string "%s" (expected "yeartodate")',
+                $days
+            )
+        );
+        $year = intval($when->format('Y'));
+        $when = clone $when;
+        $when->setDate($year,1,1);
+        return $this->getBeginningOfDay($when);
+    }
+
+    private function getBeginningOfPastDay(\DateTime $when, $days)
+    {
+        if (is_int($days)) return $this->getBeginningOfPastDayInt($when,$days);
+        if (is_string($days)) return $this->getBeginningOfPastDayString($when,$days);
+        throw new \InvalidArgumentException('$days not string or integer');
     }
 
     private function getEndOfPastDay(\DateTime $when, $days)
@@ -957,13 +978,15 @@ class DefaultController extends Controller
         $this->getConfiguration($slug,$group);
         $this->checkIfAuthenticated();
         $question = intval($question);
-        $days = intval($days);
-        if (($days < 0) || ($days > 30)) throw $this->createNotFoundException(
-            sprintf(
-                'Number of days (%d) out of range',
-                $days
-            )
-        );
+        if ($days !== 'yeartodate') {
+            $days = intval($days);
+            if (($days < 0) || ($days > 30)) throw $this->createNotFoundException(
+                sprintf(
+                    'Number of days (%d) out of range',
+                    $days
+                )
+            );
+        }
         if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
             sprintf(
                 'Question number (%d) out of range',

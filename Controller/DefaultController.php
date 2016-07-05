@@ -814,7 +814,7 @@ class DefaultController extends Controller
                 $rating = $result->getQuestion($question);
                 if (!is_numeric($rating)) throw new \RuntimeException(
                     sprintf(
-                        '%s with ID %d returned non-numeric string "%s" for question number %d',
+                        '%s with ID %d returned non-numeric string "%s" for question%d',
                         get_class($result),
                         $result->getId(),
                         $rating,
@@ -827,7 +827,7 @@ class DefaultController extends Controller
                 //  is truncated when converting to an integer
                 if (floatval($rating) != $i) throw new \RuntimeException(
                     sprintf(
-                        '%s with ID %d returned non-integer string "%s" for question number %d',
+                        '%s with ID %d returned non-integer string "%s" for question%d',
                         get_class($result),
                         $result->getId(),
                         $rating,
@@ -836,7 +836,7 @@ class DefaultController extends Controller
                 );
                 if (($i < 1) || ($i > 5)) throw new \RuntimeException(
                     sprintf(
-                        '%s with ID %d returned out of range rating %d for question number %d',
+                        '%s with ID %d returned out of range rating %d for question%d',
                         get_class($result),
                         $result->getId(),
                         $i,
@@ -875,7 +875,7 @@ class DefaultController extends Controller
             if ($text === 'No') return $negative;
             throw new \RuntimeException(
                 sprintf(
-                    '%s with ID %d returned "%s" which is neither "Yes" or "No" for question number %d',
+                    '%s with ID %d returned "%s" which is neither "Yes" or "No" for question%d',
                     get_class($q),
                     $q->getId(),
                     $text,

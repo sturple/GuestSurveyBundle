@@ -849,7 +849,7 @@ class DefaultController extends Controller
                 ++$count;
             }
             unset($day->results);
-            $day->value = ($count===0) ? 0.0 : ((float)$sum / (float)$count);
+            $day->value = ($count === 0) ? 0.0 : ((float)$sum / (float)$count);
             yield $day;
         }
     }

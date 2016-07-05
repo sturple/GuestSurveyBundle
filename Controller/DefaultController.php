@@ -852,37 +852,46 @@ class DefaultController extends Controller
         }
     }
 
-    private function polarToChart($question, $negative, $days)
+    private function percentageToChart($callable, $days)
     {
-        $pos = $negative ? 'No' : 'Yes';
-        $neg = $negative ? 'Yes' : 'No';
         foreach ($days as $day) {
             $good = 0;
             $count = 0;
             foreach ($day->results as $result) {
-                $text = $result->getQuestion($question);
+                if ($callable($result)) ++$good;
                 ++$count;
-                if ($text === $pos) {
-                    ++$good;
-                    continue;
-                }
-                if ($text === $neg) {
-                    continue;
-                }
-                throw new \RuntimeException(
-                    sprintf(
-                        '%s with ID %d returned "%s" which is neither "Yes" or "No" for question number %d',
-                        get_class($result),
-                        $result->getId(),
-                        $text,
-                        $question
-                    )
-                );
             }
             unset($day->results);
             $day->value = ($count === 0) ? 0.0 : (((float)$good / (float)$count)*100.0);
             yield $day;
         }
+    }
+
+    private function polarToChart($question, $negative, $days)
+    {
+        return $this->percentageToChart(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question, $negative) {
+            $text = $q->getQuestion($question);
+            if ($text === 'Yes') return !$negative;
+            if ($text === 'No') return $negative;
+            throw new \RuntimeException(
+                sprintf(
+                    '%s with ID %d returned "%s" which is neither "Yes" or "No" for question number %d',
+                    get_class($q),
+                    $q->getId(),
+                    $text,
+                    $question
+                )
+            );
+        },$days);
+    }
+
+    private function openToChart($question, $days)
+    {
+        return $this->percentageToChart(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+            $text = $q->getQuestion($question);
+            $text = preg_replace('/^\\s+|\\s+$/u','',$text);
+            return $text !== '';
+        },$days);
     }
 
 }

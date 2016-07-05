@@ -805,4 +805,53 @@ class DefaultController extends Controller
         } while ($end->add($jump)->getTimestamp() !== $begin->getTimestamp());
     }
 
+    private function ratingToChart($question, $days)
+    {
+        foreach ($days as $day)
+        {
+            $sum = 0;
+            $count = 0;
+            foreach ($day->results as $result)
+            {
+                $rating = $result->getQuestion($question);
+                if (!is_numeric($rating)) throw new \RuntimeException(
+                    sprintf(
+                        '%s with ID %d returned non-numeric string "%s" for question number %d',
+                        get_class($result),
+                        $result->getId(),
+                        $rating,
+                        $question
+                    )
+                );
+                $i = intval($rating);
+                //  This check makes sure that the string doesn't actually
+                //  parse to a floating point value whose fractional part
+                //  is truncated when converting to an integer
+                if (floatval($rating) != $i) throw new \RuntimeException(
+                    sprintf(
+                        '%s with ID %d returned non-integer string "%s" for question number %d',
+                        get_class($result),
+                        $result->getId(),
+                        $rating,
+                        $question
+                    )
+                );
+                if (($i < 1) || ($i > 5)) throw new \RuntimeException(
+                    sprintf(
+                        '%s with ID %d returned out of range rating %d for question number %d',
+                        get_class($result),
+                        $result->getId(),
+                        $i,
+                        $question
+                    )
+                );
+                $sum += $i;
+                ++$count;
+            }
+            unset($day->results);
+            $day->value = ($count===0) ? 0.0 : ((float)$sum / (float)$count);
+            yield $day;
+        }
+    }
+
 }

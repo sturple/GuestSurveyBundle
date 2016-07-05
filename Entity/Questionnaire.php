@@ -628,8 +628,41 @@ class Questionnaire
     {
         return $this->question15;
     }
-   
-    
+
+    private function getQuestionProperty($num)
+    {
+        if (($num < 1) || ($num > 15)) throw new \InvalidArgumentException(
+            sprintf('No question %d',$num)
+        );
+        return sprintf('question%d',$num);
+    }
+
+    /**
+     * Get an arbitrary question.
+     *
+     * @param int $num
+     *
+     * @return string
+     */
+    public function getQuestion($num)
+    {
+        return $this->{$this->getQuestionProperty($num)};
+    }
+
+    /**
+     * Sets an arbitrary question.
+     *
+     * @param int $num
+     * @param string $value
+     *
+     * @return Questionnaire
+     */
+    public function setQuestion($num, $value)
+    {
+        $this->{$this->getQuestionProperty($num)} = $value;
+
+        return $this;
+    }
     
     
     /**

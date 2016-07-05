@@ -852,4 +852,37 @@ class DefaultController extends Controller
         }
     }
 
+    private function polarToChart($question, $negative, $days)
+    {
+        $pos = $negative ? 'No' : 'Yes';
+        $neg = $negative ? 'Yes' : 'No';
+        foreach ($days as $day) {
+            $good = 0;
+            $count = 0;
+            foreach ($day->results as $result) {
+                $text = $result->getQuestion($question);
+                ++$count;
+                if ($text === $pos) {
+                    ++$good;
+                    continue;
+                }
+                if ($text === $neg) {
+                    continue;
+                }
+                throw new \RuntimeException(
+                    sprintf(
+                        '%s with ID %d returned "%s" which is neither "Yes" or "No" for question number %d',
+                        get_class($result),
+                        $result->getId(),
+                        $text,
+                        $question
+                    )
+                );
+            }
+            unset($day->results);
+            $day->value = ($count === 0) ? 0.0 : (((float)$good / (float)$count)*100.0);
+            yield $day;
+        }
+    }
+
 }

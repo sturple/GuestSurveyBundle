@@ -68,3 +68,13 @@ fgms_survey_cron_property:
 fgms_survey_cron_property_with_group:
     path: /cron/{group}/{slug}/
     defaults: {_controller: FgmsSurveyBundle:Default:cron, group: false }
+
+# Charting routes
+fgms_survey_chart:
+    path: /{slug}/chart/{question}/{days}/
+    defaults: {_controller: FgmsSurveyBundle:Default:chart, group: false }
+    requirements: {question: \d+, days: \d+ }
+fgms_survey_chart_with_group:
+    path: /{group}/{slug}/chart/{question}/{days}/
+    defaults: {_controller: FgmsSurveyBundle:Default:chart }
+    requirements: {question: \d+, days: \d+ }

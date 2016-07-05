@@ -894,4 +894,91 @@ class DefaultController extends Controller
         },$days);
     }
 
+    private function createChartResponse($question, $days, $slug, $group = false)
+    {
+        //  This is the zero-relative index of the question
+        $qi = $question - 1;
+        $q = $this->param['questions'][$qi];
+        $type = strtolower($this->getValue('type',$q,'open'));
+        $field = $q['field'];
+        $field = intval(preg_replace('/^question/u','',$field));
+        $min = 0;
+        $max = 0;
+        $obj = $this->getLastDaysByDay(new \DateTime('now',$this->getTimezone()),$days,$slug,$group);
+        $result = null;
+        if ($type === 'rating') {
+            $min = 0;
+            $max = 5;
+            $result = $this->ratingToChart($field,$obj);
+        } elseif ($type === 'polar') {
+            $min = 0;
+            $max = 100;
+            $negative = $this->getValue('negative',$q,false);
+            $result = $this->polarToChart($field,$negative,$obj);
+        } elseif ($type === 'open') {
+            $min = 0;
+            $max = 100;
+            $result = $this->openToChart($field,$obj);
+        } else {
+            throw new \RuntimeException(
+                sprintf(
+                    'Unrecognized question type "%s" (%s question %d)',
+                    $type,
+                    ($group === false) ? $slug : sprintf('%s/%s',$group,$slug),
+                    $question
+                )
+            );
+        }
+        $arr=[];
+        foreach ($result as $r) {
+            $arr[]=(object)[
+                'value' => $r->value,
+                'begin' => $r->begin->getTimestamp(),
+                'end' => $r->end->getTimestamp()
+            ];
+        }
+        $json=(object)[
+            'min' => $min,
+            'max' => $max,
+            'group' => ($group === false) ? null : $group,
+            'slug' => $slug,
+            'question' => $question,
+            'results' => $arr
+        ];
+        $res=new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->setContent(json_encode($json));
+        $res->headers->set('Content-Type','application/json');
+        return $res;
+    }
+
+    public function chartAction($question, $days, $slug, $group = false)
+    {
+        $question = intval($question);
+        $days = intval($days);
+        if (($days < 0) || ($days > 30)) throw $this->createNotFoundException(
+            sprintf(
+                'Number of days (%d) out of range',
+                $days
+            )
+        );
+        if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
+            sprintf(
+                'Question number (%d) out of range',
+                $question
+            )
+        );
+        $this->getConfiguration($slug,$group);
+        $c=count($this->param['questions']);
+        if ($question > $c) throw $this->createNotFoundException(
+            sprintf(
+                '%s has only %d questions but question number %d requested',
+                ($group === false) ? $slug : sprintf('%s/%s',$group,$slug),
+                $c,
+                $question
+            )
+        );
+        return $this->createChartResponse($question,$days,$slug,$group);
+    }
+
 }

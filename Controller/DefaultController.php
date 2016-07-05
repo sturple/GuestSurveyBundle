@@ -954,6 +954,8 @@ class DefaultController extends Controller
 
     public function chartAction($question, $days, $slug, $group = false)
     {
+        $this->getConfiguration($slug,$group);
+        $this->checkIfAuthenticated();
         $question = intval($question);
         $days = intval($days);
         if (($days < 0) || ($days > 30)) throw $this->createNotFoundException(
@@ -968,7 +970,6 @@ class DefaultController extends Controller
                 $question
             )
         );
-        $this->getConfiguration($slug,$group);
         $c=count($this->param['questions']);
         if ($question > $c) throw $this->createNotFoundException(
             sprintf(

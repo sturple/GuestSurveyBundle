@@ -925,7 +925,9 @@ class DefaultController extends Controller
         $field = intval(preg_replace('/^question/u','',$field));
         $min = 0;
         $max = 0;
-        $obj = $this->getLastDaysByDay(new \DateTime('now',$this->getTimezone()),$days,$slug,$group);
+        $tz = $this->getTimezone();
+        $now = new \DateTime('now',$tz);
+        $obj = $this->getLastDaysByDay($now,$days,$slug,$group);
         $result = null;
         if ($type === 'rating') {
             $min = 0;
@@ -964,7 +966,8 @@ class DefaultController extends Controller
             'group' => ($group === false) ? null : $group,
             'slug' => $slug,
             'question' => $question,
-            'results' => $arr
+            'results' => $arr,
+            'timezone' => $tz->getName()
         ];
         $res=new \Symfony\Component\HttpFoundation\Response();
         $res->setCharset('UTF-8');

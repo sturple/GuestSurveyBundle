@@ -1,4 +1,4 @@
-define(['jquery','google/visualization'],function ($, visualization) {
+define(['jquery','google/visualization','moment-timezone'],function ($, visualization, moment) {
 	return function (root) {
 		var self = this;
 		root = $(root);
@@ -22,11 +22,12 @@ define(['jquery','google/visualization'],function ($, visualization) {
 				}
 				var table=new visualization.DataTable();
 				//	TODO: Make this "date" type
-				table.addColumn('number','Date');
+				table.addColumn('date','Date');
 				//	TODO: Set to question number
 				table.addColumn('number','Q10');
 				data.results.forEach(function (result) {
-					table.addRow([result.begin,result.value]);
+					var begin = moment.unix(result.begin).tz(data.timezone);
+					table.addRow([new Date(begin.year(),begin.month(),begin.date()),result.value]);
 				});
 				chart.draw(table,{
 					hAxis: {title: 'Date'},

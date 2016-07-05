@@ -702,19 +702,47 @@ class DefaultController extends Controller
 		return $triggerFlag;
 	}
 
+	private function getBeginningOfDay(\DateTime $when)
+	{
+		$retr = clone $when;
+		$retr->setTime(0,0,0);
+		return $retr;
+	}
+
+	private function getEndOfDay(\DateTime $when)
+	{
+		$retr = clone $when;
+		$retr->setTime(23,59,59);
+		return $retr;
+	}
+
+	private function getBeginningOfPastDay(\DateTime $when, $days)
+	{
+		if ($days <= 0) throw new \InvalidArgumentException(sprintf('Expected strictly positive integer, got %d',$days));
+		$when = clone $when;
+		if ($days > 1) {
+			$interval = new \DateInterval(sprintf('P%dD',$days-1));
+			$when->sub($interval);
+		}
+		return $this->getBeginningOfDay($when);
+	}
+
+	private function getTimeZone()
+	{
+		$tz = $this->getValue('timezone',$this->param['property'],'America/Vancouver');
+		return new \DateTimeZone($tz);
+	}
+
 	private function getLastDays($days, $slug, $group = false)
 	{
-		$timezone = $this->getValue('timezone',$this->param['property'],'America/Vancouver');
-		$now = new \DateTime('now',new \DateTimeZone($timezone));
-		$now->setTime(0,0,0);
-		$interval = new \DateInterval(sprintf('P%dD',$days));
-		$then = clone $now;
-		$then->sub($interval);
-		$utc=new \DateTimeZone('UTC');
-		$now->setTimezone($utc);
-		$then->setTimezone($utc);
-		$from = $then->format('Y-m-d H:i:s');
-		$to = $now->format('Y-m-d H:i:s');
+		$now = new \DateTime('now',$this->getTimeZone());
+		$begin = $this->getBeginningOfPastDay($now,$days);
+		$end = $this->getEndOfDay($now);
+		$utc = new \DateTimeZone('UTC');
+		$begin->setTimezone($utc);
+		$end->setTimezone($utc);
+		$from = $begin->format('Y-m-d H:i:s');
+		$to = $end->format('Y-m-d H:i:s');
 		$repo = $this->getDoctrine()->getRepository(\Fgms\Bundle\SurveyBundle\Entity\Questionnaire::class);
 		$qb = $repo->createQueryBuilder('q')
 			->andWhere('q.createDate BETWEEN :from AND :to')

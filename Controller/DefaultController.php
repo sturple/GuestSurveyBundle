@@ -727,17 +727,22 @@ class DefaultController extends Controller
 		return $this->getBeginningOfDay($when);
 	}
 
-	private function getTimeZone()
+	private function getEndOfPastDay(\DateTime $when, $days)
+	{
+		$retr = $this->getBeginningOfPastDay($when,$days);
+		return $this->getEndOfDay($retr);
+	}
+
+	private function getTimezone()
 	{
 		$tz = $this->getValue('timezone',$this->param['property'],'America/Vancouver');
 		return new \DateTimeZone($tz);
 	}
 
-	private function getLastDays($days, $slug, $group = false)
+	private function getLastDays(\DateTime $when, $days, $slug, $group = false)
 	{
-		$now = new \DateTime('now',$this->getTimeZone());
-		$begin = $this->getBeginningOfPastDay($now,$days);
-		$end = $this->getEndOfDay($now);
+		$begin = $this->getBeginningOfPastDay($when,$days);
+		$end = $this->getEndOfDay($when);
 		$utc = new \DateTimeZone('UTC');
 		$begin->setTimezone($utc);
 		$end->setTimezone($utc);
@@ -760,6 +765,44 @@ class DefaultController extends Controller
 		$retr = $q->getResult();
 		if (!is_array($retr)) $retr = [$retr];
 		return $retr;
+	}
+
+	private function getLastDaysByDay(\DateTime $when, $days, $slug, $group = false)
+	{
+		$arr = $this->getLastDays($when,$days,$slug,$group);
+		usort($arr,function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $a, \Fgms\Bundle\SurveyBundle\Entity\Questionnaire $b) {
+			$a = $a->getCreateDate();
+			$b = $b->getCreateDate();
+			$retr = $a->getTimestamp() - $b->getTimestamp();
+			//	We reverse the order so we can just pop
+			//	things off the end
+			$retr *= -1;
+			return $retr;
+		});
+		$end = $this->getEndOfPastDay($when,$days);
+		$begin = $this->getEndOfDay($when);
+		$jump = new \DateInterval('P1D');
+		$begin->add($jump);
+		//	This function generates all the Questionnaire objects
+		//	in the currently considered day
+		$func = function () use ($end, &$arr) {
+			while ((count($arr) !==0) && ($arr[count($arr)-1]->getCreateDate()->getTimestamp()<=$end->getTimestamp())) {
+				yield array_pop($arr);
+			}
+		};
+		//	We loop through each day starting with the first
+		//	(temporally) and ending with the latest (temporally)
+		//	and generate an object for each that contains the
+		//	beginning and end of the day as well as a traversable
+		//	which yields each Questionnaire object within that
+		//	window
+		do {
+			yield (object)[
+				'begin' => $this->getBeginningOfDay($end),
+				'end' => $end,
+				'results' => $func()
+			];
+		} while ($end->add($jump)->getTimestamp() !== $begin->getTimestamp());
 	}
 
 }

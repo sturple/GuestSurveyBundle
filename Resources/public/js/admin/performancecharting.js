@@ -46,11 +46,20 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					end = day;
 					table.addRow([day,result.value]);
 				});
+				var title = null;
+				if (data.type === 'open') {
+					title = '% Responding';
+				} else if (data.type === 'polar') {
+					title = '% Positive';
+				} else {
+					//	Must be rating
+					title = 'Average Rating';
+				}
 				var config={
 					title: data.title,
 					hAxis: {title: 'Date'},
 					vAxis: {
-						title: (data.max === 100) ? '%' : 'Rating',
+						title: title,
 						viewWindow: {
 							min: data.min,
 							max: data.max

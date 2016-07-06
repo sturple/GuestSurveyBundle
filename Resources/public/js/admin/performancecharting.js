@@ -19,18 +19,33 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				var table = new visualization.DataTable();
 				table.addColumn('date','Date');
 				table.addColumn('number','Q'+question);
+				var begin = null;
+				var end = null;
 				data.results.forEach(function (result) {
-					var begin = moment.unix(result.begin).tz(data.timezone);
-					table.addRow([new Date(begin.year(),begin.month(),begin.date()),result.value]);
+					var m = moment.unix(result.begin).tz(data.timezone);
+					var day = new Date(m.year(),m.month(),m.date());
+					if (begin === null) begin = day;
+					end = day;
+					table.addRow([day,result.value]);
 				});
-				chart.draw(table,{
+				var config={
 					hAxis: {title: 'Date'},
 					vAxis: {
 						title: (data.max === 100) ? '%' : 'Rating',
-						maxValue: data.max,
-						minValue: data.min
+						viewWindow: {
+							min: data.min,
+							max: data.max
+						},
+						ticks: (data.max === 100) ? [0,25,50,75,100] : [1,2,3,4,5]
 					}
-				});
+				};
+				if (begin !== null) {
+					config.hAxis.viewWindow = {
+						max: end,
+						min: begin
+					};
+				}
+				chart.draw(table,config);
 			});
 		};
 		select.change(impl);

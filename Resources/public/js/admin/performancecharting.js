@@ -2,7 +2,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 	return function (root, get_data, get_csv_url, report_error) {
 		root = $(root);
 		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
-		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};;
+		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(0)');
 		var qselect = root.find('select:eq(1)');

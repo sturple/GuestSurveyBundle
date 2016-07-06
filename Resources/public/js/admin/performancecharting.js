@@ -1,15 +1,24 @@
 define(['jquery','google/visualization','moment-timezone'],function ($, visualization, moment) {
-	return function (root, get_data, report_error) {
+	return function (root, get_data, get_csv_url, report_error) {
 		root = $(root);
 		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
+		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};;
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(0)');
 		var qselect = root.find('select:eq(1)');
 		var div = root.find('div').first();
+		var csv = root.find('a:eq(0)');
 		var chart = new visualization.LineChart(div[0]);
 		var impl = function () {
 			var days = select.val();
 			var question = parseInt(qselect.val());
+			get_csv_url(question,days,function (url, e) {
+				if (e) {
+					report_error(e);
+					return;
+				}
+				csv.attr('href',url);
+			});
 			var num = parseInt(days);
 			get_data(question,isNaN(num) ? days : num,function (data, e) {
 				if (e) {

@@ -868,7 +868,7 @@ class DefaultController extends Controller
                 ++$count;
             }
             unset($day->results);
-            $day->value = ($count === 0) ? 0.0 : ((float)$sum / (float)$count);
+            $day->value = ($count === 0) ? null : ((float)$sum / (float)$count);
             yield $day;
         }
     }
@@ -883,7 +883,7 @@ class DefaultController extends Controller
                 ++$count;
             }
             unset($day->results);
-            $day->value = ($count === 0) ? 0.0 : (((float)$good / (float)$count)*100.0);
+            $day->value = ($count === 0) ? null : (((float)$good / (float)$count)*100.0);
             yield $day;
         }
     }
@@ -930,7 +930,7 @@ class DefaultController extends Controller
         $obj = $this->getLastDaysByDay($now,$days,$slug,$group);
         $result = null;
         if ($type === 'rating') {
-            $min = 0;
+            $min = 1;
             $max = 5;
             $result = $this->ratingToChart($field,$obj);
         } elseif ($type === 'polar') {

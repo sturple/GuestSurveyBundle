@@ -954,7 +954,7 @@ class DefaultController extends Controller
         }
         $arr=[];
         foreach ($result as $r) {
-            $arr[]=(object)[
+            $arr[] = (object)[
                 'value' => $r->value,
                 'begin' => $r->begin->getTimestamp(),
                 'end' => $r->end->getTimestamp()

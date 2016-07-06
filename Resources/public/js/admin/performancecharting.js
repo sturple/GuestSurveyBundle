@@ -3,14 +3,15 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		root = $(root);
 		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		report_error = report_error || function (e) {	};
-		var select = root.find('select').first();
+		var select = root.find('select:eq(0)');
+		var qselect = root.find('select:eq(1)');
 		var div = root.find('div').first();
 		var chart = new visualization.LineChart(div[0]);
 		var impl = function () {
 			var days = select.val();
+			var question = parseInt(qselect.val());
 			var num = parseInt(days);
-			//	TODO: Get question number dynamically
-			get_data(10,isNaN(num) ? days : num,function (data, e) {
+			get_data(question,isNaN(num) ? days : num,function (data, e) {
 				if (e) {
 					report_error(e);
 					return;
@@ -18,8 +19,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				var table = new visualization.DataTable();
 				//	TODO: Make this "date" type
 				table.addColumn('date','Date');
-				//	TODO: Set to question number
-				table.addColumn('number','Q10');
+				table.addColumn('number','Q'+question);
 				data.results.forEach(function (result) {
 					var begin = moment.unix(result.begin).tz(data.timezone);
 					table.addRow([new Date(begin.year(),begin.month(),begin.date()),result.value]);
@@ -35,6 +35,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			});
 		};
 		select.change(impl);
+		qselect.change(impl);
 		//	Load initial data
 		impl();
 	};

@@ -5,6 +5,12 @@
     <option value="yeartodate">Year to Date</option>
 </select>
 
+<select>
+    {% for q in 1..questions|length %}
+    <option value="{{q}}">Q{{q}}</option>
+    {% endfor %}
+</select>
+
 <div style="text-align: center; margin: 32px 0;height: 400px; border: 1px solid #eee;padding: 0 0;"></div>
 <div style="padding-top: 24px;">
     <a href="" class="btn btn-primary">Download Performance Data as (CSV) -- what diff </a>

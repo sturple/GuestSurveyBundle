@@ -833,37 +833,14 @@ class DefaultController extends Controller
             $count = 0;
             foreach ($day->results as $result) {
                 $rating = $result->getQuestion($question);
-                if (!is_numeric($rating)) throw new \RuntimeException(
-                    sprintf(
-                        '%s with ID %d returned non-numeric string "%s" for question%d',
-                        get_class($result),
-                        $result->getId(),
-                        $rating,
-                        $question
-                    )
-                );
+                //  Do not count invalid entries
+                if (!is_numeric($rating)) continue;
                 $i = intval($rating);
                 //  This check makes sure that the string doesn't actually
                 //  parse to a floating point value whose fractional part
                 //  is truncated when converting to an integer
-                if (floatval($rating) != $i) throw new \RuntimeException(
-                    sprintf(
-                        '%s with ID %d returned non-integer string "%s" for question%d',
-                        get_class($result),
-                        $result->getId(),
-                        $rating,
-                        $question
-                    )
-                );
-                if (($i < 1) || ($i > 5)) throw new \RuntimeException(
-                    sprintf(
-                        '%s with ID %d returned out of range rating %d for question%d',
-                        get_class($result),
-                        $result->getId(),
-                        $i,
-                        $question
-                    )
-                );
+                if (floatval($rating) != $i) continue;
+                if (($i < 1) || ($i > 5)) continue;
                 $sum += $i;
                 ++$count;
             }
@@ -879,7 +856,10 @@ class DefaultController extends Controller
             $good = 0;
             $count = 0;
             foreach ($day->results as $result) {
-                if ($callable($result)) ++$good;
+                $result = $callable($result);
+                //  Do not count invalid entries
+                if (is_null($result)) continue;
+                if ($result) ++$good;
                 ++$count;
             }
             unset($day->results);
@@ -894,15 +874,8 @@ class DefaultController extends Controller
             $text = $q->getQuestion($question);
             if ($text === 'Yes') return !$negative;
             if ($text === 'No') return $negative;
-            throw new \RuntimeException(
-                sprintf(
-                    '%s with ID %d returned "%s" which is neither "Yes" or "No" for question%d',
-                    get_class($q),
-                    $q->getId(),
-                    $text,
-                    $question
-                )
-            );
+            //  Invalid, do not count
+            return null;
         },$days);
     }
 
@@ -910,6 +883,8 @@ class DefaultController extends Controller
     {
         return $this->percentageToChart(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
             $text = $q->getQuestion($question);
+            //  Invalid, do not count
+            if (!is_string($text)) return null;
             $text = preg_replace('/^\\s+|\\s+$/u','',$text);
             return $text !== '';
         },$days);

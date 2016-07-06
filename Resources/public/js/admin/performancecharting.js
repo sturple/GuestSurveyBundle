@@ -63,6 +63,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 						min: begin
 					};
 				}
+				if (data.threshold !== null) {
+					config.vAxis.baseline = data.threshold;
+				}
 				chart.draw(table,config);
 			});
 		};

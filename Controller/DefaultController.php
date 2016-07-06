@@ -945,7 +945,8 @@ class DefaultController extends Controller
             'timezone' => $tz,
             'days' => $days,
             'type' => $type,
-            'threshold' => $this->getValue('trigger',$q,null)
+            'threshold' => $this->getValue('trigger',$q,null),
+            'title' => htmlspecialchars_decode(strip_tags($q['title']))
         ];
     }
 

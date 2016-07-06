@@ -47,6 +47,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					table.addRow([day,result.value]);
 				});
 				var config={
+					title: data.title,
 					hAxis: {title: 'Date'},
 					vAxis: {
 						title: (data.max === 100) ? '%' : 'Rating',

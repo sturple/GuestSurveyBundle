@@ -956,27 +956,45 @@ class DefaultController extends Controller
         foreach ($result as $r) {
             $arr[] = (object)[
                 'value' => $r->value,
-                'begin' => $r->begin->getTimestamp(),
-                'end' => $r->end->getTimestamp()
+                'begin' => $r->begin,
+                'end' => $r->end
             ];
         }
-        $json=(object)[
+        return (object)[
             'min' => $min,
             'max' => $max,
             'group' => ($group === false) ? null : $group,
             'slug' => $slug,
             'question' => $question,
             'results' => $arr,
-            'timezone' => $tz->getName()
+            'timezone' => $tz,
+            'days' => $days,
+            'type' => $type
         ];
-        $res=new \Symfony\Component\HttpFoundation\Response();
-        $res->setCharset('UTF-8');
-        $res->setContent(json_encode($json));
-        $res->headers->set('Content-Type','application/json');
-        return $res;
     }
 
-    public function chartAction($question, $days, $slug, $group = false)
+    private function sanitizeToJson($obj)
+    {
+        if ($obj instanceof \stdClass) {
+            $retr = new \stdClass();
+            foreach ($obj as $key => $value) $retr->$key = $this->sanitizeToJson($value);
+            return $retr;
+        }
+        if (is_array($obj)) {
+            return array_map(function ($obj) {
+                return $this->sanitizeToJson($obj);
+            },$obj);
+        }
+        if ($obj instanceof \DateTime) {
+            return $obj->getTimestamp();
+        }
+        if ($obj instanceof \DateTimeZone) {
+            return $obj->getName();
+        }
+        return $obj;
+    }
+
+    private function chartImpl($question, $days, $slug, $group = false)
     {
         $this->getConfiguration($slug,$group);
         $this->checkIfAuthenticated();
@@ -1006,6 +1024,85 @@ class DefaultController extends Controller
             )
         );
         return $this->createChartResponse($question,$days,$slug,$group);
+    }
+
+    private function getCsvFilename($question, $days, $slug, $group = false)
+    {
+        return sprintf(
+            '%s-%d-%s.csv',
+            ($group === false) ? $slug : sprintf('%s-%s',$group,$slug),
+            $question,
+            $days
+        );
+    }
+
+    private function csvEscape($str)
+    {
+        //  "Each field may or may not be enclosed in double quotes [...]"
+        //
+        //  "If double-quotes are used to enclose fields, then a double-quote
+        //   appearing inside a field must be escaped by preceding it with
+        //   another double quote."
+        return sprintf('"%s"',preg_replace('/"/u','""',$str));
+    }
+
+    private function getCsvRow(array $data)
+    {
+        $retr = '';
+        $first = true;
+        foreach ($data as $datum) {
+            if ($first) $first = false;
+            else $retr .= ',';
+            $retr .= $this->csvEscape($datum);
+        }
+        //  "Each record is located on a separate line, delimited by a line
+        //   break (CRLF)."
+        //
+        //  "The last record in the file may or may not have an ending line
+        //   break."
+        $retr .= "\r\n";
+        return $retr;
+    }
+
+    private function getCsv($obj)
+    {
+        $header = ['Date',null];
+        if ($obj->type === 'rating') $header[1] = 'Average Rating';
+        elseif ($obj->type === 'open') $header[1] = '% Responding';
+        //  Must be polar
+        else $header[1] = '% Positive';
+        $retr = $this->getCsvRow($header);
+        foreach ($obj->results as $result) {
+            $retr .= $this->getCsvRow([
+                $result->begin->format('Y-m-d T'),
+                is_null($result->value) ? '' : (string)$result->value
+            ]);
+        }
+        return $retr;
+    }
+
+    public function chartAction($question, $days, $slug, $group = false)
+    {
+        $obj = $this->chartImpl($question,$days,$slug,$group);
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->setContent(json_encode($this->sanitizeToJson($obj)));
+        $res->headers->set('Content-Type','application/json');
+        return $res;
+    }
+
+    public function chartCsvAction($question, $days, $slug, $group = false)
+    {
+        $obj = $this->chartImpl($question,$days,$slug,$group);
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->headers->set('Content-Type','text/csv');
+        $res->headers->set(
+            'Content-Disposition',
+            sprintf('attachment; filename=%s',$this->getCsvFilename($question,$days,$slug,$group))
+        );
+        $res->setContent($this->getCsv($obj));
+        return $res;
     }
 
 }

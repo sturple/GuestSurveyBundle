@@ -1,13 +1,15 @@
 define(['jquery','google/visualization','moment-timezone'],function ($, visualization, moment) {
-	return function (root, get_data, get_csv_url, report_error) {
+	return function (root, get_data, get_csv_url, get_image_filename, report_error) {
 		root = $(root);
 		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
+		get_image_filename = get_image_filename || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(0)');
 		var qselect = root.find('select:eq(1)');
 		var div = root.find('div').first();
 		var csv = root.find('a:eq(0)');
+		var image = root.find('a:eq(1)');
 		var chart = new visualization.LineChart(div[0]);
 		var enabled = false;
 		var last_days = null;
@@ -33,8 +35,6 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					return;
 				}
 				if (!enabled) return;
-				last_days = days;
-				last_question = question;
 				var table = new visualization.DataTable();
 				table.addColumn('date','Date');
 				table.addColumn('number','Q' + question);
@@ -78,6 +78,17 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					config.vAxis.baseline = data.threshold;
 				}
 				chart.draw(table,config);
+				image.attr('href',chart.getImageURI());
+				get_image_filename(question,days,function (filename, e) {
+					if (e) {
+						report_error(e);
+						return;
+					}
+					if (!enabled) return;
+					image.attr('download',filename);
+					last_days = days;
+					last_question = question;
+				});
 			});
 		};
 		select.change(impl);

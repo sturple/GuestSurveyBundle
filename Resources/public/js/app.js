@@ -39,10 +39,16 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 			retr.segment(segs);
 			callback(retr.toString());
 		};
+		var performance_charting_get_image_filename = function (question, days, callback) {
+			var str = (group === null) ? '' : (group + '-');
+			str += slug + '-' + question + '-' + days + '.png';
+			callback(str);
+		};
 		var charting_manager = new charting(
 			performance_charting_div[0],
 			performance_charting_get_data,
 			performance_charting_get_csv_url,
+			performance_charting_get_image_filename,
 			report_error
 		);
 		$('a[href="#performanceCharting"][data-toggle="tab"]').on(

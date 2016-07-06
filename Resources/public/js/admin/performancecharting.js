@@ -15,6 +15,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var impl = function () {
 			if (!enabled) return;
 			var days = select.val();
+			var num = parseInt(days);
+			if (!isNaN(num)) days = num;
 			var question = parseInt(qselect.val());
 			if ((days === last_days) && (question === last_question)) return;
 			get_csv_url(question,days,function (url, e) {
@@ -25,8 +27,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				if (!enabled) return;
 				csv.attr('href',url);
 			});
-			var num = parseInt(days);
-			get_data(question,isNaN(num) ? days : num,function (data, e) {
+			get_data(question,days,function (data, e) {
 				if (e) {
 					report_error(e);
 					return;

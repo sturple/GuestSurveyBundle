@@ -19,12 +19,11 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 		var segments = [slug];
 		if (group !== null) segments.unshift(group);
 		var performance_charting_get_data = function (question, days, callback) {
-			//	TODO: Get sluggroup and slug dynamically
-			var url = '/thehartlinggroup/thepalmsturksandcaicos/chart/';
-			url += encodeURIComponent(question) + '/';
-			url += encodeURIComponent(days) + '/';
-			url += location.search;
-			var xhr = $.ajax(url);
+			var segs = segments.concat();	//	Clones array so we can freely mutate it
+			segs.push('chart',question.toString(),days.toString());
+			var addr = url.clone();
+			addr.segment(segs);
+			var xhr = $.ajax(addr.toString());
 			xhr.fail(function (xhr, text, e) {	callback(null,new Error(e));	});
 			xhr.done(function (data, text, xhr) {
 				var obj=null;

@@ -9,14 +9,20 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var div = root.find('div').first();
 		var csv = root.find('a:eq(0)');
 		var chart = new visualization.LineChart(div[0]);
+		var enabled = false;
+		var last_days = null;
+		var last_question = null;
 		var impl = function () {
+			if (!enabled) return;
 			var days = select.val();
 			var question = parseInt(qselect.val());
+			if ((days === last_days) && (question === last_question)) return;
 			get_csv_url(question,days,function (url, e) {
 				if (e) {
 					report_error(e);
 					return;
 				}
+				if (!enabled) return;
 				csv.attr('href',url);
 			});
 			var num = parseInt(days);
@@ -25,6 +31,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					report_error(e);
 					return;
 				}
+				if (!enabled) return;
+				last_days = days;
+				last_question = question;
 				var table = new visualization.DataTable();
 				table.addColumn('date','Date');
 				table.addColumn('number','Q' + question);
@@ -61,5 +70,12 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		qselect.change(impl);
 		//	Load initial data
 		impl();
+		this.enable = function () {
+			enabled = true;
+			impl();
+		};
+		this.disable = function () {
+			enabled = false;
+		};
 	};
 });

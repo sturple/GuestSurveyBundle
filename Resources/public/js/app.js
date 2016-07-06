@@ -1,9 +1,4 @@
-requirejs.config({
-	baseUrl: '/bundles/fgmssurvey/js',
-	paths: {
-		jquery: 'jquery-1.11.3.min'
-	}
-});
+requirejs.config({baseUrl: '/bundles/fgmssurvey/js'});
 
 require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting, uri) {
 	$(function () {
@@ -36,7 +31,7 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 			});
 		};
 		var report_error = function (e) {	alert(e.message);	};
-		var performance_charting_div = $('#performanceCharting')[0];
+		var performance_charting_div = $('#performanceCharting');
 		var performance_charting_get_csv_url = function (question, days, callback) {
 			var segs = segments.concat();	//	Clones array so we can freely mutate it
 			segs.push('chartcsv',question.toString(),days.toString());
@@ -45,10 +40,17 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 			callback(retr.toString());
 		};
 		var charting_manager = new charting(
-			performance_charting_div,
+			performance_charting_div[0],
 			performance_charting_get_data,
 			performance_charting_get_csv_url,
 			report_error
+		);
+		$('a[href="#performanceCharting"][data-toggle="tab"]').on(
+			'shown.bs.tab',
+			charting_manager.enable.bind(charting_manager)
+		).on(
+			'hide.bs.tab',
+			charting_manager.disable.bind(charting_manager)
 		);
 	});
 });

@@ -1070,7 +1070,7 @@ class DefaultController extends Controller
         $retr = $this->getCsvRow($header);
         foreach ($obj->results as $result) {
             $retr .= $this->getCsvRow([
-                $result->begin->format('Y-m-d T'),
+                $result->begin->format('M j, Y'),
                 is_null($result->value) ? '' : (string)$result->value
             ]);
         }

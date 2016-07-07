@@ -66,6 +66,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 							max: (data.max === 100) ? 110 : 6
 						},
 						ticks: (data.max === 100) ? [0,25,50,75,100] : [1,2,3,4,5]
+					},
+					legend: {
+						position: 'none'
 					}
 				};
 				if (begin !== null) {

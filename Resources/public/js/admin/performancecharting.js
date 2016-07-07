@@ -80,6 +80,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				if (data.threshold !== null) {
 					config.vAxis.baseline = data.threshold;
 					config.vAxis.baselineColor = 'red';
+					config.title += '\nThreshold: ' + data.threshold;
+					if (data.max === 100) config.title += '%';
 				}
 				chart.draw(table,config);
 				image.attr('href',chart.getImageURI());

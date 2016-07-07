@@ -894,52 +894,78 @@ class DefaultController extends Controller
         },$days);
     }
 
-    private function createChartResponse($question, \DateTime $begin, \DateTime $end, $slug, $group = false)
+    private function getQuestion($question)
     {
-        //  This is the zero-relative index of the question
-        $qi = $question - 1;
-        $q = $this->param['questions'][$qi];
-        $type = strtolower($this->getValue('type',$q,'open'));
-        $field = $q['field'];
-        $field = intval(preg_replace('/^question/u','',$field));
+        //  Questions are not indexed per se, instead we have
+        //  to search and match against "field"
+        $search = sprintf('question%d',$question);
+        foreach ($this->param['questions'] as $q) {
+            if ($q['field'] === $search) return $q;
+        }
+        throw $this->createNotFoundException(
+            sprintf('No question %d',$question)
+        );
+    }
+
+    private function getQuestionType($question)
+    {
+        if (!is_array($question)) $question = $this->getQuestion($question);
+        return strtolower($this->getValue('type',$question,'open'));
+    }
+
+    private function aggregateQuestion($question, $data)
+    {
+        $q = $this->getQuestion($question);
+        $type = $this->getQuestionType($q);
         $min = 0;
         $max = 0;
-        $obj = $this->getDateRangeByDay($begin,$end,$this->getDateRange($begin,$end,$slug,$group));
         $result = null;
         if ($type === 'rating') {
             $min = 1;
             $max = 5;
-            $result = $this->ratingToChart($field,$obj);
+            return $this->ratingToChart($question,$data);
         } elseif ($type === 'polar') {
             $min = 0;
             $max = 100;
             $negative = $this->getValue('negative',$q,false);
-            $result = $this->polarToChart($field,$negative,$obj);
+            return $this->polarToChart($question,$negative,$data);
         } elseif ($type === 'open') {
             $min = 0;
             $max = 100;
-            $result = $this->openToChart($field,$obj);
-        } else {
-            throw new \RuntimeException(
-                sprintf(
-                    'Unrecognized question type "%s" (%s question %d)',
-                    $type,
-                    ($group === false) ? $slug : sprintf('%s/%s',$group,$slug),
-                    $question
+            return $this->openToChart($question,$data);
+        }
+        throw new \RuntimeException(
+            sprintf(
+                'Unrecognized question type "%s" (%s question %d)',
+                $type,
+                ($group === false) ? $slug : sprintf('%s/%s',$group,$slug),
+                $question
+            )
+        );
+    }
+
+    private function createChartResponse($question, \DateTime $begin, \DateTime $end, $slug, $group = false)
+    {
+        $q = $this->getQuestion($question);
+        $type = $this->getQuestionType($q);
+        $arr=iterator_to_array(
+            $this->aggregateQuestion(
+                $question,
+                $this->getDateRangeByDay(
+                    $begin,
+                    $end,
+                    $this->getDateRange(
+                        $begin,
+                        $end,
+                        $slug,
+                        $group
+                    )
                 )
-            );
-        }
-        $arr=[];
-        foreach ($result as $r) {
-            $arr[] = (object)[
-                'value' => $r->value,
-                'begin' => $r->begin,
-                'end' => $r->end
-            ];
-        }
+            )
+        );
         return (object)[
-            'min' => $min,
-            'max' => $max,
+            'min' => ($type === 'rating') ? 1 : 0,
+            'max' => ($type === 'rating') ? 5 : 100,
             'group' => ($group === false) ? null : $group,
             'slug' => $slug,
             'question' => $question,

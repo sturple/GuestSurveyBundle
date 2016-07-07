@@ -79,6 +79,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				}
 				if (data.threshold !== null) {
 					config.vAxis.baseline = data.threshold;
+					config.vAxis.baselineColor = 'red';
 				}
 				chart.draw(table,config);
 				image.attr('href',chart.getImageURI());

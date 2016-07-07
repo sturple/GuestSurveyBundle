@@ -40,11 +40,13 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				table.addColumn('number','Q' + question);
 				var begin = null;
 				var end = null;
+				var has_data = false;
 				data.results.forEach(function (result) {
 					var m = moment.unix(result.begin).tz(data.timezone);
 					var day = new Date(m.year(),m.month(),m.date());
 					if (begin === null) begin = day;
 					end = day;
+					if (result.value !== null) has_data=true;
 					table.addRow([day,result.value]);
 				});
 				var title = null;
@@ -82,6 +84,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					config.vAxis.baselineColor = 'red';
 					config.title += '\nThreshold: ' + data.threshold;
 					if (data.max === 100) config.title += '%';
+				}
+				if (!has_data) {
+					config.title += '\nNO DATA';
 				}
 				chart.draw(table,config);
 				image.attr('href',chart.getImageURI());

@@ -716,7 +716,7 @@ class DefaultController extends Controller
         return $retr;
     }
 
-    private function getBeginningOfPastDayInt(\DateTime $when, $days)
+    private function getBeginningOfPastDay(\DateTime $when, $days)
     {
         if ($days <= 0) throw new \InvalidArgumentException(sprintf('Expected strictly positive integer, got %d',$days));
         $when = clone $when;
@@ -725,27 +725,6 @@ class DefaultController extends Controller
             $when->sub($interval);
         }
         return $this->getBeginningOfDay($when);
-    }
-
-    private function getBeginningOfPastDayString(\DateTime $when, $days)
-    {
-        if ($days !== 'yeartodate') throw new \InvalidArgumentException(
-            sprintf(
-                'Unexpected string "%s" (expected "yeartodate")',
-                $days
-            )
-        );
-        $year = intval($when->format('Y'));
-        $when = clone $when;
-        $when->setDate($year,1,1);
-        return $this->getBeginningOfDay($when);
-    }
-
-    private function getBeginningOfPastDay(\DateTime $when, $days)
-    {
-        if (is_int($days)) return $this->getBeginningOfPastDayInt($when,$days);
-        if (is_string($days)) return $this->getBeginningOfPastDayString($when,$days);
-        throw new \InvalidArgumentException('$days not string or integer');
     }
 
     private function getEndOfPastDay(\DateTime $when, $days)
@@ -760,10 +739,41 @@ class DefaultController extends Controller
         return new \DateTimeZone($tz);
     }
 
-    private function getLastDays(\DateTime $when, $days, $slug, $group = false)
+    private function daysToRange($days)
     {
-        $begin = $this->getBeginningOfPastDay($when,$days);
-        $end = $this->getEndOfDay($when);
+        $now = new \DateTime('now',$this->getTimezone());
+        if ($days === 'yeartodate') {
+            $end = $this->getEndOfDay($now);
+            $now->setDate(intval($now->format('Y')),1,1);
+            return [$this->getBeginningOfDay($now),$end];
+        }
+        if (!is_int($days)) {
+            if (!is_numeric($days)) throw $this->createNotFoundException(
+                sprintf(
+                    '"%s" is not numeric',
+                    $days
+                )
+            );
+            $i = intval($days);
+            if ($i != floatval($days)) throw $this->createNotFoundException(
+                sprintf(
+                    '"%s" is not integer',
+                    $days
+                )
+            );
+            if ($i < 1) throw $this->createNotFoundException(
+                sprintf(
+                    'Must retrieve at least one day, %d requested',
+                    $i
+                )
+            );
+            $days = $i;
+        }
+        return [$this->getBeginningOfPastDay($now,$days),$this->getEndOfDay($now)];
+    }
+
+    private function getDateRange (\DateTime $begin, \DateTime $end, $slug, $group = false)
+    {
         $utc = new \DateTimeZone('UTC');
         $begin->setTimezone($utc);
         $end->setTimezone($utc);
@@ -788,42 +798,36 @@ class DefaultController extends Controller
         return $retr;
     }
 
-    private function getLastDaysByDay(\DateTime $when, $days, $slug, $group = false)
+    private function getDateRangeByDay(\DateTime $begin, \DateTime $end, array $arr)
     {
-        $arr = $this->getLastDays($when,$days,$slug,$group);
         usort($arr,function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $a, \Fgms\Bundle\SurveyBundle\Entity\Questionnaire $b) {
             $a = $a->getCreateDate();
             $b = $b->getCreateDate();
             $retr = $a->getTimestamp() - $b->getTimestamp();
-            //	We reverse the order so we can just pop
-            //	things off the end
-            $retr *= -1;
             return $retr;
         });
-        $end = $this->getEndOfPastDay($when,$days);
-        $begin = $this->getEndOfDay($when);
         $jump = new \DateInterval('P1D');
-        $begin->add($jump);
+        //  Clone to avoid mutating the referred to objects
+        $begin = clone $begin;
+        //  Next array index to consider
+        $i = 0;
         //	This function generates all the Questionnaire objects
         //	in the currently considered day
-        $func = function () use ($end, &$arr) {
-            while ((count($arr) !==0) && ($arr[count($arr)-1]->getCreateDate()->getTimestamp()<=$end->getTimestamp())) {
-                yield array_pop($arr);
-            }
+        $func = function () use ($begin, $arr, &$i) {
+            while (
+                ($i !== count($arr)) &&
+                ($arr[$i]->getCreateDate()->getTimestamp() < $begin->getTimestamp())
+            ) yield $arr[$i++];
         };
-        //	We loop through each day starting with the first
-        //	(temporally) and ending with the latest (temporally)
-        //	and generate an object for each that contains the
-        //	beginning and end of the day as well as a traversable
-        //	which yields each Questionnaire object within that
-        //	window
-        do {
+        while ($begin->getTimestamp() <= $end->getTimestamp()) {
+            $b = clone $begin;
+            $begin->add($jump);
             yield (object)[
-                'begin' => $this->getBeginningOfDay($end),
-                'end' => $end,
+                'begin' => $b,
+                'end' => $this->getEndOfDay($b),
                 'results' => $func()
             ];
-        } while ($end->add($jump)->getTimestamp() !== $begin->getTimestamp());
+        }
     }
 
     private function ratingToChart($question, $days)
@@ -890,7 +894,7 @@ class DefaultController extends Controller
         },$days);
     }
 
-    private function createChartResponse($question, $days, $slug, $group = false)
+    private function createChartResponse($question, \DateTime $begin, \DateTime $end, $slug, $group = false)
     {
         //  This is the zero-relative index of the question
         $qi = $question - 1;
@@ -900,9 +904,7 @@ class DefaultController extends Controller
         $field = intval(preg_replace('/^question/u','',$field));
         $min = 0;
         $max = 0;
-        $tz = $this->getTimezone();
-        $now = new \DateTime('now',$tz);
-        $obj = $this->getLastDaysByDay($now,$days,$slug,$group);
+        $obj = $this->getDateRangeByDay($begin,$end,$this->getDateRange($begin,$end,$slug,$group));
         $result = null;
         if ($type === 'rating') {
             $min = 1;
@@ -942,8 +944,7 @@ class DefaultController extends Controller
             'slug' => $slug,
             'question' => $question,
             'results' => $arr,
-            'timezone' => $tz,
-            'days' => $days,
+            'timezone' => $this->getTimezone(),
             'type' => $type,
             'threshold' => $this->getValue('trigger',$q,null),
             'title' => htmlspecialchars_decode(strip_tags($q['title']))
@@ -976,22 +977,14 @@ class DefaultController extends Controller
         $this->getConfiguration($slug,$group);
         $this->checkIfAuthenticated();
         $question = intval($question);
-        if ($days !== 'yeartodate') {
-            $days = intval($days);
-            if (($days < 0) || ($days > 30)) throw $this->createNotFoundException(
-                sprintf(
-                    'Number of days (%d) out of range',
-                    $days
-                )
-            );
-        }
+        $range = $this->daysToRange($days);
         if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
             sprintf(
                 'Question number (%d) out of range',
                 $question
             )
         );
-        $c=count($this->param['questions']);
+        $c = count($this->param['questions']);
         if ($question > $c) throw $this->createNotFoundException(
             sprintf(
                 '%s has only %d questions but question number %d requested',
@@ -1000,7 +993,7 @@ class DefaultController extends Controller
                 $question
             )
         );
-        return $this->createChartResponse($question,$days,$slug,$group);
+        return $this->createChartResponse($question,$range[0],$range[1],$slug,$group);
     }
 
     private function getCsvFilename($question, $days, $slug, $group = false)

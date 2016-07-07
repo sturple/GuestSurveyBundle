@@ -62,8 +62,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					vAxis: {
 						title: title,
 						viewWindow: {
-							min: data.min,
-							max: data.max
+							min: (data.min === 0) ? -10 : 0,
+							max: (data.max === 100) ? 110 : 6
 						},
 						ticks: (data.max === 100) ? [0,25,50,75,100] : [1,2,3,4,5]
 					}

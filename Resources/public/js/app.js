@@ -34,7 +34,7 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 		var performance_charting_div = $('#performanceCharting');
 		var performance_charting_get_csv_url = function (question, days, callback) {
 			var segs = segments.concat();	//	Clones array so we can freely mutate it
-			segs.push('chartcsv',question.toString(),days.toString());
+			segs.push('chartcsv',days.toString());
 			var retr = url.clone();
 			retr.segment(segs);
 			callback(retr.toString());

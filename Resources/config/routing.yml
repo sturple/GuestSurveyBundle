@@ -79,10 +79,10 @@ fgms_survey_chart_with_group:
     defaults: {_controller: FgmsSurveyBundle:Default:chart }
     requirements: {question: \d+, days: \d+|yeartodate }
 fgms_survey_chart_csv:
-    path: /{slug}/chartcsv/{question}/{days}/
+    path: /{slug}/chartcsv/{days}/
     defaults: {_controller: FgmsSurveyBundle:Default:chartCsv, group: false }
     requirements: {question: \d+, days: \d+|yeartodate }
 fgms_survey_chart_csv_with_group:
-    path: /{group}/{slug}/chartcsv/{question}/{days}/
+    path: /{group}/{slug}/chartcsv/{days}/
     defaults: {_controller: FgmsSurveyBundle:Default:chartCsv }
     requirements: {question: \d+, days: \d+|yeartodate }

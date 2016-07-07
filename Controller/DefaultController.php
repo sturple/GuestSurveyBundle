@@ -850,6 +850,7 @@ class DefaultController extends Controller
             }
             unset($day->results);
             $day->value = ($count === 0) ? null : ((float)$sum / (float)$count);
+            $day->count = $count;
             yield $day;
         }
     }
@@ -868,6 +869,7 @@ class DefaultController extends Controller
             }
             unset($day->results);
             $day->value = ($count === 0) ? null : (((float)$good / (float)$count)*100.0);
+            $day->count = $count;
             yield $day;
         }
     }
@@ -998,10 +1000,15 @@ class DefaultController extends Controller
         return $obj;
     }
 
-    private function chartImpl($question, $days, $slug, $group = false)
+    private function chartInit($slug, $group = false)
     {
         $this->getConfiguration($slug,$group);
         $this->checkIfAuthenticated();
+    }
+
+    private function chartImpl($question, $days, $slug, $group = false)
+    {
+        $this->chartInit($slug,$group);
         $question = intval($question);
         $range = $this->daysToRange($days);
         if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
@@ -1022,12 +1029,11 @@ class DefaultController extends Controller
         return $this->createChartResponse($question,$range[0],$range[1],$slug,$group);
     }
 
-    private function getCsvFilename($question, $days, $slug, $group = false)
+    private function getCsvFilename($days, $slug, $group = false)
     {
         return sprintf(
-            '%s-%d-%s.csv',
+            '%s-%s.csv',
             ($group === false) ? $slug : sprintf('%s-%s',$group,$slug),
-            $question,
             $days
         );
     }
@@ -1060,21 +1066,23 @@ class DefaultController extends Controller
         return $retr;
     }
 
-    private function getCsv($obj)
+    private function getCsvHeader(array $qs)
     {
-        $header = ['Date',null];
-        if ($obj->type === 'rating') $header[1] = 'Average Rating';
-        elseif ($obj->type === 'open') $header[1] = '% Responding';
-        //  Must be polar
-        else $header[1] = '% Positive';
-        $retr = $this->getCsvRow($header);
-        foreach ($obj->results as $result) {
-            $retr .= $this->getCsvRow([
-                $result->begin->format('M j, Y'),
-                is_null($result->value) ? '' : (string)$result->value
-            ]);
+        $retr = ['Date'];
+        foreach ($qs as $q) {
+            $explain = '';
+            if ($q['type'] === 'rating') $explain = 'Average Rating';
+            elseif ($q['type'] === 'open') $explain = '% Responding';
+            //  Must be polar
+            else $explain = '% Positive';
+            $retr[] = sprintf(
+                'Q%d (%s)',
+                $this->extractField($q['field']),
+                $explain
+            );
         }
-        return $retr;
+        $retr[] = 'Number of Entries';
+        return $this->getCsvRow($retr);
     }
 
     public function chartAction($question, $days, $slug, $group = false)
@@ -1087,17 +1095,54 @@ class DefaultController extends Controller
         return $res;
     }
 
-    public function chartCsvAction($question, $days, $slug, $group = false)
+    private function extractField($field)
     {
-        $obj = $this->chartImpl($question,$days,$slug,$group);
+        $field = preg_replace('/^question/u','',$field);
+        return intval($field);
+    }
+
+    public function chartCsvAction($days, $slug, $group = false)
+    {
+        $this->chartInit($slug,$group);
+        list($begin,$end) = $this->daysToRange($days);
+        $entries = $this->getDateRange($begin,$end,$slug,$group);
+        $qs = $this->param['questions'];
+        usort($qs,function (array $a, array $b) {
+            return $this->extractField($a['field']) - $this->extractField($b['field']);
+        });
+        $csv = $this->getCsvHeader($qs);
+        $gs = [];
+        foreach ($qs as $q) {
+            $curr = $this->aggregateQuestion(
+                $this->extractField($q['field']),
+                $this->getDateRangeByDay($begin,$end,$entries)
+            );
+            //  Not sure how required this is but foreach loops
+            //  do this apparently
+            $curr->rewind();
+            $gs[] = $curr;
+        }
+        if (count($gs) === 0) throw new \RuntimeException('No questions');
+        while ($gs[0]->valid()) {
+            $num = 0;
+            $row = [$gs[0]->current()->begin->format('M j, Y')];
+            foreach ($gs as $g) {
+                $curr = $g->current();
+                if ($curr->count > $num) $num = $curr->count;
+                $row[] = $curr->value;
+                $g->next();
+            }
+            $row[] = $num;
+            $csv .= $this->getCsvRow($row);
+        }
         $res = new \Symfony\Component\HttpFoundation\Response();
         $res->setCharset('UTF-8');
         $res->headers->set('Content-Type','text/csv');
         $res->headers->set(
             'Content-Disposition',
-            sprintf('attachment; filename=%s',$this->getCsvFilename($question,$days,$slug,$group))
+            sprintf('attachment; filename=%s',$this->getCsvFilename($days,$slug,$group))
         );
-        $res->setContent($this->getCsv($obj));
+        $res->setContent($csv);
         return $res;
     }
 

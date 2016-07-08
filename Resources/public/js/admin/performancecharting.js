@@ -10,7 +10,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var div = root.find('div').first();
 		var csv = root.find('a:eq(0)');
 		var image = root.find('a:eq(1)');
-		var chart = new visualization.LineChart(div[0]);
+		var chart = new visualization.ColumnChart(div[0]);
 		var enabled = false;
 		var last_days = null;
 		var last_question = null;

@@ -38,6 +38,10 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				var table = new visualization.DataTable();
 				table.addColumn('date','Date');
 				table.addColumn('number','Q' + question);
+				table.addColumn({
+					role: 'style',
+					type: 'string'
+				});
 				var begin = null;
 				var end = null;
 				var has_data = false;
@@ -47,7 +51,10 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					if (begin === null) begin = day;
 					end = day;
 					if (result.value !== null) has_data=true;
-					table.addRow([day,result.value]);
+					var color = '#dfc12a';	//	Mustard yellow
+					if (result.value === data.max) color = '#228b22';	//	Forest green
+					else if ((data.threshold !== null) && (result.value < data.threshold)) color = 'red';
+					table.addRow([day,result.value,'color: ' + color]);
 				});
 				var title = null;
 				if (data.type === 'open') {
@@ -80,8 +87,6 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					};
 				}
 				if (data.threshold !== null) {
-					config.vAxis.baseline = data.threshold;
-					config.vAxis.baselineColor = 'red';
 					config.title += '\nThreshold: ' + data.threshold;
 					if (data.max === 100) config.title += '%';
 				}

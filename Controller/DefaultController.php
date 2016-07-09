@@ -1006,11 +1006,9 @@ class DefaultController extends Controller
         $this->checkIfAuthenticated();
     }
 
-    private function chartImpl($question, $days, $slug, $group = false)
+    private function chartImpl($question, \DateTime $from, \DateTime $to, $slug, $group = false)
     {
-        $this->chartInit($slug,$group);
         $question = intval($question);
-        $range = $this->daysToRange($days);
         if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
             sprintf(
                 'Question number (%d) out of range',
@@ -1026,7 +1024,12 @@ class DefaultController extends Controller
                 $question
             )
         );
-        return $this->createChartResponse($question,$range[0],$range[1],$slug,$group);
+        $obj = $this->createChartResponse($question,$from,$to,$slug,$group);
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->setContent(json_encode($this->sanitizeToJson($obj)));
+        $res->headers->set('Content-Type','application/json');
+        return $res;
     }
 
     private function getCsvFilename($days, $slug, $group = false)
@@ -1087,12 +1090,9 @@ class DefaultController extends Controller
 
     public function chartAction($question, $days, $slug, $group = false)
     {
-        $obj = $this->chartImpl($question,$days,$slug,$group);
-        $res = new \Symfony\Component\HttpFoundation\Response();
-        $res->setCharset('UTF-8');
-        $res->setContent(json_encode($this->sanitizeToJson($obj)));
-        $res->headers->set('Content-Type','application/json');
-        return $res;
+        $this->chartInit($slug,$group);
+        $range = $this->daysToRange($days);
+        return $this->chartImpl($question,$range[0],$range[1],$slug,$group);
     }
 
     private function extractField($field)
@@ -1144,6 +1144,14 @@ class DefaultController extends Controller
         );
         $res->setContent($csv);
         return $res;
+    }
+
+    public function chartRangeAction($fromday, $frommonth, $fromyear, $today, $tomonth, $toyear, $question, $slug, $group = false)
+    {
+        $this->chartInit($slug,$group);
+        $from = \DateTime::createFromFormat('d-m-Y',sprintf('%s-%s-%s',$fromday,$frommonth,$fromyear));
+        $to = \DateTime::createFromFormat('d-m-Y',sprintf('%s-%s-%s',$today,$tomonth,$toyear));
+        return $this->chartImpl($question,$from,$to,$slug,$group);
     }
 
 }

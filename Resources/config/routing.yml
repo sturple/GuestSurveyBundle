@@ -86,3 +86,11 @@ fgms_survey_chart_csv_with_group:
     path: /{group}/{slug}/chartcsv/{days}/
     defaults: {_controller: FgmsSurveyBundle:Default:chartCsv }
     requirements: {question: \d+, days: \d+|yeartodate }
+fgms_survey_chart_range:
+    path: /{slug}/chart/{question}/{fromday}/{frommonth}/{fromyear}/{today}/{tomonth}/{toyear}/
+    defaults: {_controller: FgmsSurveyBundle:Default:chartRange, group: false }
+    requirements: {question: '\d+', fromday: '\d{2}', frommonth: '\d{2}', fromyear: '\d{4}', today: '\d{2}', tomonth: '\d{2}', toyear: '\d{4}' }
+fgms_survey_chart_range_with_group:
+    path: /{group}/{slug}/chart/{question}/{fromday}/{frommonth}/{fromyear}/{today}/{tomonth}/{toyear}/
+    defaults: {_controller: FgmsSurveyBundle:Default:chartRange }
+    requirements: {question: '\d+', fromday: '\d{2}', frommonth: '\d{2}', fromyear: '\d{4}', today: '\d{2}', tomonth: '\d{2}', toyear: '\d{4}' }

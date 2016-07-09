@@ -475,3 +475,8 @@ a:focus {  outline:none;  outline-offset: -2px;}
     display: list-item;
 }
 */
+
+#performanceCharting select {
+    display: block;
+    margin-bottom: 10px;
+}

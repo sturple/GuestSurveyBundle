@@ -132,6 +132,14 @@ class DefaultController extends Controller
         $showResultsFlag = false;
         // throws error if not authenticated
         $this->checkIfAuthenticated();
+        $this->param['questions_presentation'] = array_map(function (array $q) {
+            $q['number'] = intval(preg_replace('/^question/u','',$q['field']));
+            $q['title'] = htmlspecialchars_decode(strip_tags($q['title']));
+            return $q;
+        },$this->param['questions']);
+        usort($this->param['questions_presentation'],function (array $a, array $b) {
+            return $a['number'] - $b['number'];
+        });
         return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$this->getStats($slug,$group)) );
     }
 

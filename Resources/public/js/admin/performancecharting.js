@@ -5,8 +5,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		get_image_filename = get_image_filename || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		report_error = report_error || function (e) {	};
-		var select = root.find('select:eq(0)');
-		var qselect = root.find('select:eq(1)');
+		var select = root.find('select:eq(1)');
+		var qselect = root.find('select:eq(0)');
 		var div = root.find('div').first();
 		var csv = root.find('a:eq(0)');
 		var image = root.find('a:eq(1)');

@@ -1129,7 +1129,7 @@ class DefaultController extends Controller
             foreach ($gs as $g) {
                 $curr = $g->current();
                 if ($curr->count > $num) $num = $curr->count;
-                $row[] = $curr->value;
+                $row[] = round($curr->value,2);
                 $g->next();
             }
             $row[] = $num;

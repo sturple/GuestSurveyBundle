@@ -971,9 +971,7 @@ class DefaultController extends Controller
     private function summarizeRating($question, $threshold, $data)
     {
         $retr = (object)[
-            'perfect' => 0,
-            'acceptable' => 0,
-            'unacceptable' => 0,
+            'values' => [0,0,0,0,0],
             'total' => 0
         ];
         foreach ($data as $datum) {
@@ -982,15 +980,7 @@ class DefaultController extends Controller
             //  Ignore invalid entries
             if (is_null($i)) continue;
             ++$retr->total;
-            if ($i === 5) {
-                ++$retr->perfect;
-                continue;
-            }
-            if (is_null($threshold) || ($i >= $threshold)) {
-                ++$retr->acceptable;
-                continue;
-            }
-            ++$retr->unacceptable;
+            ++$retr->values[$i-1];
         }
         return $retr;
     }

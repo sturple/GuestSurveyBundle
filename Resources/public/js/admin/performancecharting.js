@@ -11,6 +11,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var csv = root.find('a:eq(0)');
 		var image = root.find('a:eq(1)');
 		var chart = new visualization.ColumnChart(div[0]);
+		var pie_div = root.find('div:eq(1)');
+		var pie_chart = new visualization.PieChart(pie_div[0]);
 		var enabled = false;
 		var last_days = null;
 		var last_question = null;
@@ -105,6 +107,45 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					last_days = days;
 					last_question = question;
 				});
+				var pie_table = new visualization.DataTable();
+				var pie_options = {};
+				//	Branch on type of question because we do three
+				//	different things for the pie chart for them
+				if (data.type === 'rating') {
+					pie_table.addColumn('string','Rating');
+					pie_table.addColumn('number','Entries');
+					pie_options.slices = {};
+					var r = 255;
+					var r_step = -(255-0x22) / 4;
+					var g = 0;
+					var g_step = 0x8b / 4;
+					var b = 0;
+					var b_step = 0x22 / 4;
+					for (var i = 0;i < 5;++i) {
+						pie_options.slices[i] = {color: 'rgb(' + r.toFixed() + ',' + g.toFixed() + ',' + b.toFixed() + ')'};
+						r += r_step;
+						g += g_step;
+						b += b_step;
+						var arr = [(i+1).toString(),data.summary.values[i]];
+						console.log(arr);
+						pie_table.addRow(arr);
+					}
+				} else if (data.type === 'polar') {
+					pie_options.slices = {
+						0: {color: '#228b22'},
+						1: {color: 'red'}
+					};
+					pie_table.addColumn('string','Answer Category');
+					pie_table.addColumn('number','Entries');
+					pie_table.addRow(['Positive',data.summary.good]);
+					pie_table.addRow(['Negative',data.summary.bad]);
+				} else {
+					pie_table.addColumn('string','Answer Category');
+					pie_table.addColumn('number','Entries');
+					pie_table.addRow(['Answered',data.summary.good]);
+					pie_table.addRow(['Unanswered',data.summary.bad]);
+				}
+				pie_chart.draw(pie_table,pie_options);
 			});
 		};
 		select.change(impl);

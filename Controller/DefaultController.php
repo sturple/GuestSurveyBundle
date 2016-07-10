@@ -838,6 +838,15 @@ class DefaultController extends Controller
         }
     }
 
+    private function toRating($str)
+    {
+        if (!is_numeric($str)) return null;
+        $i = intval($str);
+        if (floatval($str) != $i) return null;
+        if (($i < 1) || ($i > 5)) return null;
+        return $i;
+    }
+
     private function ratingToChart($question, $days)
     {
         foreach ($days as $day) {
@@ -845,14 +854,9 @@ class DefaultController extends Controller
             $count = 0;
             foreach ($day->results as $result) {
                 $rating = $result->getQuestion($question);
+                $i = $this->toRating($rating);
                 //  Do not count invalid entries
-                if (!is_numeric($rating)) continue;
-                $i = intval($rating);
-                //  This check makes sure that the string doesn't actually
-                //  parse to a floating point value whose fractional part
-                //  is truncated when converting to an integer
-                if (floatval($rating) != $i) continue;
-                if (($i < 1) || ($i > 5)) continue;
+                if (is_null($i)) continue;
                 $sum += $i;
                 ++$count;
             }
@@ -882,26 +886,36 @@ class DefaultController extends Controller
         }
     }
 
-    private function polarToChart($question, $negative, $days)
+    private function getPolarCallable($question, $negative)
     {
-        return $this->percentageToChart(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question, $negative) {
+        return function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question, $negative) {
             $text = $q->getQuestion($question);
             if ($text === 'Yes') return !$negative;
             if ($text === 'No') return $negative;
             //  Invalid, do not count
             return null;
-        },$days);
+        };
+    }
+
+    private function polarToChart($question, $negative, $days)
+    {
+        return $this->percentageToChart($this->getPolarCallable($question,$negative),$days);
+    }
+
+    private function getOpenCallable($question)
+    {
+        return function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+            $text = $q->getQuestion($question);
+            //  Apparently no comment is stored as NULL
+            if (!is_string($text)) return false;
+            $text = preg_replace('/^\\s+|\\s+$/u','',$text);
+            return $text !== '';
+        };
     }
 
     private function openToChart($question, $days)
     {
-        return $this->percentageToChart(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
-            $text = $q->getQuestion($question);
-            //  Invalid, do not count
-            if (!is_string($text)) return null;
-            $text = preg_replace('/^\\s+|\\s+$/u','',$text);
-            return $text !== '';
-        },$days);
+        return $this->percentageToChart($this->getOpenCallable($question),$days);
     }
 
     private function getQuestion($question)
@@ -954,25 +968,101 @@ class DefaultController extends Controller
         );
     }
 
+    private function summarizeRating($question, $threshold, $data)
+    {
+        $retr = (object)[
+            'perfect' => 0,
+            'acceptable' => 0,
+            'unacceptable' => 0,
+            'total' => 0
+        ];
+        foreach ($data as $datum) {
+            $rating = $datum->getQuestion($question);
+            $i = $this->toRating($rating);
+            //  Ignore invalid entries
+            if (is_null($i)) continue;
+            ++$retr->total;
+            if ($i === 5) {
+                ++$retr->perfect;
+                continue;
+            }
+            if (is_null($threshold) || ($i >= $threshold)) {
+                ++$retr->acceptable;
+                continue;
+            }
+            ++$retr->unacceptable;
+        }
+        return $retr;
+    }
+
+    private function summarizeBinary($callable, $data)
+    {
+        $retr = (object)[
+            'total' => 0,
+            'good' => 0,
+            'bad' => 0
+        ];
+        foreach ($data as $datum) {
+            $val = $callable($datum);
+            //  Skip invalid data
+            if (is_null($val)) continue;
+            ++$retr->total;
+            if ($val) ++$retr->good;
+            else ++$retr->bad;
+        }
+        return $retr;
+    }
+
+    private function summarizePolar($question, $negative, $data)
+    {
+        return $this->summarizeBinary($this->getPolarCallable($question,$negative),$data);
+    }
+
+    private function summarizeOpen($question, $data)
+    {
+        return $this->summarizeBinary($this->getOpenCallable($question),$data);
+    }
+
+    private function summarizeQuestion($question, $data)
+    {
+        $q = $this->getQuestion($question);
+        $type = $this->getQuestionType($q);
+        $threshold = $this->getValue('trigger',$q,null);
+        if ($type === 'rating') {
+            return $this->summarizeRating($question,$threshold,$data);
+        }
+        if ($type === 'polar') {
+            return $this->summarizePolar($question,$this->getValue('negative',$q,false),$data);
+        }
+        if ($type === 'open') {
+            return $this->summarizeOpen($question,$data);
+        }
+        throw new \RuntimeException(
+            sprintf(
+                'Unrecognized question type "%s" (%s question %d)',
+                $type,
+                ($group === false) ? $slug : sprintf('%s/%s',$group,$slug),
+                $question
+            )
+        );
+    }
+
     private function createChartResponse($question, \DateTime $begin, \DateTime $end, $slug, $group = false)
     {
         $q = $this->getQuestion($question);
         $type = $this->getQuestionType($q);
-        $arr=iterator_to_array(
+        $data = $this->getDateRange($begin,$end,$slug,$group);
+        $arr = iterator_to_array(
             $this->aggregateQuestion(
                 $question,
                 $this->getDateRangeByDay(
                     $begin,
                     $end,
-                    $this->getDateRange(
-                        $begin,
-                        $end,
-                        $slug,
-                        $group
-                    )
+                    $data
                 )
             )
         );
+        $summary = $this->summarizeQuestion($question,$data);
         return (object)[
             'min' => ($type === 'rating') ? 1 : 0,
             'max' => ($type === 'rating') ? 5 : 100,
@@ -983,7 +1073,8 @@ class DefaultController extends Controller
             'timezone' => $this->getTimezone(),
             'type' => $type,
             'threshold' => $this->getValue('trigger',$q,null),
-            'title' => htmlspecialchars_decode(strip_tags($q['title']))
+            'title' => htmlspecialchars_decode(strip_tags($q['title'])),
+            'summary' => $summary
         ];
     }
 

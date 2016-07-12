@@ -14,6 +14,19 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 		var segments = [slug];
 		if (group !== null) segments.unshift(group);
 		var report_error = function (e) {	alert(e.message);	};
+		var do_json_xhr = function (url, callback) {
+			var xhr = $.ajax(url);
+			xhr.fail(function (xhr, text, e) {	callback(null,new Error(e));	});
+			xhr.done(function (data, text, xhr) {
+				var obj = null;
+				try {
+					obj = JSON.parse(xhr.responseText);
+				} catch (e) {
+					callback(null,e);
+				}
+				callback(obj);
+			});
+		};
 		//	Setup performance charting
 		(function () {
 			var get_data = function (question, days, callback) {
@@ -21,17 +34,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				segs.push('chart',question.toString(),days.toString());
 				var addr = url.clone();
 				addr.segment(segs);
-				var xhr = $.ajax(addr.toString());
-				xhr.fail(function (xhr, text, e) {	callback(null,new Error(e));	});
-				xhr.done(function (data, text, xhr) {
-					var obj=null;
-					try {
-						obj=JSON.parse(xhr.responseText);
-					} catch (e) {
-						callback(null,e);
-					}
-					callback(obj);
-				});
+				do_json_xhr(addr.toString(),callback);
 			};
 			var div = $('#performanceCharting');
 			var get_csv_url = function (question, days, callback) {
@@ -69,8 +72,15 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 		})();
 		//	Setup guest feedback
 		(function () {
+			var get_data = function (question, days, callback) {
+				var segs = segments.concat();
+				segs.push('feedback',question.toString(),days.toString());
+				var addr = url.clone();
+				addr.segment(segs);
+				do_json_xhr(addr.toString(),callback);
+			};
 			var div = $('#guestFeedback');
-			var manager = new feedback(div[0]);
+			var manager = new feedback(div[0],get_data,report_error);
 		})();
 	});
 });

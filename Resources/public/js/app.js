@@ -79,8 +79,20 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				addr.segment(segs);
 				do_json_xhr(addr.toString(),callback);
 			};
+			var get_csv_url = function (question, days, callback) {
+				var segs = segments.concat();
+				segs.push('feedbackcsv',question.toString(),days.toString());
+				var retr = url.clone();
+				retr.segment(segs);
+				callback(retr.toString());
+			};
 			var div = $('#guestFeedback');
-			var manager = new feedback(div[0],get_data,report_error);
+			var manager = new feedback(
+				div[0],
+				get_data,
+				get_csv_url,
+				report_error
+			);
 		})();
 	});
 });

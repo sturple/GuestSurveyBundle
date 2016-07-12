@@ -1,5 +1,5 @@
 define(['jquery'],function ($) {
-	return function (root, get_data, report_error) {
+	return function (root, get_data, get_csv_url, report_error) {
 		root = $(root);
 		var unimplemented = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		get_data = get_data || unimplemented;
@@ -7,6 +7,7 @@ define(['jquery'],function ($) {
 		var q_select = root.find('select:eq(0)');
 		var d_select = root.find('select:eq(1)');
 		var table = root.find('table.table').first();
+		var csv = root.find('a').first();
 		var impl = function () {
 			var days = d_select.val();
 			var num = parseInt(days);
@@ -36,6 +37,13 @@ define(['jquery'],function ($) {
 					tbody.appendChild(tr);
 				});
 				table[0].appendChild(tbody);
+			});
+			get_csv_url(question,days,function (url, e) {
+				if (e) {
+					report_error(e);
+					return;
+				}
+				csv.attr('href',url);
 			});
 		};
 		q_select.change(impl);

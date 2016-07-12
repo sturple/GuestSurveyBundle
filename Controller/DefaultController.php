@@ -1198,6 +1198,11 @@ class DefaultController extends Controller
         return $this->getCsvRow($retr);
     }
 
+    private function dateToCsv(\DateTime $date)
+    {
+        return $date->format('M j, Y');
+    }
+
     public function chartAction($question, $days, $slug, $group = false)
     {
         $this->chartInit($slug,$group);
@@ -1235,7 +1240,7 @@ class DefaultController extends Controller
         if (count($gs) === 0) throw new \RuntimeException('No questions');
         while ($gs[0]->valid()) {
             $num = 0;
-            $row = [$gs[0]->current()->begin->format('M j, Y')];
+            $row = [$this->dateToCsv($gs[0]->current()->begin)];
             foreach ($gs as $g) {
                 $curr = $g->current();
                 if ($curr->count > $num) $num = $curr->count;
@@ -1264,7 +1269,7 @@ class DefaultController extends Controller
         return $this->chartImpl($question,$from,$to,$slug,$group);
     }
 
-    public function feedbackAction($question, $days, $slug, $group = false)
+    public function getFeedbackData($question, $days, $slug, $group = false)
     {
         $this->chartInit($slug,$group);
         $range = $this->daysToRange($days);
@@ -1285,12 +1290,17 @@ class DefaultController extends Controller
             return $val !== '';
         });
         $this->sortByDate($data,false);
-        $results = array_map(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+        return array_map(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
             return (object)[
                 'date' => $q->getCreateDate(),
                 'feedback' => $q->getQuestion($question)
             ];
         },$data);
+    }
+
+    public function feedbackAction($question, $days, $slug, $group = false)
+    {
+        $results = $this->getFeedbackData($question,$days,$slug,$group);
         $res = new \Symfony\Component\HttpFoundation\Response();
         $res->setCharset('UTF-8');
         $res->headers->set('Content-Type','application/json');
@@ -1303,6 +1313,29 @@ class DefaultController extends Controller
                 )
             )
         );
+        return $res;
+    }
+
+    public function feedbackCsvAction($question, $days, $slug, $group = false)
+    {
+        $results = $this->getFeedbackData($question,$days,$slug,$group);
+        $csv = $this->startCsv() . $this->getCsvRow(['Date','Feedback']);
+        foreach ($results as $result) {
+            $csv .= $this->getCsvRow([$this->dateToCsv($result->date),$result->feedback]);
+        }
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->headers->set('Content-Type','text/csv');
+        $res->headers->set(
+            'Content-Disposition',
+            sprintf(
+                'attachment; filename=%s-%s-%s-feedback.csv',
+                ($group === false) ? $slug : sprintf('%s-%s',$group,$slug),
+                $question,
+                $days
+            )
+        );
+        $res->setContent($csv);
         return $res;
     }
 

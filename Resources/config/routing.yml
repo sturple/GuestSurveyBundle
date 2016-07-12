@@ -104,3 +104,11 @@ fgms_survey_feedback_with_group:
     path: /{group}/{slug}/feedback/{question}/{days}/
     defaults: {_controller: FgmsSurveyBundle:Default:feedback }
     requirements: {question: '\d+', days: '\d+|yeartodate' }
+fgms_survey_feedback_csv:
+    path: /{slug}/feedbackcsv/{question}/{days}/
+    defaults: {_controller: FgmsSurveyBundle:Default:feedbackCsv, group: false }
+    requirements: {question: '\d+', days: '\d+|yeartodate' }
+fgms_survey_feedback_csv_with_group:
+    path: /{group}/{slug}/feedbackcsv/{question}/{days}/
+    defaults: {_controller: FgmsSurveyBundle:Default:feedbackCsv }
+    requirements: {question: '\d+', days: '\d+|yeartodate' }

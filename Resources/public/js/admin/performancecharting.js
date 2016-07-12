@@ -9,11 +9,12 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(1)');
 		var qselect = root.find('select:eq(0)');
-		var div = root.find('div').first();
+		var no_data_div = root.find('div:eq(0)');
+		var div = root.find('div:eq(1)');
 		var csv = root.find('a:eq(0)');
 		var image = root.find('a:eq(1)');
 		var chart = new visualization.ColumnChart(div[0]);
-		var pie_div = root.find('div:eq(1)');
+		var pie_div = root.find('div:eq(2)');
 		var pie_chart = new visualization.PieChart(pie_div[0]);
 		var pie_image = root.find('a:eq(2)');
 		var enabled = false;
@@ -40,8 +41,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					return;
 				}
 				if (!enabled) return;
-				//	Column chart
-				(function () {
+				var do_column_chart = function () {
 					var table = new visualization.DataTable();
 					table.addColumn('date','Date');
 					table.addColumn('number','Q' + question);
@@ -109,9 +109,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 						}
 						image.attr('download',filename);
 					});
-				})();
-				//	Pie chart
-				(function () {
+				};
+				var do_pie_chart = function () {
 					var pie_table = new visualization.DataTable();
 					var pie_options = {
 						title: data.title + '\nSummary'
@@ -160,7 +159,20 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 						}
 						pie_image.attr('download',filename);
 					});
-				})();
+				};
+				var no_data = true;
+				data.results.forEach(function (result) {	if (result.count !== 0) no_data = false;	});
+				if (no_data) {
+					div.hide();
+					pie_div.hide();
+					no_data_div.show();
+				} else {
+					div.show();
+					pie_div.show();
+					no_data_div.hide();
+					do_column_chart();
+					do_pie_chart();
+				}
 				last_days = days;
 				last_question = question;
 			});

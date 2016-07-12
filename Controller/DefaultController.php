@@ -806,14 +806,20 @@ class DefaultController extends Controller
         return $retr;
     }
 
-    private function getDateRangeByDay(\DateTime $begin, \DateTime $end, array $arr)
+    private function sortByDate(array &$data, $asc = true)
     {
-        usort($arr,function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $a, \Fgms\Bundle\SurveyBundle\Entity\Questionnaire $b) {
+        usort($data,function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $a, \Fgms\Bundle\SurveyBundle\Entity\Questionnaire $b) use ($asc) {
             $a = $a->getCreateDate();
             $b = $b->getCreateDate();
             $retr = $a->getTimestamp() - $b->getTimestamp();
+            if (!$asc) $retr *= -1;
             return $retr;
         });
+    }
+
+    private function getDateRangeByDay(\DateTime $begin, \DateTime $end, array $arr)
+    {
+        $this->sortByDate($arr);
         $jump = new \DateInterval('P1D');
         //  Clone to avoid mutating the referred to objects
         $begin = clone $begin;
@@ -1089,13 +1095,15 @@ class DefaultController extends Controller
         return $obj;
     }
 
+    //  TODO: Consider renaming this function: It does
+    //  initialization for more than just charts
     private function chartInit($slug, $group = false)
     {
         $this->getConfiguration($slug,$group);
         $this->checkIfAuthenticated();
     }
 
-    private function chartImpl($question, \DateTime $from, \DateTime $to, $slug, $group = false)
+    private function checkQuestion($question, $slug, $group = false)
     {
         $question = intval($question);
         if (($question < 1) || ($question > 15)) throw $this->createNotFoundException(
@@ -1113,6 +1121,12 @@ class DefaultController extends Controller
                 $question
             )
         );
+        return $question;
+    }
+
+    private function chartImpl($question, \DateTime $from, \DateTime $to, $slug, $group = false)
+    {
+        $question = $this->checkQuestion($question,$slug,$group);
         $obj = $this->createChartResponse($question,$from,$to,$slug,$group);
         $res = new \Symfony\Component\HttpFoundation\Response();
         $res->setCharset('UTF-8');
@@ -1241,6 +1255,48 @@ class DefaultController extends Controller
         $from = \DateTime::createFromFormat('d-m-Y',sprintf('%s-%s-%s',$fromday,$frommonth,$fromyear));
         $to = \DateTime::createFromFormat('d-m-Y',sprintf('%s-%s-%s',$today,$tomonth,$toyear));
         return $this->chartImpl($question,$from,$to,$slug,$group);
+    }
+
+    public function feedbackAction($question, $days, $slug, $group = false)
+    {
+        $this->chartInit($slug,$group);
+        $range = $this->daysToRange($days);
+        $data = $this->getDateRange($range[0],$range[1],$slug,$group);
+        $question = $this->checkQuestion($question,$slug,$group);
+        $q = $this->getQuestion($question);
+        $type = $this->getValue($q,'type','open');
+        if ($type !== 'open') throw $this->createNotFoundException(
+            sprintf(
+                'Question %d is not of type "open"',
+                $question
+            )
+        );
+        $data = array_filter($data,function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+            $val = $q->getQuestion($question);
+            if (is_null($val)) return false;
+            $val = preg_replace('/^\\s+|\\s+$/u','',$val);
+            return $val !== '';
+        });
+        $this->sortByDate($data,false);
+        $results = array_map(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+            return (object)[
+                'date' => $q->getCreateDate(),
+                'feedback' => $q->getQuestion($question)
+            ];
+        },$data);
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->headers->set('Content-Type','application/json');
+        $res->setContent(
+            json_encode(
+                $this->sanitizeToJson(
+                    (object)[
+                        'results' => $results
+                    ]
+                )
+            )
+        );
+        return $res;
     }
 
 }

@@ -108,7 +108,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					image.attr('download',filename);
 				});
 				var pie_table = new visualization.DataTable();
-				var pie_options = {};
+				var pie_options = {
+					title: data.title + '\nSummary'
+				};
 				//	Branch on type of question because we do three
 				//	different things for the pie chart for them
 				if (data.type === 'rating') {

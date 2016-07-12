@@ -71,7 +71,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					title = 'Average Rating';
 				}
 				var config={
-					title: data.title,
+					title: data.title + '\nDaily Averages',
 					hAxis: {title: 'Date'},
 					vAxis: {
 						title: title,

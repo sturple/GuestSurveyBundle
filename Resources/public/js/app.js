@@ -34,7 +34,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				});
 			};
 			var div = $('#performanceCharting');
-			var csv_url = function (question, days, callback) {
+			var get_csv_url = function (question, days, callback) {
 				var segs = segments.concat();	//	Clones array so we can freely mutate it
 				segs.push('chartcsv',days.toString());
 				var retr = url.clone();

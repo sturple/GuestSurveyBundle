@@ -41,7 +41,12 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 		};
 		var performance_charting_get_image_filename = function (question, days, callback) {
 			var str = (group === null) ? '' : (group + '-');
-			str += slug + '-' + question + '-' + days + '.png';
+			str += slug + '-' + question + '-' + days + '-day-by-day.png';
+			callback(str);
+		};
+		var performance_charting_get_pie_image_filename = function (question, days, callback) {
+			var str = (group === null) ? '' : (group + '-');
+			str += slug + '-' + question + '-' + days + '-summary.png';
 			callback(str);
 		};
 		var charting_manager = new charting(
@@ -49,6 +54,7 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 			performance_charting_get_data,
 			performance_charting_get_csv_url,
 			performance_charting_get_image_filename,
+			performance_charting_get_pie_image_filename,
 			report_error
 		);
 		$('a[href="#performanceCharting"][data-toggle="tab"]').on(

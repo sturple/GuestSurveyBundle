@@ -1,9 +1,11 @@
 define(['jquery','google/visualization','moment-timezone'],function ($, visualization, moment) {
-	return function (root, get_data, get_csv_url, get_image_filename, report_error) {
+	return function (root, get_data, get_csv_url, get_bar_image_filename, get_pie_image_filename, report_error) {
 		root = $(root);
-		get_data = get_data || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
-		get_csv_url = get_csv_url || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
-		get_image_filename = get_image_filename || function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
+		var unimplemented = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
+		get_data = get_data || unimplemented;
+		get_csv_url = get_csv_url || unimplemented;
+		get_bar_image_filename = get_bar_image_filename || unimplemented;
+		get_pie_image_filename = get_pie_image_filename || unimplemented;
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(1)');
 		var qselect = root.find('select:eq(0)');
@@ -13,6 +15,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var chart = new visualization.ColumnChart(div[0]);
 		var pie_div = root.find('div:eq(1)');
 		var pie_chart = new visualization.PieChart(pie_div[0]);
+		var pie_image = root.find('a:eq(2)');
 		var enabled = false;
 		var last_days = null;
 		var last_question = null;
@@ -97,15 +100,12 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				}
 				chart.draw(table,config);
 				image.attr('href',chart.getImageURI());
-				get_image_filename(question,days,function (filename, e) {
+				get_bar_image_filename(question,days,function (filename, e) {
 					if (e) {
 						report_error(e);
 						return;
 					}
-					if (!enabled) return;
 					image.attr('download',filename);
-					last_days = days;
-					last_question = question;
 				});
 				var pie_table = new visualization.DataTable();
 				var pie_options = {};
@@ -146,6 +146,16 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					pie_table.addRow(['Unanswered',data.summary.bad]);
 				}
 				pie_chart.draw(pie_table,pie_options);
+				pie_image.attr('href',pie_chart.getImageURI());
+				get_pie_image_filename(question,days,function (filename, e) {
+					if (e) {
+						report_error(e);
+						return;
+					}
+					pie_image.attr('download',filename);
+				});
+				last_days = days;
+				last_question = question;
 			});
 		};
 		select.change(impl);

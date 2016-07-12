@@ -134,7 +134,6 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 							g += g_step;
 							b += b_step;
 							var arr = [(i+1).toString(),data.summary.values[i]];
-							console.log(arr);
 							pie_table.addRow(arr);
 						}
 					} else if (data.type === 'polar') {

@@ -1,10 +1,20 @@
 <h2>Guest Feedback</h2>
+
+<select>
+    {% for q in questions_presentation %}
+    {% if not q.type is defined or q.type == 'open' %}
+    <option value="{{q.number}}">{{q.title|e}}</option>
+    {% endif %}
+    {% endfor %}
+</select>
+
 {% include 'FgmsSurveyBundle:Default:includes/admin-select-period.html.twig' ignore missing %}
 
 <table class="table">
     <thead>
         <tr><th>Date</th><th>Feedback</th><th>Posted to Website?</th></tr>
     </thead>
+
 </table>
 <div style="padding-top: 24px;">
     <a href="" class="btn btn-primary">Download Guest Feedback as (CSV) </a>

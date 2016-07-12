@@ -1,6 +1,6 @@
 requirejs.config({baseUrl: '/bundles/fgmssurvey/js'});
 
-require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting, uri) {
+require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback'],function ($, charting, uri, feedback) {
 	$(function () {
 		var url = new uri(window.location.href);
 		var slug = null;
@@ -13,56 +13,64 @@ require(['jquery','admin/performancecharting','urijs/URI'],function ($, charting
 		//	For building URLs later
 		var segments = [slug];
 		if (group !== null) segments.unshift(group);
-		var performance_charting_get_data = function (question, days, callback) {
-			var segs = segments.concat();	//	Clones array so we can freely mutate it
-			segs.push('chart',question.toString(),days.toString());
-			var addr = url.clone();
-			addr.segment(segs);
-			var xhr = $.ajax(addr.toString());
-			xhr.fail(function (xhr, text, e) {	callback(null,new Error(e));	});
-			xhr.done(function (data, text, xhr) {
-				var obj=null;
-				try {
-					obj=JSON.parse(xhr.responseText);
-				} catch (e) {
-					callback(null,e);
-				}
-				callback(obj);
-			});
-		};
 		var report_error = function (e) {	alert(e.message);	};
-		var performance_charting_div = $('#performanceCharting');
-		var performance_charting_get_csv_url = function (question, days, callback) {
-			var segs = segments.concat();	//	Clones array so we can freely mutate it
-			segs.push('chartcsv',days.toString());
-			var retr = url.clone();
-			retr.segment(segs);
-			callback(retr.toString());
-		};
-		var performance_charting_get_image_filename = function (question, days, callback) {
-			var str = (group === null) ? '' : (group + '-');
-			str += slug + '-' + question + '-' + days + '-day-by-day.png';
-			callback(str);
-		};
-		var performance_charting_get_pie_image_filename = function (question, days, callback) {
-			var str = (group === null) ? '' : (group + '-');
-			str += slug + '-' + question + '-' + days + '-summary.png';
-			callback(str);
-		};
-		var charting_manager = new charting(
-			performance_charting_div[0],
-			performance_charting_get_data,
-			performance_charting_get_csv_url,
-			performance_charting_get_image_filename,
-			performance_charting_get_pie_image_filename,
-			report_error
-		);
-		$('a[href="#performanceCharting"][data-toggle="tab"]').on(
-			'shown.bs.tab',
-			charting_manager.enable.bind(charting_manager)
-		).on(
-			'hide.bs.tab',
-			charting_manager.disable.bind(charting_manager)
-		);
+		//	Setup performance charting
+		(function () {
+			var get_data = function (question, days, callback) {
+				var segs = segments.concat();	//	Clones array so we can freely mutate it
+				segs.push('chart',question.toString(),days.toString());
+				var addr = url.clone();
+				addr.segment(segs);
+				var xhr = $.ajax(addr.toString());
+				xhr.fail(function (xhr, text, e) {	callback(null,new Error(e));	});
+				xhr.done(function (data, text, xhr) {
+					var obj=null;
+					try {
+						obj=JSON.parse(xhr.responseText);
+					} catch (e) {
+						callback(null,e);
+					}
+					callback(obj);
+				});
+			};
+			var div = $('#performanceCharting');
+			var csv_url = function (question, days, callback) {
+				var segs = segments.concat();	//	Clones array so we can freely mutate it
+				segs.push('chartcsv',days.toString());
+				var retr = url.clone();
+				retr.segment(segs);
+				callback(retr.toString());
+			};
+			var get_image_filename = function (question, days, callback) {
+				var str = (group === null) ? '' : (group + '-');
+				str += slug + '-' + question + '-' + days + '-day-by-day.png';
+				callback(str);
+			};
+			var get_pie_image_filename = function (question, days, callback) {
+				var str = (group === null) ? '' : (group + '-');
+				str += slug + '-' + question + '-' + days + '-summary.png';
+				callback(str);
+			};
+			var manager = new charting(
+				div[0],
+				get_data,
+				get_csv_url,
+				get_image_filename,
+				get_pie_image_filename,
+				report_error
+			);
+			$('a[href="#performanceCharting"][data-toggle="tab"]').on(
+				'shown.bs.tab',
+				manager.enable.bind(manager)
+			).on(
+				'hide.bs.tab',
+				manager.disable.bind(manager)
+			);
+		})();
+		//	Setup guest feedback
+		(function () {
+			var div = $('#guestFeedback');
+			var manager = new feedback(div[0]);
+		})();
 	});
 });

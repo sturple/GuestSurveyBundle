@@ -1144,6 +1144,13 @@ class DefaultController extends Controller
         );
     }
 
+    private function startCsv()
+    {
+        //  The UTF-8 BOM, forces Excel to recognize
+        //  Unicode characters in the CSV
+        return chr(0xEF).chr(0xBB).chr(0xBF);
+    }
+
     private function csvEscape($str)
     {
         //  "Each field may or may not be enclosed in double quotes [...]"
@@ -1213,7 +1220,7 @@ class DefaultController extends Controller
         usort($qs,function (array $a, array $b) {
             return $this->extractField($a['field']) - $this->extractField($b['field']);
         });
-        $csv = $this->getCsvHeader($qs);
+        $csv = $this->startCsv() . $this->getCsvHeader($qs);
         $gs = [];
         foreach ($qs as $q) {
             $curr = $this->aggregateQuestion(

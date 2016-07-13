@@ -1,4 +1,4 @@
-define(['jquery'],function ($) {
+define(['jquery','moment-timezone'],function ($, moment) {
 	return function (root, get_data, get_csv_url, report_error) {
 		root = $(root);
 		var unimplemented = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
@@ -27,8 +27,9 @@ define(['jquery'],function ($) {
 					var feedback = document.createTextNode(result.feedback);
 					var ftd = document.createElement('td');
 					ftd.appendChild(feedback);
-					//	TODO: Format this
-					var date = document.createTextNode(result.date);
+					var m = moment.unix(result.date).tz(data.timezone);
+					var date_str = m.format('D MMM YYYY');
+					var date = document.createTextNode(date_str);
 					var dtd = document.createElement('td');
 					dtd.appendChild(date);
 					var tr = document.createElement('tr');

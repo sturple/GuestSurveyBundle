@@ -1311,6 +1311,7 @@ class DefaultController extends Controller
             json_encode(
                 $this->sanitizeToJson(
                     (object)[
+                        'timezone' => $this->getTimezone(),
                         'results' => $results
                     ]
                 )

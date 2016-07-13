@@ -487,3 +487,11 @@ a:focus {  outline:none;  outline-offset: -2px;}
 #performanceCharting > div > label:after, #guestFeedback > div > label:after {
     content: ":";
 }
+
+#guestFeedback table.table tr > *:nth-child(1) {
+    width: 100px;
+}
+
+#guestFeedback table.table tr > *:nth-child(3) {
+    width: 75px;
+}

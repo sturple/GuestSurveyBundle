@@ -1200,6 +1200,9 @@ class DefaultController extends Controller
 
     private function dateToCsv(\DateTime $date)
     {
+        $tz = $this->getTimezone();
+        $date = clone $date;
+        $date->setTimezone($tz);
         return $date->format('M j, Y');
     }
 

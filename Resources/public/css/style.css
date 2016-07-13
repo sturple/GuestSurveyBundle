@@ -476,7 +476,14 @@ a:focus {  outline:none;  outline-offset: -2px;}
 }
 */
 
-#performanceCharting select {
-    display: block;
+#performanceCharting > div, #guestFeedback > div {
     margin-bottom: 10px;
+}
+
+#performanceCharting > div > label, #guestFeedback > div > label {
+    width: 100px;
+}
+
+#performanceCharting > div > label:after, #guestFeedback > div > label:after {
+    content: ":";
 }

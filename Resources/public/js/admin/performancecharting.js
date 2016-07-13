@@ -9,12 +9,12 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		report_error = report_error || function (e) {	};
 		var select = root.find('select:eq(1)');
 		var qselect = root.find('select:eq(0)');
-		var no_data_div = root.find('div:eq(0)');
-		var div = root.find('div:eq(2)');
+		var no_data_div = root.find('div:eq(2)');
+		var div = root.find('div:eq(4)');
 		var csv = root.find('a:eq(0)');
 		var image = root.find('a:eq(2)');
 		var chart = new visualization.ColumnChart(div[0]);
-		var pie_div = root.find('div:eq(1)');
+		var pie_div = root.find('div:eq(3)');
 		var pie_chart = new visualization.PieChart(pie_div[0]);
 		var pie_image = root.find('a:eq(1)');
 		var enabled = false;

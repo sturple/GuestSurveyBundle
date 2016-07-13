@@ -1,10 +1,13 @@
 <h2>Performance Charting</h2>
 
-<select>
-    {% for q in questions_presentation %}
-    <option value="{{q.number}}">{{q.title|e}}</option>
-    {% endfor %}
-</select>
+<div>
+    <label>Question</label>
+    <select>
+        {% for q in questions_presentation %}
+        <option value="{{q.number}}">{{q.title|e}}</option>
+        {% endfor %}
+    </select>
+</div>
 
 {% include 'FgmsSurveyBundle:Default:includes/admin-select-period.html.twig' ignore missing %}
 

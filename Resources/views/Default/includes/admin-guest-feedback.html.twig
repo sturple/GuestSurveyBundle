@@ -1,12 +1,15 @@
 <h2>Guest Feedback</h2>
 
-<select>
-    {% for q in questions_presentation %}
-    {% if not q.type is defined or q.type == 'open' %}
-    <option value="{{q.number}}">{{q.title|e}}</option>
-    {% endif %}
-    {% endfor %}
-</select>
+<div>
+    <label>Question</label>
+    <select>
+        {% for q in questions_presentation %}
+        {% if not q.type is defined or q.type == 'open' %}
+        <option value="{{q.number}}">{{q.title|e}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
 
 {% include 'FgmsSurveyBundle:Default:includes/admin-select-period.html.twig' ignore missing %}
 

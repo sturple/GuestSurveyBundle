@@ -947,21 +947,13 @@ class DefaultController extends Controller
     {
         $q = $this->getQuestion($question);
         $type = $this->getQuestionType($q);
-        $min = 0;
-        $max = 0;
         $result = null;
         if ($type === 'rating') {
-            $min = 1;
-            $max = 5;
             return $this->ratingToChart($question,$data);
         } elseif ($type === 'polar') {
-            $min = 0;
-            $max = 100;
             $negative = $this->getValue('negative',$q,false);
             return $this->polarToChart($question,$negative,$data);
         } elseif ($type === 'open') {
-            $min = 0;
-            $max = 100;
             return $this->openToChart($question,$data);
         }
         throw new \RuntimeException(

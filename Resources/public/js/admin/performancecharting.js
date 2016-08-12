@@ -113,7 +113,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				var do_pie_chart = function () {
 					var pie_table = new visualization.DataTable();
 					var pie_options = {
-						title: data.title + '\nSummary'
+						title: 'Summary of Results over '+((typeof days === 'number') ? ('Last '+days+' Days') : 'Year to Date')
 					};
 					//	Branch on type of question because we do three
 					//	different things for the pie chart for them

@@ -1051,7 +1051,7 @@ class DefaultController extends Controller
             )
         );
         $summary = $this->summarizeQuestion($question,$data);
-        return (object)[
+        $retr = (object)[
             'min' => ($type === 'rating') ? 1 : 0,
             'max' => ($type === 'rating') ? 5 : 100,
             'group' => ($group === false) ? null : $group,
@@ -1064,6 +1064,8 @@ class DefaultController extends Controller
             'title' => htmlspecialchars_decode(strip_tags($q['title'])),
             'summary' => $summary
         ];
+        if ($type === 'polar') $retr->negative = $this->getValue('negative',$q,false);
+        return $retr;
     }
 
     private function sanitizeToJson($obj)

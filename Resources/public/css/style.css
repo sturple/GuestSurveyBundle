@@ -489,7 +489,7 @@ a:focus {  outline:none;  outline-offset: -2px;}
 }
 
 #guestFeedback table.table tr > *:nth-child(1) {
-    width: 100px;
+    width: 150px;
 }
 
 #guestFeedback table.table tr > *:nth-child(3) {

@@ -28,7 +28,7 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					var ftd = document.createElement('td');
 					ftd.appendChild(feedback);
 					var m = moment.unix(result.date).tz(data.timezone);
-					var date_str = m.format('D MMM YYYY');
+					var date_str = m.format('D MMM YYYY h:mm A');
 					var date = document.createTextNode(date_str);
 					var dtd = document.createElement('td');
 					dtd.appendChild(date);

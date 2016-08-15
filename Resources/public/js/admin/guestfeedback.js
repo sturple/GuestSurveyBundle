@@ -7,6 +7,7 @@ define(['jquery','moment-timezone'],function ($, moment) {
 		var q_select = root.find('select:eq(0)');
 		var d_select = root.find('select:eq(1)');
 		var table = root.find('table.table').first();
+		var no_data = root.children('div:eq(2)');
 		var csv = root.find('a').first();
 		var impl = function () {
 			var days = d_select.val();
@@ -20,6 +21,14 @@ define(['jquery','moment-timezone'],function ($, moment) {
 				}
 				//	Clear the table
 				table.children('tbody').remove();
+				//	If there's no data, show no data and abort
+				if (data.results.length === 0) {
+					no_data.show();
+					table.hide();
+					return;
+				}
+				no_data.hide();
+				table.show();
 				//	Recreate the table
 				var document = root[0].ownerDocument;
 				var tbody = document.createElement('tbody');

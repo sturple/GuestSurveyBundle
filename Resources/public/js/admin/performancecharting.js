@@ -142,8 +142,8 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 						};
 						pie_table.addColumn('string','Answer Category');
 						pie_table.addColumn('number','Entries');
-						pie_table.addRow([data.negative ? 'No' : 'Yes',data.summary.good]);
-						pie_table.addRow([data.negative ? 'Yes' : 'No',data.summary.bad]);
+						pie_table.addRow([data.positive_description,data.summary.good]);
+						pie_table.addRow([data.negative_description,data.summary.bad]);
 					} else {
 						pie_table.addColumn('string','Answer Category');
 						pie_table.addColumn('number','Entries');

@@ -1294,6 +1294,7 @@ class DefaultController extends Controller
         return array_map(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
             return (object)[
                 'date' => $q->getCreateDate(),
+                'room' => $q->getRoomNumber(),
                 'feedback' => $q->getQuestion($question)
             ];
         },$data);
@@ -1321,9 +1322,9 @@ class DefaultController extends Controller
     public function feedbackCsvAction($question, $days, $slug, $group = false)
     {
         $results = $this->getFeedbackData($question,$days,$slug,$group);
-        $csv = $this->startCsv() . $this->getCsvRow(['Date','Feedback']);
+        $csv = $this->startCsv() . $this->getCsvRow(['Date','Room Number','Feedback']);
         foreach ($results as $result) {
-            $csv .= $this->getCsvRow([$this->dateToCsv($result->date),$result->feedback]);
+            $csv .= $this->getCsvRow([$this->dateToCsv($result->date),$result->room,$result->feedback]);
         }
         $res = new \Symfony\Component\HttpFoundation\Response();
         $res->setCharset('UTF-8');

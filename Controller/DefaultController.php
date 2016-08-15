@@ -1064,7 +1064,11 @@ class DefaultController extends Controller
             'title' => htmlspecialchars_decode(strip_tags($q['title'])),
             'summary' => $summary
         ];
-        if ($type === 'polar') $retr->negative = $this->getValue('negative',$q,false);
+        if ($type === 'polar') {
+            $retr->negative = $this->getValue('negative',$q,false);
+            $retr->positive_description = $this->getValue('positive_description',$q,$retr->negative ? 'No' : 'Yes');
+            $retr->negative_description = $this->getValue('negative_description',$q,$retr->negative ? 'Yes' : 'No');
+        }
         return $retr;
     }
 

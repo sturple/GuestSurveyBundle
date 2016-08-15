@@ -32,11 +32,9 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					var date = document.createTextNode(date_str);
 					var dtd = document.createElement('td');
 					dtd.appendChild(date);
-					var ptd = document.createElement('td');
 					var tr = document.createElement('tr');
 					tr.appendChild(dtd);
 					tr.appendChild(ftd);
-					tr.appendChild(ptd);
 					tbody.appendChild(tr);
 				});
 				table[0].appendChild(tbody);

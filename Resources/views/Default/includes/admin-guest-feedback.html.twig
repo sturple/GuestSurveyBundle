@@ -2,7 +2,7 @@
 
 <div>
     <label>Question</label>
-    <select>
+    <select class="form-control">
         {% for q in questions_presentation %}
         {% if not q.type is defined or q.type == 'open' %}
         <option value="{{q.number}}">{{q.title|e}}</option>

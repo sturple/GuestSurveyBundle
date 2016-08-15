@@ -2,7 +2,7 @@
 
 <div>
     <label>Question</label>
-    <select>
+    <select class="form-control">
         {% for q in questions_presentation %}
         <option value="{{q.number}}">{{q.title|e}}</option>
         {% endfor %}

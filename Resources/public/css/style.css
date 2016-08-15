@@ -492,6 +492,10 @@ a:focus {  outline:none;  outline-offset: -2px;}
     width: 150px;
 }
 
-#guestFeedback table.table tr > *:nth-child(3) {
+#guestFeedback table.table tr > *:nth-child(2) {
+    width: 110px;
+}
+
+#guestFeedback table.table tr > *:nth-child(4) {
     width: 75px;
 }

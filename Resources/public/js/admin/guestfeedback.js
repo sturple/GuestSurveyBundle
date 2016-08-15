@@ -27,6 +27,9 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					var feedback = document.createTextNode(result.feedback);
 					var ftd = document.createElement('td');
 					ftd.appendChild(feedback);
+					var room = document.createTextNode(result.room);
+					var rtd = document.createElement('td');
+					rtd.appendChild(room);
 					var m = moment.unix(result.date).tz(data.timezone);
 					var date_str = m.format('D MMM YYYY h:mm A');
 					var date = document.createTextNode(date_str);
@@ -34,6 +37,7 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					dtd.appendChild(date);
 					var tr = document.createElement('tr');
 					tr.appendChild(dtd);
+					tr.appendChild(rtd);
 					tr.appendChild(ftd);
 					tbody.appendChild(tr);
 				});

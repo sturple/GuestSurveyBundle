@@ -704,12 +704,12 @@ class Questionnaire
     /**
      * Set testimonialData
      *
-     * @param string $testimonialData
+     * @param array $testimonialData
      * @return Questionnaire
      */
-    public function setTestimonialData($jsonstring)
+    public function setTestimonialData(array $testimonialData = null)
     {
-        $this->testimonialData = $jsonstring;
+        $this->testimonialData = is_null($testimonialData) ? null : json_encode($testimonialData);
 
         return $this;
     }
@@ -717,11 +717,21 @@ class Questionnaire
     /**
      * Get testimonialData
      *
-     * @return string 
+     * @return array
      */
     public function getTestimonialData()
     {
-        return $this->testimonialData;
+        //  Should this return the empty array?
+        if (is_null($this->testimonialData)) return null;
+        $retr = json_decode($this->testimonialData);
+        if (!is_array($retr)) throw new \RuntimeException(
+            sprintf(
+                'Invalid testimonialData "%s"',
+                $this->testimonialData
+            )
+        );
+        //  TODO: Verify each element?
+        return $retr;
     }  	
 
 }

@@ -19,7 +19,7 @@
 		.question-input-visual a.active .button-circle{	color:{{config.survey.css.buttons.survey.background.color.active}};background-color: {{config.survey.css.buttons.survey.background.color.active}};}
 		.questionnaire-nav i {	color: #f8f8f8; }
 		.questionnaire-nav i:hover {color: {{config.survey.css.buttons.survey.background.color.hover}}}
-		{% if config.survey.css.title.letterspacing is defined %}
+		{% if config.survey.css.title.letterspacing is defined and config.survey.css.title.letterspacing %}
 		.question-title { letter-spacing: {{config.survey.css.title.letterspacing}}; }
 		{% endif %}
 		.button-text {	color: {{config.survey.css.buttons.survey.font.color.normal}}; font-family: {{config.survey.css.buttons.survey.font.family | raw }};}

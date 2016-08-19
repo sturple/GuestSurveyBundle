@@ -732,6 +732,6 @@ class Questionnaire
         );
         //  TODO: Verify each element?
         return $retr;
-    }  	
+    }
 
 }

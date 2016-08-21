@@ -157,6 +157,11 @@ class Questionnaire
      * @ORM\Column(name="questionSet", type="text", nullable=true)
      */
     private $questionSet;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Testimonial",mappedBy="questionnaire")
+     */
+    private $testimonials;
 	
     
 
@@ -734,4 +739,45 @@ class Questionnaire
         return $retr;
     }
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->testimonials = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add testimonial
+     *
+     * @param \Fgms\Bundle\SurveyBundle\Entity\Testimonial $testimonial
+     *
+     * @return Questionnaire
+     */
+    public function addTestimonial(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $testimonial)
+    {
+        $this->testimonials[] = $testimonial;
+
+        return $this;
+    }
+
+    /**
+     * Remove testimonial
+     *
+     * @param \Fgms\Bundle\SurveyBundle\Entity\Testimonial $testimonial
+     */
+    public function removeTestimonial(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $testimonial)
+    {
+        $this->testimonials->removeElement($testimonial);
+    }
+
+    /**
+     * Get testimonials
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTestimonials()
+    {
+        return $this->testimonials;
+    }
 }

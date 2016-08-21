@@ -54,4 +54,22 @@ class QuestionnaireTest extends \PHPUnit_Framework_TestCase
         $this->q->setTestimonialData([]);
         $this->assertSame('[]',$this->td->getValue($this->q));
     }
+
+    public function testSetTestimonialDataString()
+    {
+        $this->q->setTestimonialData('[]');
+        $this->assertSame('[]',$this->td->getValue($this->q));
+    }
+
+    public function testSetTestimonialDataStringBad()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->q->setTestimonialData('foo');
+    }
+
+    public function testSetTestimonialDataWrongType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->q->setTestimonialData(new \stdClass());
+    }
 }

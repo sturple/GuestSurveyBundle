@@ -712,8 +712,25 @@ class Questionnaire
      * @param array $testimonialData
      * @return Questionnaire
      */
-    public function setTestimonialData(array $testimonialData = null)
+    public function setTestimonialData($testimonialData)
     {
+        if (is_string($testimonialData)) {
+            $temp = json_decode($testimonialData);
+            $code = json_last_error();
+            if ($code !== JSON_ERROR_NONE) throw new \RuntimeException(
+                sprintf(
+                    'Failed to JSON decode with error "%s", input was "%s"',
+                    json_last_error_msg(),
+                    $testimonialData
+                ),
+                $code
+            );
+            $testimonialData = $temp;
+        }
+        //  TODO: Verify structure?
+        if (!(is_array($testimonialData) || is_null($testimonialData))) throw new \InvalidArgumentException(
+            'Expected $testimonialData to be array'
+        );
         $this->testimonialData = is_null($testimonialData) ? null : json_encode($testimonialData);
 
         return $this;

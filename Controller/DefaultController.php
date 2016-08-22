@@ -42,6 +42,12 @@ class DefaultController extends Controller
         return $this->render('FgmsSurveyBundle:Default:start.html.twig', $param);
     }
 
+    private function invalidTestimonialData($obj)
+    {
+        //	TODO: Improve error handling/reporting
+        throw new \RuntimeException('Invalid testimonial data');
+    }
+
     /**
      * route for the survey
      * @param string $slug
@@ -63,7 +69,31 @@ class DefaultController extends Controller
         $form->handleRequest($this->request);
         if ($form->isValid()){
             $em = $this->getDoctrine()->getManager();
-            $em->persist($form->getData());
+            $q = $form->getData();
+            //  Create Testimonial objects from responses user
+            //  identified as being testimonials
+            $ts = $q->getTestimonialData();
+            $tests = [];
+            if (!is_null($ts)) {
+                foreach ($ts as $t) {
+                    //	As far as we know each of these $t items
+                    //	is raw data from the user, we expect an
+                    //	object with a "field" property which is
+                    //	a string, but we don't know that the item
+                    //	actually has that form
+                    if (!(is_object($t) && isset($t->field) && is_string($t->field))) $this->invalidTestimonialData($t);
+                    if (!preg_match('/^question(\d+)$/u',$t->field,$matches)) $this->invalidTestimonialData($t);
+                    $num = intval($matches[1]);
+                    $test = new \Fgms\Bundle\SurveyBundle\Entity\Testimonial();
+                    $test->setQuestion($num);
+                    $test->setApproved(false);
+                    $test->setText($q->getQuestion($num));
+                    $test->setQuestionnaire($q);
+                    $tests[] = $test;
+                }
+            }
+            $em->persist($q);
+            foreach ($tests as $t) $em->persist($t);
             $this->checkSurveyResults($slug,$group,$form,$room);
             $em->flush();
             $conditional = $this->getConditionalFinish($form) ? '?conditional' : '';

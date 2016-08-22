@@ -48,6 +48,11 @@ class DefaultController extends Controller
         throw new \RuntimeException('Invalid testimonial data');
     }
 
+    private function sendTestimonialEmail(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $t)
+    {
+        //  TODO
+    }
+
     /**
      * route for the survey
      * @param string $slug
@@ -99,6 +104,7 @@ class DefaultController extends Controller
             }
             $em->persist($q);
             foreach ($tests as $t) $em->persist($t);
+            foreach ($tests as $t) $this->sendTestimonialEmail($t);
             $this->checkSurveyResults($slug,$group,$form,$room);
             $em->flush();
             $conditional = $this->getConditionalFinish($form) ? '?conditional' : '';

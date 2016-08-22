@@ -35,7 +35,7 @@ class Testimonial
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
      */
-    private $key;
+    private $token;
 
     /**
      * Get id
@@ -120,30 +120,6 @@ class Testimonial
     }
 
     /**
-     * Set key
-     *
-     * @param string $key
-     *
-     * @return Testimonial
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
-
-        return $this;
-    }
-
-    /**
-     * Get key
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
      * Set questionnaire
      *
      * @param \Fgms\Bundle\SurveyBundle\Entity\Questionnaire $questionnaire
@@ -165,5 +141,29 @@ class Testimonial
     public function getQuestionnaire()
     {
         return $this->questionnaire;
+    }
+
+    /**
+     * Set token
+     *
+     * @param string $token
+     *
+     * @return Testimonial
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * Get token
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 }

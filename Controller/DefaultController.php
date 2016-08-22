@@ -56,6 +56,10 @@ class DefaultController extends Controller
     public function surveyAction($slug,$group=false)
     {
 
+        //  TODO: This should be injected and the number of bits
+        //  should be configurable
+        $token = new \Fgms\Bundle\SurveyBundle\Utility\RandomTokenGenerator(128);
+
         $param = $this->getConfiguration($slug,$group);
         $room = $this->request->query->has('room') ? $this->request->query->get('room') : 'none';
 
@@ -89,6 +93,7 @@ class DefaultController extends Controller
                     $test->setApproved(false);
                     $test->setText($q->getQuestion($num));
                     $test->setQuestionnaire($q);
+                    $test->setToken($token->generate());
                     $tests[] = $test;
                 }
             }

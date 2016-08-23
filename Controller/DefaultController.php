@@ -1428,4 +1428,47 @@ class DefaultController extends Controller
 		return $triggerFlag;
 	}
 
+    private function getTestimonialsQueryBuilder($count, $slug, $group = false)
+    {
+        $repo = $this->getDoctrine()->getRepository(\Fgms\Bundle\SurveyBundle\Entity\Testimonial::class);
+        return $repo->createQueryBuilder('t')
+            ->innerJoin('t.questionnaire','q')
+            ->andWhere('q.slug = :slug')
+            ->setParameter('slug',$slug)
+            ->andWhere('q.sluggroup = :sluggroup')
+            ->setParameter('sluggroup',($group === false) ? '' : $group)
+            ->andWhere('t.approved = 1')
+            ->setMaxResults($count);
+    }
+
+    private function getLatestTestimonialsQuery($count, $slug, $group = false)
+    {
+        $qb = $this->getTestimonialsQueryBuilder($count,$slug,$group)
+            ->orderBy('q.createDate','DESC');
+        return $qb->getQuery();
+    }
+
+    public function testimonialsAction($order, $count, $slug, $group = false)
+    {
+        if ($order !== 'latest') throw new \LogicException('Unsupported');
+        $count = intval($count);
+        if ($count === 0) throw new \LogicException('Invalid count');
+        $results = $this->getLatestTestimonialsQuery($count,$slug,$group)->getResult();
+        if (!is_array($results)) $results = [$results];
+        $arr = [];
+        foreach ($results as $r) $arr[] = $r->getText();
+        $obj = (object)[
+            'results' => $arr,
+            'slug' => $slug,
+            'order' => $order,
+            'count' => $count,
+            'group' => ($group === false) ? null : $group
+        ];
+        $res = new \Symfony\Component\HttpFoundation\Response();
+        $res->setCharset('UTF-8');
+        $res->setContent(json_encode($obj));
+        $res->headers->set('Content-Type','application/json');
+        return $res;
+    }
+
 }

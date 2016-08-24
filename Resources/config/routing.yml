@@ -113,7 +113,7 @@ fgms_survey_feedback_csv_with_group:
     defaults: {_controller: FgmsSurveyBundle:Default:feedbackCsv }
     requirements: {question: '\d+', days: '\d+|yeartodate' }
 
-#api routes
+#testimonial routes
 fgms_testimonials_api:
     path: /{slug}/testimonials/{order}/{count}/
     defaults: { _controller: FgmsSurveyBundle:Default:testimonials, group: false }

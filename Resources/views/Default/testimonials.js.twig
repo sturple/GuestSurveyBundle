@@ -1,0 +1,24 @@
+{% autoescape false %}
+(function () {
+	var testimonials = {{testimonials|json_encode()}};
+	var ul = document.createElement('ul');
+	ul.setAttribute('class','fanferret-testimonials');
+	testimonials.forEach(function (testimonial) {
+		var li = document.createElement('li');
+		li.setAttribute('class','fanferret-testimonial');
+		var text = document.createElement('div');
+		text.setAttribute('class','fanferret-testimonial-body');
+		text.appendChild(document.createTextNode(testimonial.text));
+		li.appendChild(text);
+		var date = document.createElement('div');
+		date.setAttribute('class','fanferret-testimonial-date');
+		date.appendChild(document.createTextNode(testimonial.date));
+		li.appendChild(date);
+		ul.appendChild(li);
+	});
+	var self = document.currentScript || document.scripts[document.scripts.length - 1];
+	var parent = self.parentNode;
+	parent.insertBefore(ul,self);
+	parent.removeChild(self);
+})();
+{% endautoescape %}

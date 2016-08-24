@@ -1456,7 +1456,7 @@ class DefaultController extends Controller
         return $qb->getQuery();
     }
 
-    public function testimonialsAction($order, $count, $slug, $group = false)
+    private function getTestimonials($order, $count, $slug, $group = false)
     {
         $count = intval($count);
         if ($count === 0) throw new \LogicException('Invalid count');
@@ -1469,20 +1469,24 @@ class DefaultController extends Controller
         $q = ($order === 'random') ? $this->getRandomTestimonialsQuery($count,$slug,$group) : $this->getLatestTestimonialsQuery($count,$slug,$group);
         $results = $q->getResult();
         if (!is_array($results)) $results = [$results];
+        return $results;
+    }
+
+    public function testimonialsAction($order, $count, $slug, $group = false)
+    {
+        $results = $this->getTestimonials($order,$count,$slug,$group);
         $arr = [];
-        foreach ($results as $r) $arr[] = $r->getText();
-        $obj = (object)[
-            'results' => $arr,
-            'slug' => $slug,
-            'order' => $order,
-            'count' => $count,
-            'group' => ($group === false) ? null : $group
-        ];
-        $res = new \Symfony\Component\HttpFoundation\Response();
-        $res->setCharset('UTF-8');
-        $res->setContent(json_encode($obj));
-        $res->headers->set('Content-Type','application/json');
-        return $res;
+        foreach ($results as $r) {
+            $obj = new \stdClass();
+            $obj->text = $r->getText();
+            $obj->date = $r->getQuestionnaire()->getCreateDate()->format('F j, Y');
+            $arr[] = $obj;
+        }
+        $params = ['testimonials' => $arr];
+        $response = $this->render('FgmsSurveyBundle:Default:testimonials.js.twig',$params);
+        $response->headers->set('Content-Type','text/javascript');
+        $response->setCharset('UTF-8');
+        return $response;
     }
 
 }

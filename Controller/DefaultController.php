@@ -1460,6 +1460,12 @@ class DefaultController extends Controller
     {
         $count = intval($count);
         if ($count === 0) throw new \LogicException('Invalid count');
+        if ($count > 50) throw new \LogicException(
+            sprintf(
+                'Count %d exceeds maximum of 50',
+                $count
+            )
+        );
         $q = ($order === 'random') ? $this->getRandomTestimonialsQuery($count,$slug,$group) : $this->getLatestTestimonialsQuery($count,$slug,$group);
         $results = $q->getResult();
         if (!is_array($results)) $results = [$results];

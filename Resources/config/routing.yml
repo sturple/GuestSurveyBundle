@@ -114,12 +114,12 @@ fgms_survey_feedback_csv_with_group:
     requirements: {question: '\d+', days: '\d+|yeartodate' }
 
 #testimonial routes
-fgms_testimonials_api:
+fgms_testimonials:
     path: /{slug}/testimonials/{order}/{count}/
     defaults: { _controller: FgmsSurveyBundle:Default:testimonials, group: false }
     requirements: { order: '^(?:latest|random)$', count: '^\d+$' }
 
-fgms_testimonials_api_with_group:
+fgms_testimonials_with_group:
     path: /{group}/{slug}/testimonials/{order}/{count}/
     defaults: { _controller: FgmsSurveyBundle:Default:testimonials }
     requirements: { order: '^(?:latest|random)$', count: '^\d+$' }

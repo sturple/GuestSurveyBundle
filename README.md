@@ -26,7 +26,7 @@ composer.phar require sturple/guest-survey-bundle:dev-master
 
 ## Configuration
 
-**Add to ```app/AppKernal.php``` file**
+**Add to ```app/AppKernel.php``` file**
 
 ```php
 class AppKernel extends Kernel

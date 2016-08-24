@@ -49,6 +49,16 @@ fgms_survey:
     prefix:   /
 ```
 
+**Add to config.yml**
+
+```yaml
+doctrine:
+    orm:
+        dql:
+            numeric_functions:
+                Rand: Fgms\Bundle\SurveyBundle\Utility\DoctrineRand
+```
+
 **Create ```survey.yml``` in your config directory
 
 ```yaml

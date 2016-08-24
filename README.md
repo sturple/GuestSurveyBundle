@@ -7,7 +7,7 @@
 ```json
 {
     "require": {
-        "sturpe/guest-survey-bundle": "dev-master"
+        "sturple/guest-survey-bundle": "dev-master"
     }
 }
 

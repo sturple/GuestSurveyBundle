@@ -1448,12 +1448,20 @@ class DefaultController extends Controller
         return $qb->getQuery();
     }
 
+    private function getRandomTestimonialsQuery($count, $slug, $group = false)
+    {
+        $qb = $this->getTestimonialsQueryBuilder($count,$slug,$group)
+            ->addSelect('RAND() as HIDDEN rand')
+            ->orderBy('rand');
+        return $qb->getQuery();
+    }
+
     public function testimonialsAction($order, $count, $slug, $group = false)
     {
-        if ($order !== 'latest') throw new \LogicException('Unsupported');
         $count = intval($count);
         if ($count === 0) throw new \LogicException('Invalid count');
-        $results = $this->getLatestTestimonialsQuery($count,$slug,$group)->getResult();
+        $q = ($order === 'random') ? $this->getRandomTestimonialsQuery($count,$slug,$group) : $this->getLatestTestimonialsQuery($count,$slug,$group);
+        $results = $q->getResult();
         if (!is_array($results)) $results = [$results];
         $arr = [];
         foreach ($results as $r) $arr[] = $r->getText();

@@ -50,7 +50,12 @@ class DefaultController extends Controller
 
     private function sendTestimonialEmail(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $t)
     {
-        //  TODO
+        $param = $this->getBasicEmailParam();
+        $param['subject'] = 'New Testimonial';
+        $param['recipient'] = ['to' => $this->param['config']['testimonials']['recipient']['to']];
+        var_dump($param);
+        $data = ['token' => $t->getToken()];
+        $this->sendEmail($param,$data,'email-testimonial',true);
     }
 
     /**
@@ -383,6 +388,15 @@ class DefaultController extends Controller
         $this->sendEmail($emailParam, $this->param,'email-rollup');
     }
 
+    private function getBasicEmailParam()
+    {
+        return [
+            'fromEmail' => [
+                $this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com') => $this->getValue('name',$this->config['email']['from'],'Webmaster')
+            ]
+        ];
+    }
+
     /**
      *
      * @param string $slug
@@ -393,8 +407,7 @@ class DefaultController extends Controller
      */
     private function checkSurveyResults($slug,$group,$form,$room)
     {
-        $emailParam = array();
-        $emailParam['fromEmail'] = array($this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com')=>$this->getValue('name',$this->config['email']['from'],'Webmaster'));
+        $emailParam = $this->getBasicEmailParam();
         foreach ($this->param['activequestions'] as $item){
             $emailFlag = false;
             $field = $item['field'];
@@ -1487,6 +1500,11 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type','text/javascript');
         $response->setCharset('UTF-8');
         return $response;
+    }
+
+    public function testimonialAction($token)
+    {
+
     }
 
 }

@@ -123,3 +123,8 @@ fgms_testimonials_with_group:
     path: /{group}/{slug}/testimonials/{order}/{count}/
     defaults: { _controller: FgmsSurveyBundle:Default:testimonials }
     requirements: { order: '^(?:latest|random)$', count: '^\d+$' }
+
+fgms_testimonial:
+    path: /testimonial/{token}/
+    defaults: { _controller: FgmsSurveyBundle:Default:testimonial, group: false }
+    requirements: { token: '^[a-f0-9]{32}$' }

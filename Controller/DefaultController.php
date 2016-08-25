@@ -1502,9 +1502,46 @@ class DefaultController extends Controller
         return $response;
     }
 
+    private function getTestimonial($token)
+    {
+        $repo = $this->getDoctrine()->getRepository(\Fgms\Bundle\SurveyBundle\Entity\Testimonial::class);
+        $qb = $repo->createQueryBuilder('t')
+            ->andWhere('t.token = :token')
+            ->setParameter('token',$token)
+            ->setMaxResults(1);
+        $result = $qb->getQuery()->getResult();
+        if (!is_array($result)) $result = [$result];
+        if (count($result) === 0) return null;
+        return $result[0];
+    }
+
     public function testimonialAction($token)
     {
-
+        $t = $this->getTestimonial($token);
+        if (is_null($t)) throw new \LogicException(
+            sprintf(
+                'No testimonial with token %s',
+                $token
+            )
+        );
+        $q = $t->getQuestionnaire();
+        $slug = $q->getSlug();
+        $group = $q->getSluggroup();
+        if (!$group) $group = false;
+        $this->getConfiguration($slug,$group);
+        $form = $this->createFormBuilder($t)
+            ->add('text',\Symfony\Component\Form\Extension\Core\Type\TextareaType::class)
+            ->add('approved',\Symfony\Component\Form\Extension\Core\Type\CheckboxType::class,['required' => false])
+            ->add('save',\Symfony\Component\Form\Extension\Core\Type\SubmitType::class,['label' => 'Save'])
+            ->getForm();
+        $form->handleRequest($this->request);
+        if ($form->isValid()) {
+            $t = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($t);
+            $em->flush();
+        }
+        return $this->render('FgmsSurveyBundle:Default:testimonial.html.twig',['form' => $form->createView()]);
     }
 
 }

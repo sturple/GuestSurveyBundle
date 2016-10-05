@@ -1398,49 +1398,6 @@ class DefaultController extends Controller
         return $res;
     }
 
-
-	/**
-	 *
-	 * @param string $key
-	 * @param array $array
-	 * @param mixed $default
-	 * @return mixed
-	 */
-	private function getValue($key, $array=array(), $default=false)
-	{
-		if (isset($array)){
-			if (isset($array[$key])){
-				return $array[$key];
-			}
-		}
-		return $default;
-	}
-
-
-	/**
-	* compares value and trigger.
-	* @param mixed $value
-	* @param mixed $trigger
-	* @param boolean $triggerIsGreaterActive normal should be true except on a positive trigger like tripadvisor output screen
-	**/
-	private function check_trigger($value, $trigger, $triggerIsGreaterActive = true)
-	{
-		$valueAsInt = intval($value);
-		$triggerAsInt = intval($trigger);
-		$triggerFlag = false;
-		//comparison type
-		if (($valueAsInt >= 0) && ($trigger != null)){
-			if ($valueAsInt > 0 ){
-				$triggerFlag = $triggerIsGreaterActive ? ($triggerAsInt >= $valueAsInt ) : ($triggerAsInt <= $valueAsInt );
-			}
-			// equates type
-			else {
-				$triggerFlag = ($trigger == $value);
-			}
-		}
-		return $triggerFlag;
-	}
-
     private function getTestimonialsQueryBuilder($count, $slug, $group = false)
     {
         $repo = $this->getDoctrine()->getRepository(\Fgms\Bundle\SurveyBundle\Entity\Testimonial::class);

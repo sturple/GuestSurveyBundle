@@ -53,7 +53,6 @@ class DefaultController extends Controller
         $param = $this->getBasicEmailParam();
         $param['subject'] = 'New Testimonial';
         $param['recipient'] = ['to' => $this->param['config']['testimonials']['recipient']['to']];
-        var_dump($param);
         $data = ['token' => $t->getToken()];
         $this->sendEmail($param,$data,'email-testimonial',true);
     }

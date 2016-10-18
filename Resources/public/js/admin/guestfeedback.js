@@ -4,35 +4,67 @@ define(['jquery','moment-timezone'],function ($, moment) {
 		var unimplemented = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		get_data = get_data || unimplemented;
 		report_error = report_error || function () {	};
-		var q_select = root.find('select:eq(0)');
-		var d_select = root.find('select:eq(1)');
-		var table = root.find('table.table').first();
-		var no_data = root.children('div:eq(2)');
-		var csv = root.find('a').first();
+		var q_select,
+			d_select,
+			$feedback;
+		
+		$(function(){
+			q_select = root.find('.select-question').first();
+			d_select = root.find('.select-time-period').first();
+			$feedback = root.find('.feedback-wrapper');
+			q_select.change(impl);
+			d_select.change(impl);
+			impl();
+			
+		});
+	
+		var refresh_feedback = function($selector, no_data, loading_flag){
+			$selector = $selector || $feedback;
+			loading_flag = loading_flag || false;
+			// this means we are loading new set of data
+			if (loading_flag){
+				$selector.find('.feedback-no-data').hide();
+				$selector.find('.feedback-data').hide();
+				$selector.find('.feedback-loading').fadeIn();
+				
+			}
+			else {
+				$selector.find('.feedback-loading').fadeOut(200,function(){
+					if (no_data){
+						$selector.find('.feedback-no-data').fadeIn();
+					}
+					else {
+						$selector.find('.feedback-data').fadeIn();
+					}
+				});				
+			}	
+		};
+		
 		var impl = function () {
+			refresh_feedback($feedback,true,true);
 			var days = d_select.val();
 			var num = parseInt(days);
+			
 			if (!isNaN(num)) $days = num;
 			var question = parseInt(q_select.val());
 			get_data(question,days,function (data, e) {
 				if (e) {
 					report_error(e);
+					refresh_feedback($feedback, true);
 					return;
 				}
+				var no_data = true;
+				// checking if data
+				
 				//	Clear the table
-				table.children('tbody').remove();
+				$feedback.find('tbody').remove();
 				//	If there's no data, show no data and abort
-				if (data.results.length === 0) {
-					no_data.show();
-					table.hide();
-					return;
-				}
-				no_data.hide();
-				table.show();
+				
 				//	Recreate the table
 				var document = root[0].ownerDocument;
 				var tbody = document.createElement('tbody');
 				data.results.forEach(function (result) {
+					if (result.count !== 0) no_data = false;
 					var feedback = document.createTextNode(result.feedback);
 					var ftd = document.createElement('td');
 					ftd.appendChild(feedback);
@@ -50,18 +82,20 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					tr.appendChild(ftd);
 					tbody.appendChild(tr);
 				});
-				table[0].appendChild(tbody);
+				
+				$feedback.find('table').append(tbody);
+				refresh_feedback($feedback, no_data);
 			});
 			get_csv_url(question,days,function (url, e) {
 				if (e) {
 					report_error(e);
 					return;
 				}
-				csv.attr('href',url);
+				
+				$feedback.find('.feedback-action').attr('href',url);
 			});
 		};
-		q_select.change(impl);
-		d_select.change(impl);
-		impl();
+
+		
 	};
 });

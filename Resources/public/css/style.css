@@ -1,12 +1,16 @@
 
 body {
 	background-repeat: no-repeat;
-	background-attachment: scroll;
+	background-attachment: fixed;
 	background-position: left top;
 	background-color: #f8f8f8;
 	background-size: 100% auto;
 }
 a:focus {  outline:none;  outline-offset: -2px;}
+
+h2 {
+	margin-bottom: 32px;
+}
 .column-wrapper{padding: 24px ;position: relative;}
 .main .column-wrapper {padding: 12px 24px;	}
 
@@ -109,14 +113,7 @@ a:focus {  outline:none;  outline-offset: -2px;}
 .button-boolean {	font-size: 32px; font-weight: 700 !important; }
 .button-text { font-weight: 700 !important;}
 
-.input-lg {
-	font-size: 70px;
-	line-height: 1.2em;
-	height: 100px;
-	width: 300px ! important;
-	position: relative;
-	top: 6px;
-}
+
 
 .survey-results-wrapper {
 	background-color: #fff;
@@ -137,6 +134,105 @@ a:focus {  outline:none;  outline-offset: -2px;}
 }
 
 .table { font-size: 13px;}
+
+
+.property-logo {
+	margin: 0 auto 32px;
+}
+
+/** bootstrap overrides ***/
+.form-horizontal .control-label {
+	text-align: left;
+}
+
+.input-lg {
+	font-size: 70px;
+	line-height: 1.2em;
+	height: 100px;
+	width: 300px ! important;
+	position: relative;
+	top: 6px;
+}
+
+.btn, .nav-pills  a {
+	text-transform: uppercase;
+}
+
+/** performance  and feedback **/
+
+.performance-no-data, .feedback-no-data {	
+	padding: 50px 0;
+	font-size: 1.5em;
+	
+}
+.performance-loading, .feedback-loading {
+	padding: 50px;
+	font-size: 1.5em;
+	text-align: center;
+
+}
+.performance-data, .performance-no-data, .feedback-no-data, .feedback-data{
+	display: none;	
+}
+.performance-wrapper, .feedback-wrapper {	
+	
+	position: relative;
+	min-height: 400px;
+	
+}
+.performance-data {
+	max-width: 80%;
+
+}
+
+.performance-data
+	.fa-ul {
+		padding-top: 12px ;
+		padding-bottom: 12px;
+	
+}
+.performance-title {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+.performance-subtitle {
+	font-size: 1.2em;
+}
+.performance-description {
+	padding: 12px 0 24px;
+	font-style: italic;
+}
+.performance-wrapper  .performance-data {
+	
+	margin: 32px 0;
+}
+
+.performance-wrapper .performance-action {
+	
+
+}
+
+
+.question-period-filter {
+	margin: 32px 0 64px;
+}
+
+
+
+
+#guestFeedback table.table tr > *:nth-child(1) {
+    width: 150px;
+}
+
+#guestFeedback table.table tr > *:nth-child(2) {
+    width: 110px;
+}
+
+#guestFeedback table.table tr > *:nth-child(4) {
+    width: 75px;
+}
+
+
 
 /*
     Common
@@ -316,186 +412,4 @@ a:focus {  outline:none;  outline-offset: -2px;}
 	.main .column-wrapper {padding: 0;}
 	.btn-lg {	margin-top: 24px;padding: 12px 36px;	font-size: 32px;}
 
-}
-
-/*
-.wizard.vertical > .actions
-{
-    display: inline;
-    float: right;
-    margin: 0 2.5%;
-    width: 95%;
-}
-
-.wizard > .actions > ul
-{
-    display: inline-block;
-    text-align: left;
-}
-
-.wizard > .actions > ul > li
-{
-    margin: 0 0.5em;
-}
-
-.wizard.vertical > .actions > ul > li
-{
-    margin: 0 0 0 1em;
-}
-
-.wizard > .actions a,
-.wizard > .actions a:hover,
-.wizard > .actions a:active
-{
-    background: #2184be;
-    color: #fff;
-    display: block;
-    padding: 0.5em 1em;
-    text-decoration: none;
-
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
-.wizard > .actions .disabled a,
-.wizard > .actions .disabled a:hover,
-.wizard > .actions .disabled a:active
-{
-    background: #eee;
-    color: #aaa;
-}
-
-.wizard > .loading
-{
-}
-
-.wizard > .loading .spinner
-{
-}
-
-*/
-
-/*
-    Tabcontrol
-*/
-/*
-.tabcontrol > .steps
-{
-    position: relative;
-    display: block;
-    width: 100%;
-}
-
-.tabcontrol > .steps > ul
-{
-    position: relative;
-    margin: 6px 0 0 0;
-    top: 1px;
-    z-index: 1;
-}
-
-.tabcontrol > .steps > ul > li
-{
-    float: left;
-    margin: 5px 2px 0 0;
-    padding: 1px;
-
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    -moz-border-radius-topright: 5px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.tabcontrol > .steps > ul > li:hover
-{
-    background: #edecec;
-    border: 1px solid #bbb;
-    padding: 0;
-}
-
-.tabcontrol > .steps > ul > li.current
-{
-    background: #fff;
-    border: 1px solid #bbb;
-    border-bottom: 0 none;
-    padding: 0 0 1px 0;
-    margin-top: 0;
-}
-
-.tabcontrol > .steps > ul > li > a
-{
-    color: #5f5f5f;
-    display: inline-block;
-    border: 0 none;
-    margin: 0;
-    padding: 10px 30px;
-    text-decoration: none;
-}
-
-.tabcontrol > .steps > ul > li > a:hover
-{
-    text-decoration: none;
-}
-
-.tabcontrol > .steps > ul > li.current > a
-{
-    padding: 15px 30px 10px 30px;
-}
-
-.tabcontrol > .content
-{
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    height: 35em;
-    overflow: hidden;
-    border-top: 1px solid #bbb;
-    padding-top: 20px;
-}
-
-.tabcontrol > .content > .body
-{
-    float: left;
-    position: absolute;
-    width: 95%;
-    height: 95%;
-    padding: 2.5%;
-}
-
-.tabcontrol > .content > .body ul
-{
-    list-style: disc !important;
-}
-
-.tabcontrol > .content > .body ul > li
-{
-    display: list-item;
-}
-*/
-
-#performanceCharting > div, #guestFeedback > div {
-    margin-bottom: 10px;
-}
-
-#performanceCharting > div > label, #guestFeedback > div > label {
-    width: 100px;
-}
-
-#performanceCharting > div > label:after, #guestFeedback > div > label:after {
-    content: ":";
-}
-
-#guestFeedback table.table tr > *:nth-child(1) {
-    width: 150px;
-}
-
-#guestFeedback table.table tr > *:nth-child(2) {
-    width: 110px;
-}
-
-#guestFeedback table.table tr > *:nth-child(4) {
-    width: 75px;
 }

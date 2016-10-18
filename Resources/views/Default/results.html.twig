@@ -3,15 +3,17 @@
 {%block body%}
 	
 	<div class="fade-in-out-wrapper">
+		<img class="img-responsive property-logo" src="{{images_path}}{{config.survey.images.logos.color}}" alt="{{property.name}}  Logo" />
 	<div class="row" style="margin-bottom: 24px;">
 		<div class="col-sm-8">
 			<h1 style="">{{config.survey.text.results.title}}</h1>
 			<h2 style="margin: 0; font-size: 22px;  ">{{property.name}}</h2>
 			<p>All result time periods are UTC</p>
-			<a href="/{{fullslug}}/start/" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
-			<div style="padding: 24px 0;">
-				<a class="btn btn-primary btn-sm" href="/{{fullslug}}/csv/">Download Survey Results</a>
-			</div> 
+			<p>
+				<a class="btn btn-primary " href="/{{fullslug}}/start/" target="_blank">Preview Guest Survey</a>
+			</p>
+			
+
 		</div>
 		<div class="col-sm-4">
 			<div class="form-group">
@@ -43,10 +45,10 @@
 			{% include 'FgmsSurveyBundle:Default:includes/admin-summary-report.html.twig' ignore missing %}
 		
 		</div>
-		<div role="tabpanel" class="tab-pane" id="performanceCharting">			
+		<div role="tabpanel" class="tab-pane" id="performanceCharting" style="overflow: hidden">			
 			{% include 'FgmsSurveyBundle:Default:includes/admin-performance-charting.html.twig' ignore missing %}
 		</div>
-		<div role="tabpanel" class="tab-pane" id="guestFeedback">			
+		<div role="tabpanel" class="tab-pane" id="guestFeedback" style="overflow: hidden">			
 			{% include 'FgmsSurveyBundle:Default:includes/admin-guest-feedback.html.twig' ignore missing %}
 		
 		</div>

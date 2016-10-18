@@ -54,6 +54,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				str += slug + '-' + question + '-' + days + '-summary.png';
 				callback(str);
 			};
+			
 			var manager = new charting(
 				div[0],
 				get_data,
@@ -69,6 +70,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				'hide.bs.tab',
 				manager.disable.bind(manager)
 			);
+			
 		})();
 		//	Setup guest feedback
 		(function () {
@@ -76,6 +78,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				var segs = segments.concat();
 				segs.push('feedback',question.toString(),days.toString());
 				var addr = url.clone();
+				
 				addr.segment(segs);
 				do_json_xhr(addr.toString(),callback);
 			};
@@ -87,6 +90,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				callback(retr.toString());
 			};
 			var div = $('#guestFeedback');
+			
 			var manager = new feedback(
 				div[0],
 				get_data,

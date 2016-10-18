@@ -8,7 +8,7 @@
     <li role="presentation" class="active"><a href="#previewCheckoutSurvey" aria-controls="home" role="tab" data-toggle="tab">Preview Checkout Survey</a></li>
     <li role="presentation"><a href="#previewSurveyEmail" aria-controls="profile" role="tab" data-toggle="tab">Preview Survey Email</a></li>
     <li role="presentation"><a href="#previewDailyRollupEmail" aria-controls="messages" role="tab" data-toggle="tab">Preview Daily Rollup Email</a></li>
-    <li role="presentation"><a href="#previewTestimonialTool" aria-controls="settings" role="tab" data-toggle="tab">Preview Testimonial Tool</a></li>
+    {#<li role="presentation"><a href="#previewTestimonialTool" aria-controls="settings" role="tab" data-toggle="tab">Preview Testimonial Tool</a></li>#}
 </ul>
 
 <!-- Tab panes -->
@@ -24,9 +24,7 @@
         <div class="embed-responsive embed-responsive-16by9">
           <iframe class="embed-responsive-item" src="/{{fullslug}}/start/"></iframe>
         </div>
-        <div style="padding-top: 24px;">          
-           <a href="/{{fullslug}}/start/" class="btn btn-primary" target="_blank">{{ app.request.getSchemeAndHttpHost() }}/{{fullslug}}/start/</a>
-        </div>    
+        
     </div>
     {# Checkout Survey Email #}
     <div role="tabpanel" class="tab-pane" id="previewSurveyEmail">
@@ -50,7 +48,7 @@
             <a style="margin-left: 8px;" target="_blank" href="/{{fullslug}}/email/?rollup=true&template=email-rollup&email=true&key={{key}}" class="btn btn-primary btn-sm">Send Rollup Email</a>
         </div>        
     </div>
-    {# Testimonial Tool #}
+    {# Testimonial Tool 
     <div role="tabpanel" class="tab-pane" id="previewTestimonialTool">
         <h2>Preview Testimonal Widget</h2>
         <h3>Preview</h3>
@@ -59,6 +57,7 @@
         <h3>Style Guide</h3>
         
     </div>
+    #}
 </div>    
     
 

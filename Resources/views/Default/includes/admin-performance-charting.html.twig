@@ -1,25 +1,100 @@
 <h2>Performance Charting</h2>
+<p class="intro-text">
+    With the Performance Charts below, you are able to select any question as well as a time period and see a visual indication of your property's performance.
+    You can also download any chart for inclusion in performance reports that may be presented during management or staff presentations.
+</p>
 
-<div>
-    <label>Question</label>
-    <select class="form-control">
-        {% for q in questions_presentation %}
-        <option value="{{q.number}}">{{q.title|e}}</option>
-        {% endfor %}
-    </select>
+<div class="form-horizontal question-period-filter">
+    <div class="form-group">
+        <label class="col-md-3 col-lg-2 control-label">Question</label>
+        <div class="col-md-9 col-lg-8">
+            <select class="form-control select-question" >
+                {% for q in questions_presentation %}
+                <option value="{{q.number}}">{{q.title|e}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% include 'FgmsSurveyBundle:Default:includes/admin-select-period.html.twig' ignore missing %}    
 </div>
 
-{% include 'FgmsSurveyBundle:Default:includes/admin-select-period.html.twig' ignore missing %}
 
-<div style="text-align: center; margin: 32px 0;border: 1px solid #eee;padding: 200px 50px;font-size: 24px;">No Data</div>
-<div style="text-align: center; margin: 32px 0;height: 400px; border: 1px solid #eee;padding: 0 0;position:relative;">
-    <div style="border: 0;margin: 0;padding: 0;height: 400px;width: 100%;"></div>
-    <a href="" class="btn btn-primary" style="position:absolute;top:20px;right:20px;">Download Chart</a>
+ <!-- Nav tabs -->
+<ul class="nav nav-pills" role="tablist">
+    <li role="presentation" class="active"><a href="#performance-pie" aria-controls="home" role="tab" data-toggle="tab">Pie Chart</a></li>
+    <li role="presentation"><a href="#performance-bar" aria-controls="profile" role="tab" data-toggle="tab">Bar Graph</a></li>
+</ul>
+
+
+<div class="tab-content" >
+    <div id="performance-pie" role="tabpanel" class="tab-pane active  performance-wrapper" data-toggle="tab" >
+        <div class="performance-data">
+            <div class="performance-title"></div>
+            <div class="performance-subtitle"></div>
+            <div class="performance-description">
+                This Pie Chart provides a snapshot of the COMBINED response values received for this question over the time period selected.
+                <ul class="fa-ul">
+                    <li><i class="fa-li fa fa-chevron-right"></i>Green = maximum performance value possible.</li>
+                    <li><i class="fa-li fa fa-chevron-right"></i> Red = the lowest performance value possible.</li>
+                </ul>
+                
+               
+            </div>
+            <div class="performance-content" style="width: 1500px; height: 500px;"></div>
+            <a href="" class="btn btn-primary performance-action" >Download Pie Chart</a>
+            <a href="" style="margin-left: 12px"class="btn btn-primary performance-csv">Download Performance Data as CSV</a>
+        </div>
+        <div class="performance-no-data">No Data</div>
+        <div class="performance-loading"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></div>
+        
+
+    </div>
+    
+    <div id="performance-bar" role="tabpanel" class="tab-pane  performance-wrapper" data-toggle="tab">
+        <div class="performance-data">
+            <div class="performance-title"></div>
+            <div class="performance-subtitle"></div>
+            <div class="performance-description">
+              
+            </div>
+            <div class="performance-content"></div>
+            <a href="" class="btn btn-primary performance-action" >Download Bar Chart</a>
+            <a href="" style="margin-left: 12px"class="btn btn-primary performance-csv">Download Performance Data as CSV</a>
+        </div>
+        <div class="performance-no-data">No Data</div>
+        <div class="performance-loading"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></div>
+    </div>
 </div>
-<div style="text-align: center; margin: 32px 0;height: 400px; border: 1px solid #eee;padding: 0 0;position:relative;">
-    <div style="border: 0;margin: 0;padding: 0;height: 400px;width: 100%;"></div>
-    <a href="" class="btn btn-primary" style="position:absolute;top:20px;right:20px;">Download Chart</a>
+<div>    
 </div>
-<div style="padding-top: 24px;">
-    <a href="" class="btn btn-primary">Download Performance Data as CSV</a>
-</div>
+<script id="performance-description-polar" type="text/template">
+    <div>
+        This Bar Chart provides a snapshot of the DAILY AVERAGE response values received for this question over the time period selected.
+        Note that longer time periods provide a good visual of performance trending.
+        <ul class="fa-ul">
+            <li><i class="fa-li fa fa-chevron-right"></i>Green = Positive Responses.</li>           
+            <li><i class="fa-li fa fa-chevron-right"></i>Red = Negative Responses.</li>
+        </ul>          
+    </div>
+</script>
+<script id="performance-description-rating" type="text/template">
+    <div>
+        This Bar Chart provides a snapshot of the DAILY AVERAGE response values received for this question over the time period selected.
+        Note that longer time periods provide a good visual of performance trending.
+        <ul class="fa-ul">
+            <li><i class="fa-li fa fa-chevron-right"></i>Green = Maximum performance value reached.</li>
+            <li><i class="fa-li fa fa-chevron-right"></i>Yellow = Above performance threshold set by management, but below maximum possible value.</li>
+            <li><i class="fa-li fa fa-chevron-right"></i>Red = Below performance threshold set by management.</li>
+        </ul>          
+    </div>
+</script>
+<script id="performance-description-open" type="text/template">
+    <div>
+        This Bar Chart provides a snapshot of the DAILY AVERAGE response values received for this question over the time period selected.
+        Note that longer time periods provide a good visual of performance trending.
+        <ul class="fa-ul">
+            <li><i class="fa-li fa fa-chevron-right"></i>Blue = Questions with answers</li>
+            <li><i class="fa-li fa fa-chevron-right"></i>Orange = Questions with no answers</li>    
+        </ul>          
+    </div>
+</script>

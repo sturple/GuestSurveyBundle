@@ -20,28 +20,26 @@
 			font-family: {{reporting.css.body.font.family|default('Raleway, sans-serif')}};
 			background-color: {{reporting.css.body.background.color|default('#f8f8f8')}};
 			background-image: url('{{images_path}}{{reporting.images.background.results}}');
+
 		}
+		.btn-primary,
+		.nav-pills a,
+		.nav-pills a:focus
+		 {background-color: {{config.survey.css.buttons.navigation.background.color.normal}}; border-color: {{config.survey.css.buttons.navigation.background.color.normal}}; color: {{config.survey.css.buttons.navigation.font.color.normal}} !important;}
+		
+		.nav-pills a:hover,
+		.nav-pills>li.active a,
+		.btn-primary:hover {background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important; border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;}
+		
 		.main {
-			min-height: 580px;
-			-webkit-border-radius: 5px;
-			-moz-border-radius: 5px;
-			border-radius: 5px;
+			min-height: 580px;			
 		}
 		h1 {font-weight: 600; font-size: 38px;}
 	</style>
 	{% block styles %}{%endblock%}
 </head>
 <body class="admin">
-	<div class="header">
-		<div class="column-wrapper">
-			<div class="row">
-				<div class="col-xs-6"></div>
-				<div class="col-xs-6" style="text-align: right;">
-					<img style="height: 80px" src="{{images_path}}{{reporting.group.logo}}" alt="{{reporting.group.name}}  Logo" />
-				</div>			
-			</div>				
-		</div>
-	</div>
+	
 	<div class="container">
 		<div class="main">
 			<div class="column-wrapper">

@@ -291,5 +291,6 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		this.disable = function () {
 			enabled = false;
 		};
+		this.resize = redraw;
 	};
 });

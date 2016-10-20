@@ -73,6 +73,7 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				manager.disable.bind(manager)
 			);
 			if (tab.parent().hasClass('active')) manager.enable();
+			$(window).resize(manager.resize.bind(manager));
 			
 		})();
 		//	Setup guest feedback

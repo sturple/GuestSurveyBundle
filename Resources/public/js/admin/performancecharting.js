@@ -15,7 +15,10 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			$bar_div,
 			bar_chart,
 			$pie_div,
-			pie_chart;
+			pie_chart,
+			data,
+			question,
+			days;
 		
 		
 		select 	= root.find('.select-time-period').first();
@@ -41,14 +44,22 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		var enabled = false;
 		var last_days = null;
 		var last_question = null;
+
+		var get_selected = function () {
+			return (root.find('.active > a[href="#performance-bar"]').length === 0) ? 'pie' : 'bar';
+		}
+		var selected = get_selected();
 		
+		var no_data = function () {
+			return data.results.reduce(function (prev, curr) {
+				if (curr.count !== 0) return false;
+				return prev;
+			},true);
+		};
 		
 		// updates charts .		
-		var refresh_chart = function($selector,data,loading_flag){
-			loading_flag = loading_flag || false;
-			var no_data = true;
-			// checking if data
-			data.results.forEach(function (result) {	if (result.count !== 0) no_data = false;	});			
+		var refresh_chart = function($selector,loading_flag){
+			loading_flag = loading_flag || false;			
 			
 			// this means we are loading new set of data
 			if (loading_flag){
@@ -63,7 +74,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				$selector.find('.performance-description').html($('#performance-description-'+ data.type).html());
 				
 				$selector.find('.performance-loading').fadeOut(200,function(){
-					if (no_data){				
+					if (no_data()){				
 						$selector.find('.performance-no-data').fadeIn();		
 					} else {
 						
@@ -73,9 +84,18 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			}
 		
 		};
+
+		var do_no_data = function ($selector) {
+			if (no_data()) {
+				$selector.find('.performance-no-data').show();
+				$selector.find('.performance-data').hide();
+			} else {
+				$selector.find('.performance-no-data').hide();
+				$selector.find('.performance-data').show();
+			}
+		};
 		
-		var do_pie_chart = function (data, question, days) {
-			refresh_chart($pie_div, data, true);
+		var do_pie_chart = function () {
 			var pie_table = new visualization.DataTable();
 			var pie_options = {
 				/*title: ''+((typeof days === 'number') ? ('Last '+days+' Days') : 'Year to Date')*/
@@ -115,9 +135,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				pie_table.addRow(['Answered',data.summary.good]);
 				pie_table.addRow(['Unanswered',data.summary.bad]);
 			}
-			pie_options.width = 1500;
-			pie_options.height = 500;			
+			$pie_div.find('.performance-data').show();
 			pie_chart.draw(pie_table,pie_options);
+			$pie_div.find('.performance-data').hide();
 			$pie_div.find('.performance-action').attr('href',pie_chart.getImageURI());
 			get_pie_image_filename(question,days,function (filename, e) {
 				if (e) {
@@ -129,8 +149,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			
 		};		
 
-		var do_column_chart = function (data,question,days) {
-			refresh_chart($bar_div, data, true);
+		var do_column_chart = function () {
 			var table = new visualization.DataTable();
 			table.addColumn('date','Date');
 			table.addColumn('number','Q' + question);
@@ -174,9 +193,7 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 				},
 				legend: {
 					position: 'none'
-				},
-				width : 1200,
-				height: 500
+				}
 				
 			};
 			if (begin !== null) {
@@ -192,7 +209,9 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 			if (!has_data) {
 				config.title += '\nNO DATA';
 			}
+			$bar_div.find('.performance-data').show();
 			bar_chart.draw(table,config);
+			$bar_div.find('.performance-data').hide();
 			$bar_div.find('.performance-action').attr('href',bar_chart.getImageURI());
 			get_bar_image_filename(question,days,function (filename, e) {
 				if (e) {
@@ -206,10 +225,10 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 		// controller 
 		var impl = function () {
 			if (!enabled) return;
-			var days = select.val();
+			days = select.val();
 			var num = parseInt(days);
 			if (!isNaN(num)) days = num;
-			var question = parseInt(qselect.val());
+			question = parseInt(qselect.val());
 			if ((days === last_days) && (question === last_question)) return;
 			get_csv_url(question,days,function (url, e) {
 				if (e) {
@@ -222,25 +241,45 @@ define(['jquery','google/visualization','moment-timezone'],function ($, visualiz
 					$(this).attr('href',url);
 				});
 			});
-			get_data(question,days,function (data, e) {
+			get_data(question,days,function (new_data, e) {
+				data = new_data;
 				if (e) {
 					report_error(e);
 					return;
 				}
 				if (!enabled) return;
-				do_pie_chart(data,question,days);
-				do_column_chart(data,question,days);
+				if (selected === 'pie') {
+					refresh_chart($pie_div, true);
+					do_pie_chart(question,days);
+				} else {
+					refresh_chart($bar_div, true);
+					do_column_chart(question,days);
+				}
 
 				
 
 				//updating containers to show/hide data 
-				refresh_chart($pie_div, data);
-				refresh_chart($bar_div, data);
+				refresh_chart($pie_div);
+				refresh_chart($bar_div);
 				
 				last_days = days;
 				last_question = question;
 			});
 		};
+		var redraw = function () {
+			if (!enabled) return;
+			if (selected === 'pie') {
+				do_pie_chart();
+				do_no_data($pie_div);
+			} else {
+				do_column_chart();
+				do_no_data($bar_div);
+			}
+		};
+		root.find('> ul.nav.nav-pills > li > a').on('shown.bs.tab',function () {
+			selected = get_selected();
+			redraw();
+		});
 		select.change(impl);
 		qselect.change(impl);
 		//	Load initial data

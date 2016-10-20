@@ -63,13 +63,16 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				get_pie_image_filename,
 				report_error
 			);
-			$('a[href="#performanceCharting"][data-toggle="tab"]').on(
+
+			var tab = $('a[href="#performanceCharting"][data-toggle="tab"]');
+			tab.on(
 				'shown.bs.tab',
 				manager.enable.bind(manager)
 			).on(
 				'hide.bs.tab',
 				manager.disable.bind(manager)
 			);
+			if (tab.parent().hasClass('active')) manager.enable();
 			
 		})();
 		//	Setup guest feedback

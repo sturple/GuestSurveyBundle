@@ -1514,4 +1514,14 @@ class DefaultController extends Controller
         return $this->render('FgmsSurveyBundle:Default:testimonial.html.twig',['form' => $form->createView()]);
     }
 
+    public function testimonialsExampleAction($order, $count, $slug, $group = false)
+    {
+        return $this->render('FgmsSurveyBundle:Default:testimonials.html.twig',[
+            'order' => $order,
+            'count' => intval($count),
+            'slug' => $slug,
+            'group' => $group
+        ]);
+    }
+
 }

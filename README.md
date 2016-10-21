@@ -70,3 +70,15 @@ email:
         name: Guest Feedback
 
 ```
+
+## Testimonials Widget
+
+To place a testimonials widget on a page simply add:
+
+```html
+<script type="text/javascript" src="/<group>/<slug>/testimonials/<order>/<count>"></script>
+```
+
+to your page's HTML.  The `<script>` tag will be replaced with a testimonials widget on page load.
+
+The `order` parameter may be either `random` (which selects `count` testimonials randomly) or `latest` (which displays the `count` latest testimonials in the order in which they were added).

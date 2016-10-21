@@ -76,10 +76,14 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					var date = document.createTextNode(date_str);
 					var dtd = document.createElement('td');
 					dtd.appendChild(date);
+					var ttd = document.createElement('td');
+					//	U+2713 is Unicode code point CHECK MARK
+					if (result.testimonial) ttd.appendChild(document.createTextNode('\u2713'));
 					var tr = document.createElement('tr');
 					tr.appendChild(dtd);
 					tr.appendChild(rtd);
 					tr.appendChild(ftd);
+					tr.appendChild(ttd);
 					tbody.appendChild(tr);
 				});
 				

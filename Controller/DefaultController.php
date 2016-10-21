@@ -1347,10 +1347,24 @@ class DefaultController extends Controller
         });
         $this->sortByDate($data,false);
         return array_map(function (\Fgms\Bundle\SurveyBundle\Entity\Questionnaire $q) use ($question) {
+            $t = null;
+            foreach ($q->getTestimonials() as $curr) {
+                if ($curr->getQuestion() === $question) {
+                    $t = $curr;
+                    break;
+                }
+            }
+            if (!is_null($t)) {
+                $t = (object)[
+                    'text' => $t->getText(),
+                    'approved' => $t->getApproved()
+                ];
+            }
             return (object)[
                 'date' => $q->getCreateDate(),
                 'room' => $q->getRoomNumber(),
-                'feedback' => $q->getQuestion($question)
+                'feedback' => $q->getQuestion($question),
+                'testimonial' => $t
             ];
         },$data);
     }

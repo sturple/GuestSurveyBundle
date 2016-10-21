@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Testimonials Example</title>
+	</head>
+	<body>
+		{% set args = {'order': order, 'count': count, 'slug': slug} %}
+		{% if group is same as(false) %}
+		{% set route = 'fgms_testimonials' %}
+		{% else %}
+		{% set route = 'fgms_testimonials_with_group' %}
+		{% set args = args|merge({'group': group}) %}
+		{% endif %}
+		<script type="text/javascript" src="{{path(route,args)|e('html_attr')}}"></script>
+	</body>
+</html>

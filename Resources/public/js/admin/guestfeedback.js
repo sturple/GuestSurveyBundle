@@ -1,8 +1,9 @@
 define(['jquery','moment-timezone'],function ($, moment) {
-	return function (root, get_data, get_csv_url, report_error) {
+	return function (root, get_data, get_csv_url, get_testimonial_url, report_error) {
 		root = $(root);
 		var unimplemented = function (question, days, callback) {	callback(null,new Error('Unimplemented'));	};
 		get_data = get_data || unimplemented;
+		get_testimonial_url = get_testimonial_url || unimplemented;
 		report_error = report_error || function () {	};
 		var q_select,
 			d_select,
@@ -84,6 +85,22 @@ define(['jquery','moment-timezone'],function ($, moment) {
 					tr.appendChild(rtd);
 					tr.appendChild(ftd);
 					tr.appendChild(ttd);
+					if (result.testimonial) get_testimonial_url(result.testimonial.token,function (url, e) {
+						if (e) {
+							report_error(e);
+							return;
+						}
+						for (var curr = tr.firstChild; curr !== null; curr = curr.nextSibling) {
+							var a = document.createElement('a');
+							a.setAttribute('href',url);
+							while (curr.firstChild !== null) {
+								var popped = curr.firstChild;
+								curr.removeChild(popped);
+								a.appendChild(popped);
+							}
+							curr.appendChild(a);
+						}
+					});
 					tbody.appendChild(tr);
 				});
 				

@@ -89,12 +89,18 @@ require(['jquery','admin/performancecharting','urijs/URI','admin/guestfeedback']
 				retr.segment(segs);
 				callback(retr.toString());
 			};
+			var get_testimonial_url = function (token, callback) {
+				var retr = url.clone();
+				retr.segment(['testimonial',token]);
+				callback(retr.toString());
+			};
 			var div = $('#guestFeedback');
 			
 			var manager = new feedback(
 				div[0],
 				get_data,
 				get_csv_url,
+				get_testimonial_url,
 				report_error
 			);
 		})();

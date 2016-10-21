@@ -1357,7 +1357,8 @@ class DefaultController extends Controller
             if (!is_null($t)) {
                 $t = (object)[
                     'text' => $t->getText(),
-                    'approved' => $t->getApproved()
+                    'approved' => $t->getApproved(),
+                    'token' => $t->getToken()
                 ];
             }
             return (object)[

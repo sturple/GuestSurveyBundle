@@ -15,108 +15,147 @@ use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class DefaultController extends Controller
 {
+  var $config = array();
+  var $logger = false;
+  var $param = array();
+  var $request = null;
+  var $summary_report =null;
+  var $charting = null;
+  var $feedback = null;
 
-    var $config = array();
-    var $logger = false;
-    var $param = array();
-    var $request = null;
-    
-    /**
-     * route to show home page
-     *
-     */
-    public function indexAction()
-    {
-        return $this->render('FgmsSurveyBundle:Default:index.html.twig', array());
-    }
+  /**
+   * route to show home page
+   *
+   */
+  public function indexAction()
+  {
+      return $this->render('FgmsSurveyBundle:Default:index.html.twig', array());
+  }
 
-    /**
-     * route to start survey
-     * @param string $slug
-     * @param mixed $group
-     */
-    public function startAction($slug,$group=false)
-    {
-        $param = $this->getConfiguration($slug,$group);
+  /**
+   * route to start survey
+   * @param string $slug
+   * @param mixed $group
+   */
+  public function startAction($slug,$group=false)
+  {
+      $param = $this->getConfiguration($slug,$group);
+      return $this->render('FgmsSurveyBundle:Default:start.html.twig', $param);
+  }
 
-        return $this->render('FgmsSurveyBundle:Default:start.html.twig', $param);
-    }
+  /**
+   * route for the survey
+   * @param string $slug
+   * @param mixed $group
+   */
+  public function surveyAction($slug,$group=false)
+  {
 
-    private function invalidTestimonialData($obj)
-    {
-        //	TODO: Improve error handling/reporting
-        throw new \RuntimeException('Invalid testimonial data');
-    }
+      //  TODO: This should be injected and the number of bits
+      //  should be configurable
+      $token = new \Fgms\Bundle\SurveyBundle\Utility\RandomTokenGenerator(128);
+      $param = $this->getConfiguration($slug,$group);
+      $room = $this->request->query->has('room') ? $this->request->query->get('room') : 'none';
+      if ($this->has('request')){
+          $form = $this->getForm($slug,$group,$room);
+      }
+      else {
+          $form = $this->getFormSymfony3($slug,$group,$room);
+      }
+      $form->handleRequest($this->request);
+      if ($form->isValid()){
+          $em = $this->getDoctrine()->getManager();
+          $q = $form->getData();
+          //  Create Testimonial objects from responses user
+          //  identified as being testimonials
+          $ts = $q->getTestimonialData();
+          $tests = [];
+          if (!is_null($ts)) {
+              foreach ($ts as $t) {
+                  //	As far as we know each of these $t items
+                  //	is raw data from the user, we expect an
+                  //	object with a "field" property which is
+                  //	a string, but we don't know that the item
+                  //	actually has that form
+                  if (!(is_object($t) && isset($t->field) && is_string($t->field))) $this->invalidTestimonialData($t);
+                  if (!preg_match('/^question(\d+)$/u',$t->field,$matches)) $this->invalidTestimonialData($t);
+                  $num = intval($matches[1]);
+                  $test = new \Fgms\Bundle\SurveyBundle\Entity\Testimonial();
+                  $test->setQuestion($num);
+                  $test->setApproved(false);
+                  $test->setText($q->getQuestion($num));
+                  $test->setQuestionnaire($q);
+                  $test->setToken($token->generate());
+                  $tests[] = $test;
+              }
+          }
+          $em->persist($q);
+          foreach ($tests as $t) $em->persist($t);
+          foreach ($tests as $t) $this->sendTestimonialEmail($t);
+          $this->checkSurveyResults($slug,$group,$form,$room);
+          $em->flush();
+          $conditional = $this->getConditionalFinish($form) ? '?conditional' : '';
+          return $this->redirect("/". $this->fullSlug. "/finish/".$conditional);
+      }
+      $param['form'] = $form->createView();
+      return $this->render('FgmsSurveyBundle:Default:survey.html.twig', $param );
+  }
 
-    private function sendTestimonialEmail(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $t)
-    {
-        $param = $this->getBasicEmailParam();
-        $param['subject'] = 'New Testimonial';
-        $param['recipient'] = ['to' => $this->param['config']['testimonials']['recipient']['to']];
-        $data = ['token' => $t->getToken()];
-        $this->sendEmail($param,$data,'email-testimonial',true);
-    }
+  /**
+   * route to finish survey
+   * @param string $slug
+   * @param mixed $group
+   *
+   */
+  public function finishAction($slug,$group=false)
+  {
+      $param = $this->getConfiguration($slug, $group);
+      $param['conditionalFinish'] = $this->request->query->has('conditional');
+      return $this->render('FgmsSurveyBundle:Default:finish.html.twig', $param);
+  }
 
-    /**
-     * route for the survey
-     * @param string $slug
-     * @param mixed $group
-     */
-    public function surveyAction($slug,$group=false)
-    {
+  /**
+   * route to get results this is the admin section requires valid key which is setup in yaml file
+   *
+   * @param string $slug
+   * @param mixed $group
+   *
+   */
+  public function resultsAction($slug,$group=false)
+  {
+      $this->getConfiguration($slug,$group);
+      $showResultsFlag = false;
+      // throws error if not authenticated
+      $this->checkIfAuthenticated();
+      $this->param['questions_presentation'] = array_map(function (array $q) {
+          $q['number'] = intval(preg_replace('/^question/u','',$q['field']));
+          $q['title'] = htmlspecialchars_decode(strip_tags($q['title']));
+          return $q;
+      },$this->param['questions']);
+      usort($this->param['questions_presentation'],function (array $a, array $b) {
+          return $a['number'] - $b['number'];
+      });
+      $this->summary_report = new \Fgms\Bundle\SurveyBundle\Utility\SummaryReport($this->getDoctrine()->getManager(), $this->param, $slug, $group);
+      //$stats = $this->getStats($slug,$group);
+      $stats = $this->summary_report->get_stats();
+      return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$stats) );
+  }
 
-        //  TODO: This should be injected and the number of bits
-        //  should be configurable
-        $token = new \Fgms\Bundle\SurveyBundle\Utility\RandomTokenGenerator(128);
+  private function invalidTestimonialData($obj)
+  {
+      //	TODO: Improve error handling/reporting
+      throw new \RuntimeException('Invalid testimonial data');
+  }
 
-        $param = $this->getConfiguration($slug,$group);
-        $room = $this->request->query->has('room') ? $this->request->query->get('room') : 'none';
+  private function sendTestimonialEmail(\Fgms\Bundle\SurveyBundle\Entity\Testimonial $t)
+  {
+      $param = $this->getBasicEmailParam();
+      $param['subject'] = 'New Testimonial';
+      $param['recipient'] = ['to' => $this->param['config']['testimonials']['recipient']['to']];
+      $data = ['token' => $t->getToken()];
+      $this->sendEmail($param,$data,'email-testimonial',true);
+  }
 
-
-        if ($this->has('request')){
-            $form = $this->getForm($slug,$group,$room);
-        }
-        else {
-            $form = $this->getFormSymfony3($slug,$group,$room);
-        }
-        $form->handleRequest($this->request);
-        if ($form->isValid()){
-            $em = $this->getDoctrine()->getManager();
-            $q = $form->getData();
-            //  Create Testimonial objects from responses user
-            //  identified as being testimonials
-            $ts = $q->getTestimonialData();
-            $tests = [];
-            if (!is_null($ts)) {
-                foreach ($ts as $t) {
-                    //	As far as we know each of these $t items
-                    //	is raw data from the user, we expect an
-                    //	object with a "field" property which is
-                    //	a string, but we don't know that the item
-                    //	actually has that form
-                    if (!(is_object($t) && isset($t->field) && is_string($t->field))) $this->invalidTestimonialData($t);
-                    if (!preg_match('/^question(\d+)$/u',$t->field,$matches)) $this->invalidTestimonialData($t);
-                    $num = intval($matches[1]);
-                    $test = new \Fgms\Bundle\SurveyBundle\Entity\Testimonial();
-                    $test->setQuestion($num);
-                    $test->setApproved(false);
-                    $test->setText($q->getQuestion($num));
-                    $test->setQuestionnaire($q);
-                    $test->setToken($token->generate());
-                    $tests[] = $test;
-                }
-            }
-            $em->persist($q);
-            foreach ($tests as $t) $em->persist($t);
-            foreach ($tests as $t) $this->sendTestimonialEmail($t);
-            $this->checkSurveyResults($slug,$group,$form,$room);
-            $em->flush();
-            $conditional = $this->getConditionalFinish($form) ? '?conditional' : '';
-            return $this->redirect("/". $this->fullSlug. "/finish/".$conditional);
-        }
-        $param['form'] = $form->createView();
-        return $this->render('FgmsSurveyBundle:Default:survey.html.twig', $param );
-    }
 
     /*
     * checks to see if uses alternative or conditional finish , ie send to trip advisor
@@ -151,107 +190,7 @@ class DefaultController extends Controller
     }
 
 
-    /**
-     * route to finish survey
-     * @param string $slug
-     * @param mixed $group
-     *
-     */
-    public function finishAction($slug,$group=false)
-    {
-        $param = $this->getConfiguration($slug, $group);
-        $param['conditionalFinish'] = $this->request->query->has('conditional');
-        return $this->render('FgmsSurveyBundle:Default:finish.html.twig', $param);
-    }
 
-    /**
-     * route to get results this is the admin section requires valid key which is setup in yaml file
-     *
-     * @param string $slug
-     * @param mixed $group
-     *
-     */
-    public function resultsAction($slug,$group=false)
-    {
-        $this->getConfiguration($slug,$group);
-        $showResultsFlag = false;
-        // throws error if not authenticated
-        $this->checkIfAuthenticated();
-        $this->param['questions_presentation'] = array_map(function (array $q) {
-            $q['number'] = intval(preg_replace('/^question/u','',$q['field']));
-            $q['title'] = htmlspecialchars_decode(strip_tags($q['title']));
-            return $q;
-        },$this->param['questions']);
-        usort($this->param['questions_presentation'],function (array $a, array $b) {
-            return $a['number'] - $b['number'];
-        });
-        return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$this->getStats($slug,$group)) );
-    }
-
-    /**
-    * Gets stats, depending on $dayFlag either gets email ($dayFlag == true) or gets 7, 30 and year to date stats.
-    * @param $slug string
-    * @param $group string
-    * @param $dayFlag boolean
-    */
-    private function getStats($slug, $group, $dayFlag=false)
-    {
-        $questions = $this->param['questions'];
-        $statsCount = array();
-        if ($dayFlag){
-            $survey24Hours =  $this->getSurveyRollup($slug,$group,'24 HOUR', $questions);
-            $statsCount = array('day'=>$this->getValue('count',$survey24Hours));
-        }
-        else {
-            $survey7 = $this->getSurveyRollup($slug,$group,'7 DAY', $questions);
-            $survey30 = $this->getSurveyRollup($slug,$group,'30 DAY', $questions);
-            $surveyYear = $this->getSurveyRollup($slug,$group,'1 YEAR', $questions);
-            $statsCount = array('last7' =>$this->getValue('count',$survey7),
-                                'last30'=>$this->getValue('count',$survey30),
-                                'yeartodate'=>$this->getValue('count',$surveyYear)
-                            );
-        }
-        $stats = array();
-        // setting up stats.
-        foreach($questions as $allquestion){
-            $active = isset($allquestion['active']) ? $allquestion['active'] : true;
-            //$field = str_replace('question','Q',$allquestion['field']);
-            //$field = str_replace('Comment','O',$allquestion['field']);
-            $field = $allquestion['field'];
-            $emailtrigger = 'none';
-            if ($this->getValue('email',$allquestion) !== false){
-                $emailtrigger = $this->getValue('trigger', $allquestion['email'], 'none');
-            }
-            $type = $allquestion['type'];
-            $array = array(  'field'=>str_replace('question','Q',$field),
-                             'active'=>$active,
-                             'type'=>$type,
-                             'question'=>strip_tags($allquestion['title']),
-                             'negative'=>$this->getValue('negative',$allquestion,false),
-                             'show'=>(strlen($field) < 4),
-                             'trigger'=>$this->getValue('trigger',$allquestion),
-                             'emailtrigger'=>$emailtrigger
-                            );
-
-            // add last 24 hour stat
-            if ($dayFlag){
-                $array['day'] = $this->getValue($field.'M',$survey24Hours);
-            }
-            // add last 7 , last 30 and year to date stats
-            else {
-                $array = array_merge($array,array(
-                    'last7'=>$this->getValue($field.'M',$survey7),
-                    'last30'=>$this->getValue($field.'M',$survey30),
-                    'yeartodate'=>$this->getValue($field.'M',$surveyYear),
-                ));
-            }
-            $stats[] = $array;
-        }
-        return array('stats'=>$stats,
-                     'statCounts'=>$statsCount
-                 );
-
-    }
     /**
      * route to download CSV file
      * @param string $slug
@@ -375,7 +314,9 @@ class DefaultController extends Controller
     private function emailRollup($testFlag=false)
     {
         $emailParam = array();
-        $emailParam['fromEmail'] = array($this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com')=>$this->getValue('name',$this->config['email']['from'],'Webmaster'));
+        $emailParam['fromEmail'] = [
+          $this->getValue('address',$this->config['email']['from'],'webmaster@fifthgeardev.com') => $this->getValue('name',$this->config['email']['from'],'Webmaster')
+        ];
         $emailParam['subject'] = sprintf($this->param['config']['rollup']['subject'], $this->param['property']['name']) ;
         if ($testFlag){
             $emailParam['recipient']['to'] = array('webmaster@fifthgeardev.com');
@@ -606,51 +547,6 @@ class DefaultController extends Controller
 
     }
 
-    /*
-     * Gets Survey Rollup with specific interval
-     *
-     * @param string $property this is property slug
-     * @param string $timeInterval is the time interval for the last x time
-     * @param array $allquestions is an array of all the questions
-     */
-    private function getSurveyRollup($slug, $group, $timeInterval="7 DAY", $allquestions)
-    {
-        $timezone = $this->getValue('timezone',$this->param['property'],'America/Vancouver');
-        $time = new \DateTime('now', new \DateTimeZone($timezone));
-        $timezoneOffset = intval($time->format('O'))/100;
-        $this->logger->info('Timezone Offset:: '.$timezoneOffset);
-        //$timeInterval .= " $timezoneOffset HOURS";
-        $em = $this->getDoctrine()->getManager();
-        $sql = "SELECT createDate, count(*) as `count`,  ";
-        $s = array();
-
-        foreach ($allquestions as $question){
-            $type = strtolower($this->getValue('type',$question,'open'));
-            $field = $question['field'];
-            if ($type == 'rating'){
-                $s[] = "AVG(s.{$field}) as `{$field}M`";
-            }
-            else if ($type == 'polar'){
-                $negativeFlag =  $this->getValue('negative',$question,false);
-                $yesText = $negativeFlag ? 'No' : 'Yes';
-                $noText = $negativeFlag ? 'Yes' : 'No' ;
-                $s[] = "(sum(if(s.{$field}='{$yesText}',1,0))/(sum(if(s.{$field}='{$yesText}',1,0))+sum(if(s.{$field}='{$noText}',1,0)))*100 ) as `{$field}M`";
-            }
-            else if ($type == 'open'){
-                $s[] = "(sum(IF (LENGTH(s.{$field}) > 2, 1,0))) as `{$field}M`";
-            }
-            else {
-
-            }
-        }
-        $sql .= implode(', ',$s) .' ';
-        $sql .= "FROM questionnaire s  WHERE s.createDate > (NOW()  - INTERVAL {$timeInterval}) AND s.slug = '{$slug}'";
-        if ($group != false){
-            $sql .= " AND s.sluggroup = '{$group}'";
-        }
-        //$this->logger->info('sql:: '. $sql);
-        return $em->getConnection()->fetchAssoc($sql);
-    }
 
     /**
      * Gets the form to display for survey
@@ -802,38 +698,7 @@ class DefaultController extends Controller
         return new \DateTimeZone($tz);
     }
 
-    private function daysToRange($days)
-    {
-        $now = new \DateTime('now',$this->getTimezone());
-        if ($days === 'yeartodate') {
-            $end = $this->getEndOfDay($now);
-            $now->setDate(intval($now->format('Y')),1,1);
-            return [$this->getBeginningOfDay($now),$end];
-        }
-        if (!is_int($days)) {
-            if (!is_numeric($days)) throw $this->createNotFoundException(
-                sprintf(
-                    '"%s" is not numeric',
-                    $days
-                )
-            );
-            $i = intval($days);
-            if ($i != floatval($days)) throw $this->createNotFoundException(
-                sprintf(
-                    '"%s" is not integer',
-                    $days
-                )
-            );
-            if ($i < 1) throw $this->createNotFoundException(
-                sprintf(
-                    'Must retrieve at least one day, %d requested',
-                    $i
-                )
-            );
-            $days = $i;
-        }
-        return [$this->getBeginningOfPastDay($now,$days),$this->getEndOfDay($now)];
-    }
+
 
     private function getDateRange (\DateTime $begin, \DateTime $end, $slug, $group = false)
     {
@@ -1148,8 +1013,11 @@ class DefaultController extends Controller
         return $obj;
     }
 
-    //  TODO: Consider renaming this function: It does
-    //  initialization for more than just charts
+    private function setAdminInit($slug, $group=false){
+      $this->getConfiguration($slug,$group);
+      $this->checkIfAuthenticated();
+    }
+
     private function chartInit($slug, $group = false)
     {
         $this->getConfiguration($slug,$group);
@@ -1261,7 +1129,8 @@ class DefaultController extends Controller
 
     public function chartAction($question, $days, $slug, $group = false)
     {
-        $this->chartInit($slug,$group);
+        $this->charting = new \Fgms\Bundle\SurveyBundle\Utility\PerformanceCharting();
+        $this->setAdminInit($slug,$group);
         $range = $this->daysToRange($days);
         return $this->chartImpl($question,$range[0],$range[1],$slug,$group);
     }

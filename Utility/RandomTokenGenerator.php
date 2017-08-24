@@ -1,5 +1,4 @@
 <?php
-
 namespace Fgms\Bundle\SurveyBundle\Utility;
 
 /**
@@ -7,9 +6,9 @@ namespace Fgms\Bundle\SurveyBundle\Utility;
  */
 class RandomTokenGenerator implements TokenGenerator
 {
-    
+
     private $bits;
-    
+
     /**
      * Creates a RandomTokenGenerator object which
      * generates tokens of a certain length.
@@ -34,11 +33,11 @@ class RandomTokenGenerator implements TokenGenerator
         );
         $this->bits=$bits;
     }
-    
+
     public function generate()
     {
         $str=random_bytes($this->bits/8);
         return bin2hex($str);
     }
-    
+
 }

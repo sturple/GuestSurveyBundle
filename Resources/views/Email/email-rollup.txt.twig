@@ -8,7 +8,7 @@ Number of Surveys Completed: {{statCounts.day | default('000')}} {% if statCount
 {% if stat.active %}
 ID: {{stat.field}}
 
-Question:  {{stat.question}}
+Question:  {{stat.question|raw}}
 {#
 Email Trigger: {% if stat.type == 'open' %}{% if stat.emailtrigger %}Input{% else %}None{% endif %}{% else %}{{stat.emailtrigger | capitalize}}{% endif %}
 

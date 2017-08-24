@@ -3,14 +3,13 @@
 Room # {{item.roomNumber|default('None')}}
 Date {{item.createDate|date('M d, Y')}}
 Time {{item.createDate|date('H:i')}}
-Question: {{item.title|default('No Question')}}
+Question: {{item.title|default('No Question')|raw}}
 {% if data.answer > 0 %}
 Message: {{item.answer |default('--answer missing--')}}
 {% else %}
-Response: {{item.answer| default('--answer missing--')}} {%if item.type == 'rating'%}out of 5{%endif%} 
+Response: {{item.answer| default('--answer missing--')}} {%if item.type == 'rating'%}out of 5{%endif%}
 {% endif %}
 
 {{property.name}}
 {{property.contact.address}}, {{property.contact.province}}, {{property.contact.country}}
 {{property.contact.phone}}| TF: {{property.contact.tollfree}} | {{property.contact.email}} | {{property.contact.website}}
- 

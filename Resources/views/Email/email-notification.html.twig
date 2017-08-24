@@ -70,7 +70,7 @@
                 Question
                 </td>
               <td class="panel nine sub-columns body-text" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; min-width: 0px; width: 75%; color: #666666; font-family: 'Open Sans',arial,helvetica,sans-serif; font-weight: normal; line-height: 22px; font-size: 14px; background: #ffffff; margin: 0; padding: 10px; border: 1px solid #efefef;" align="left" bgcolor="#ffffff" valign="top">
-                {{item.title|default('No Question')}}
+                {{item.title|default('No Question')|raw}}
               </td>
               <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
             </tr>
@@ -96,7 +96,7 @@
                 <em> {%if item.type|default('') == 'rating'%}({{item.answer| default('--answer missing--')}} out of 5){%else%}{{item.answer| default('--answer missing--')}}{%endif%} </em>
               </td>
               <td class="expander" style="word-break: break-word; -webkit-hyphens: none; -moz-hyphens: none; hyphens: none; border-collapse: collapse !important; vertical-align: top; text-align: left; visibility: hidden; width: 0px; color: #222222; font-family: Helvetica, Arial, sans-serif; font-weight: normal; line-height: 19px; font-size: 14px; margin: 0; padding: 0;" align="left" valign="top"></td>
-            </tr>													
+            </tr>
                                   {% endif %}
           </table>
         </td>

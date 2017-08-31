@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="/bundles/fgmssurvey/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<link href='https://fonts.googleapis.com/css?family={{reporting.resources.google.fonts|default('Raleway:400,700,Open+Sans')}}' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="/bundles/fgmssurvey/js/require.js" data-main="/bundles/fgmssurvey/js/app.js"></script>
+	{#<script type="text/javascript" src="/bundles/fgmssurvey/js/require.js" data-main="/bundles/fgmssurvey/js/app.js"></script>#}
 	<style>
 		body {
 			color:{{reporting.css.body.font.color|default('#666')}};
@@ -26,28 +26,28 @@
 		.nav-pills a,
 		.nav-pills a:focus
 		 {background-color: {{config.survey.css.buttons.navigation.background.color.normal}}; border-color: {{config.survey.css.buttons.navigation.background.color.normal}}; color: {{config.survey.css.buttons.navigation.font.color.normal}} !important;}
-		
+
 		.nav-pills a:hover,
 		.nav-pills>li.active a,
 		.btn-primary:hover {background-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important; border-color: {{config.survey.css.buttons.navigation.background.color.hover}} !important;}
-		
+
 		.main {
-			min-height: 580px;			
+			min-height: 580px;
 		}
 		h1 {font-weight: 600; font-size: 38px;}
 	</style>
 	{% block styles %}{%endblock%}
 </head>
 <body class="admin">
-	
+
 	<div class="container">
 		<div class="main">
 			<div class="column-wrapper">
-				<div class="row">		
-					<div class="col-sm-12">	{%block body %}{%endblock%}	</div>		
-				</div>					
+				<div class="row">
+					<div class="col-sm-12">	{%block body %}{%endblock%}	</div>
+				</div>
 			</div>
-		</div>	
+		</div>
 	</div>
 	<div class="footer">
 		<div class="column-wrapper">

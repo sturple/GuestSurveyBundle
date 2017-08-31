@@ -1,9 +1,10 @@
 {% extends 'FgmsSurveyBundle:Default:admin.html.twig' %}
 
 {%block body%}
-	
+
 	<div class="fade-in-out-wrapper">
-		<img class="img-responsive property-logo" src="{{images_path}}{{config.survey.images.logos.color}}" alt="{{property.name}}  Logo" />
+
+		{#<img class="img-responsive property-logo" src="{{images_path}}{{config.survey.images.logos.color}}" alt="{{property.name}}  Logo" />#}
 	<div class="row" style="margin-bottom: 24px;">
 		<div class="col-sm-8">
 			<h1 style="">{{config.survey.text.results.title}}</h1>
@@ -12,7 +13,7 @@
 			<p>
 				<a class="btn btn-primary " href="/{{fullslug}}/start/" target="_blank">Preview Guest Survey</a>
 			</p>
-			
+
 
 		</div>
 		<div class="col-sm-4">
@@ -34,29 +35,48 @@
 	</div>
 
 	<!-- Nav tabs -->
+
 	<ul class="nav nav-tabs" role="tablist">
 	  <li role="presentation" class="active"><a href="#summaryReport" aria-controls="home" role="tab" data-toggle="tab">Summary Report</a></li>
-	  <li role="presentation"><a href="#performanceCharting" aria-controls="profile" role="tab" data-toggle="tab">Performance Charting</a></li>
-	  <li role="presentation"><a href="#guestFeedback" aria-controls="messages" role="tab" data-toggle="tab">Guest Feedback</a></li>
-	  <li role="presentation"><a href="#surveyConfiguration" aria-controls="settings" role="tab" data-toggle="tab">Survey Configuration</a></li>
+		{% if enables.performance_charating | default(false) %}
+	  <li role="presentation">
+			<a href="#performanceCharting" aria-controls="profile" role="tab" data-toggle="tab">Performance Charting</a>
+		</li>
+		{% endif %}
+
+		{% if enables.guest_feedback | default(false) %}
+	  <li role="presentation">
+			<a href="#guestFeedback" aria-controls="messages" role="tab" data-toggle="tab">Guest Feedback</a>
+		</li>
+		{% endif %}
+		{% if enables.suvery_configuration | default(false) %}
+		<li role="presentation"><a href="#surveyConfiguration" aria-controls="settings" role="tab" data-toggle="tab">Survey Configuration</a></li>
+		{% endif %}
+
 	</ul>
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="summaryReport">			
+		<div role="tabpanel" class="tab-pane active" id="summaryReport">
 			{% include 'FgmsSurveyBundle:Default:includes/admin-summary-report.html.twig' ignore missing %}
-		
 		</div>
-		<div role="tabpanel" class="tab-pane" id="performanceCharting" style="overflow: hidden">			
+
+		{% if enables.performance_charating | default(false) %}
+		<div role="tabpanel" class="tab-pane" id="performanceCharting" style="overflow: hidden">
 			{% include 'FgmsSurveyBundle:Default:includes/admin-performance-charting.html.twig' ignore missing %}
 		</div>
-		<div role="tabpanel" class="tab-pane" id="guestFeedback" style="overflow: hidden">			
+		{% endif %}
+
+		{% if enables.guest_feedback | default(false) %}
+		<div role="tabpanel" class="tab-pane" id="guestFeedback" style="overflow: hidden">
 			{% include 'FgmsSurveyBundle:Default:includes/admin-guest-feedback.html.twig' ignore missing %}
-		
 		</div>
-		<div role="tabpanel" class="tab-pane" id="surveyConfiguration">			
+		{% endif %}
+
+		{% if enables.suvery_configuration | default(false) %}
+		<div role="tabpanel" class="tab-pane" id="surveyConfiguration">
 			{% include 'FgmsSurveyBundle:Default:includes/admin-survey-configuration.html.twig' ignore missing %}
-		
-		</div>		
-	</div>	
+		</div>
+		{% endif %}
+	</div>
 	</div>
 {% endblock%}
 {%block styles %}

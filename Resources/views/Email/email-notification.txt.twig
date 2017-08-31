@@ -1,10 +1,10 @@
 {{config.email.text.title}}
 {{config.email.text.subtitle}}
 Room # {{item.roomNumber|default('None')}}
-Date {{item.createDate|date('M d, Y')}}
-Time {{item.createDate|date('H:i')}}
+Date {{item.createDate|default('now')|date('M d, Y')}}
+Time {{item.createDate|default('now')|date('H:i')}}
 Question: {{item.title|default('No Question')|raw}}
-{% if data.answer > 0 %}
+{% if data.answer|default(0) > 0 %}
 Message: {{item.answer |default('--answer missing--')}}
 {% else %}
 Response: {{item.answer| default('--answer missing--')}} {%if item.type == 'rating'%}out of 5{%endif%}

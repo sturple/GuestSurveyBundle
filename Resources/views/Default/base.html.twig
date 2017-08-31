@@ -39,7 +39,7 @@
 		<div class="column-wrapper">
 			<div class="row">
 				<div class="col-xs-6"><img style="" class="" src="{{images_path}}{{config.survey.images.logos.white}}" alt="{{property.name}}" /></div>
-				{% if config.survey.images.logos.group %}
+				{% if config.survey.images.logos.group | default(false) %}
 				<div class="col-xs-6" style="text-align: right;"><img style="" class="" src="{{images_path}}{{config.survey.images.logos.group}}" alt="{{reporting.group.name|default('')}}  Logo" /></div>
 				{% endif %}
 			</div>

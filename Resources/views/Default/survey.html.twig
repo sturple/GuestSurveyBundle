@@ -65,13 +65,13 @@
 
 				<div class="form-group form-comment">
 					<textarea class="form-control" data-field="{{question.field}}" ></textarea>
-					{% if question.testimonial %}
+					{% if question.testimonial | default(false) %}
 						<div class="checkbox">
 							<label>
 								<input type="checkbox" class="script-testimonial" data-question="{{question.field}}" value="true" /> Use as Testimonial
 							</label>
 						</div>
-						
+
 					{% endif %}
 				</div>
 				{% if loop.index == loop.length%}
@@ -140,21 +140,21 @@
 			}
 		});
 		$('#questionnaire').fadeIn(1000);
-		
+
 		{# 	When testimonial input box is clicked will create json object of all testimonial checboxes that are enabled in hidden field name="testimonialData", which gets saves in database #}
 		$('.script-testimonial').on('change',function(){
 			var testimonialData = [];
 			$('.script-testimonial').each(function(){
-				
+
 				if ($(this).is(':checked')) {
 					var fieldObj = new Object();
 					fieldObj.field = $(this).attr('data-question');
 					testimonialData.push(fieldObj);
 				}
-				
+
 			})
 			$('#form_testimonialData').val(JSON.stringify(testimonialData))
-			
+
 		});
 		$('.finish-button').on('click',function(){
 			$('a[href="#finish"]').trigger('click');

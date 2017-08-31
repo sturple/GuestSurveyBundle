@@ -4,6 +4,8 @@ namespace Fgms\Bundle\SurveyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use \Fgms\Bundle\SurveyBundle\Entity\Questionnaire;
+use \Fgms\Bundle\SurveyBundle\Entity\Feedback;
+use \Fgms\Bundle\SurveyBundle\Form\FeedbackType;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -40,7 +42,24 @@ class DefaultController extends Controller
   public function startAction($slug,$group=false)
   {
       $param = $this->getConfiguration($slug,$group);
-      return $this->render('FgmsSurveyBundle:Default:start.html.twig', $param);
+      //config.survey.text.start
+      $default = 'FgmsSurveyBundle:Default:start.html.twig';
+      $template = (empty($param['config']['survey']['templates']['start'])) ? $default : $param['config']['survey']['templates']['start'];
+      if ( (!empty($param['config']['survey']['form'])) and ($param['config']['survey']['form'] == 'feedback') ){
+        $feedback_entity = new Feedback();
+        $feedback_entity->setCreateDate();
+/*        $param['form'] = $this->createForm(FeedbackType::class,$feedback_entity);
+
+        $param['form']->handleRequest($this->get('request'));
+        if ($param['form']->isValid()){
+          $em = $this->getDoctrine()->getManager();
+          $em->persist($param['form']->getData());
+          $em->flush();
+        }*/
+        //$param['form'] =
+      }
+      $template = ((strlen($template) > 10) and ($this->get('templating')->exists($template))) ? $template : $default;
+      return $this->render($template, $param);
   }
 
   /**
@@ -138,7 +157,14 @@ class DefaultController extends Controller
       $this->summary_report = new \Fgms\Bundle\SurveyBundle\Utility\SummaryReport($this->getDoctrine()->getManager(), $this->param, $slug, $group);
       //$stats = $this->getStats($slug,$group);
       $stats = $this->summary_report->get_stats();
-      return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$stats) );
+      $enables = [
+        'enables' =>[
+          'performance_charting'  => false,
+          'suvery_configuration'  => false,
+          'guest_feedback'        => false
+        ]
+      ];
+      return $this->render('FgmsSurveyBundle:Default:results.html.twig',array_merge($this->param,$stats,$enables) );
   }
 
   private function invalidTestimonialData($obj)
@@ -199,6 +225,7 @@ class DefaultController extends Controller
     public function downloadcsvAction($slug,$group=false)
     {
         //$param = $this->getConfiguration($slug, $group);
+
         $repository = $this->getDoctrine()->getRepository('FgmsSurveyBundle:Questionnaire');
         $sluggroup = ($group != false) ? $group : '';
         $query = $repository->createQueryBuilder('q')
@@ -241,7 +268,7 @@ class DefaultController extends Controller
         $response->headers->set('Content-Type', 'application/force-download');
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
-        $response->prepare($this->request);
+        $response->prepare(Request::createFromGlobals());
         return $response;
     }
 
@@ -345,8 +372,7 @@ class DefaultController extends Controller
      * @param string $room
      *
      */
-    private function checkSurveyResults($slug,$group,$form,$room)
-    {
+    private function checkSurveyResults($slug,$group,$form,$room)  {
         $emailParam = $this->getBasicEmailParam();
         foreach ($this->param['activequestions'] as $item){
             $emailFlag = false;

@@ -48,15 +48,17 @@ class DefaultController extends Controller
       if ( (!empty($param['config']['survey']['form'])) and ($param['config']['survey']['form'] == 'feedback') ){
         $feedback_entity = new Feedback();
         $feedback_entity->setCreateDate();
-/*        $param['form'] = $this->createForm(FeedbackType::class,$feedback_entity);
-
-        $param['form']->handleRequest($this->get('request'));
-        if ($param['form']->isValid()){
+        $form = $this->createForm(FeedbackType::class,$feedback_entity);
+        $param['form'] = $form->createView();
+        //$this->logger->warning('guest feedback data:: ' .print_R($form->getData(),true));
+        $form->handleRequest(Request::createFromGlobals());
+        if ($form->isValid()){
           $em = $this->getDoctrine()->getManager();
-          $em->persist($param['form']->getData());
+          $data = $form->getData();
+          $em->persist($data);
           $em->flush();
-        }*/
-        //$param['form'] =
+          $param['feedback_id'] = $data->getId();
+        }
       }
       $template = ((strlen($template) > 10) and ($this->get('templating')->exists($template))) ? $template : $default;
       return $this->render($template, $param);
@@ -406,6 +408,7 @@ class DefaultController extends Controller
             if ($emailFlag){
                 $item['answer'] = $data;
                 $item['roomNumber'] = $room;
+
                 $item['title'] = strip_tags($item['title']);
                 // adds webmaster to bcc
                 $item['email']['recipient']['bcc'] = isset($item['email']['recipient']['bcc']) ? array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com')) : array('webmaster@fifthgeardev.com');

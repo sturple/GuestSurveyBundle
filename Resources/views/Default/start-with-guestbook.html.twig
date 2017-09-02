@@ -1,30 +1,60 @@
 {% extends 'FgmsSurveyBundle:Default:base.html.twig' %}
 {%block body%}
-<div id="questionnaire" class="wizard question-start" style="display: none;">
+<div id="questionnaire" class="wizard question-start question-questbook-start" style="display: none;">
 	<div class="content">
-		<div class="body">
+		<div class="body" style="position: relative;">
 			<div class="question-title">
 				<div class="small-text">{{config.survey.text.start.subtitle |raw}}</div>
 				{{config.survey.text.start.title|raw}}
 			</div>
-			{% if form | default(false) %}
-				{{ form_start(form)}}				
-				{{ form_widget(form) }}
-				{{ form_end(form) }}
-			{% endif %}
-			<form action="/{{fullslug}}/survey/" method="GET" accept-charset="UTF_8" class="form-inline" style="text-align: center;">
+			<div class="guestbook-form">
+			{% if form | default(false) and  0 == feedback_id |default(0) %}
+				{{ form_start(form)}}
+				{{ form_errors(form) }}
+
 				<div class="form-group">
-					<input type="text" class="form-control input-lg" name="room" />
+					<label>Name</label>
+					{{ form_widget(form.name, {'attr' : {'class' : 'form-control input-md'}}) }}
 				</div>
-				<div class="form-group question-input-visual">
-					<a href="javascript:void(0)" id="script-go-button" >
-						<span class="fa-stack fa-lg button-circle">
-							<i class="fa  fa-circle fa-stack-2x"></i>
-							<i class="fa  fa-stack-1x button-rating button-text" >GO</i>
-						</span>
-					</a>
+				<div class="form-group">
+					<label>Email</label>
+					{{ form_widget(form.email, {'attr' : {'class' : 'form-control input-md'}}) }}
 				</div>
-			</form>
+				<div class="form-group">
+					<label>Where are you from?</label>
+						{{ form_widget(form.address, {'attr' : {'class' : 'form-control input-md'}}) }}
+				</div>
+				<div class="form-group">
+					<label>Feedback</label>
+					{{ form_widget(form.message, {'attr' : {'class' : 'form-control input-md'}}) }}
+				</div>
+				<div class="form-group" style="margin-top: 30px;">
+					{{form_widget(form.comment,{'attr' : {'class' : 'btn btn-primary btn-md'}}) }}
+				</div>
+				{{ form_end(form) }}
+
+			{% else %}
+				<div>
+					{% for text in config.survey.text.start.completed_text %}
+						<p>{{text}}</p>
+					{% endfor %}
+				</div>
+				<form action="/{{fullslug}}/survey/" method="GET" accept-charset="UTF_8" class="form-inline" style="text-align: center;">
+					<input type="hidden" name="room" value="_{{feedback_id}}_" />
+					<div class="action-buttons">
+						<input style="display: inline; margin-right: 8px;" type="submit" class="btn btn-primary btn-md" value="Lets Go" />
+						<a href="/{{fullslug}}/start/" class="btn btn-primary btn-no btn-md">No Thanks</a>
+					</div>
+				</form>
+					<script type="text/javascript">
+						setTimeout(function(){
+							window.location.replace('/{{fullslug}}/start/');
+						},{{config.survey.reset_timeout|default(10000)}})
+					</script>
+			{% endif %}
+			<div>
+		{#	#}
+
 		</div>
 	</div>
 </div>

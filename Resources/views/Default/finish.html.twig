@@ -30,4 +30,14 @@
 {% if conditionalFinish %}<div class="start-over-button"><a href="/{{fullslug}}/start/">Restart</a></div>{% endif %}
 {% endblock %}
 {%block styles %}{% endblock %}
-{% block javascript %}<script type="text/javascript">	$(function(){	$('#questionnaire').fadeIn(1000);})</script>{% endblock %}
+{% block javascript %}
+	<script type="text/javascript">
+		$(function(){
+			$('#questionnaire').fadeIn(1000);
+			setTimeout(function(){
+				window.location.replace('/{{fullslug}}/start/');
+			},{{config.survey.reset_timeout|default(10000)}})
+	})
+
+	</script>
+{% endblock %}

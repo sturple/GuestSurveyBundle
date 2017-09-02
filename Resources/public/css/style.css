@@ -153,6 +153,40 @@ h2 {
 	position: relative;
 	top: 6px;
 }
+.question-questbook-start .question-title {
+		min-height: 0;
+		margin-bottom: 30px;
+}
+.question-questbook-start p {
+	font-size: 1.8em;
+	text-align: center;
+}
+.question-questbook-start .btn.btn-primary.btn-no {
+	background-color: #ccc;
+	border-color: #fff;
+}
+.guestbook-form {
+	margin: 0 auto 30px;;
+	border: 1px solid #fff;
+	padding: 30px;
+	max-width: 800px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.guestbook-form label {
+	font-size: 2em;
+	margin: 0 0 0 2px !important;
+}
+
+.input-md {
+	font-size: 25px;
+	line-height: 1.2em;
+	height: 50px;
+	position: relative;
+	top: 6px;
+}
 
 .btn, .nav-pills  a {
 	text-transform: uppercase;
@@ -160,10 +194,10 @@ h2 {
 
 /** performance  and feedback **/
 
-.performance-no-data, .feedback-no-data {	
+.performance-no-data, .feedback-no-data {
 	padding: 50px 0;
 	font-size: 1.5em;
-	
+
 }
 .performance-loading, .feedback-loading {
 	padding: 50px;
@@ -172,13 +206,13 @@ h2 {
 
 }
 .performance-data, .performance-no-data, .feedback-no-data, .feedback-data{
-	display: none;	
+	display: none;
 }
-.performance-wrapper, .feedback-wrapper {	
-	
+.performance-wrapper, .feedback-wrapper {
+
 	position: relative;
 	min-height: 400px;
-	
+
 }
 .performance-data {
 	max-width: 80%;
@@ -189,7 +223,7 @@ h2 {
 	.fa-ul {
 		padding-top: 12px ;
 		padding-bottom: 12px;
-	
+
 }
 .performance-title {
 	font-size: 1.5em;
@@ -203,12 +237,12 @@ h2 {
 	font-style: italic;
 }
 .performance-wrapper  .performance-data {
-	
+
 	margin: 32px 0;
 }
 
 .performance-wrapper .performance-action {
-	
+
 
 }
 
@@ -272,7 +306,6 @@ h2 {
     overflow: hidden;
     position: relative;
     width: auto;
-
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;

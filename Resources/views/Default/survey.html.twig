@@ -180,7 +180,7 @@
 			var dataValue = $(this).data('value')
 			$('*[name="form['+ $(this).data('field') +']"]').val(dataValue);
 			$(this).addClass('active');
-			console.log($('a[href="#next"]').parent().attr('aria-disabled'))
+			
 			if ($('a[href="#next"]').parent().attr('aria-disabled') == 'true') {
 				$('a[href="#finish"]').trigger('click');
 			}

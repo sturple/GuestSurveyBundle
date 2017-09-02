@@ -34,7 +34,7 @@ class Questionnaire
      * @ORM\Column(name="slug", type="string", length=255)
      */
     private $slug;
-    
+
     /**
      * @var string
      *
@@ -117,21 +117,21 @@ class Questionnaire
      * @ORM\Column(name="question10", type="string", length=1000, nullable=true)
      */
     private $question10;
-    
+
      /**
      * @var string
      *
      * @ORM\Column(name="question11", type="string", length=1000, nullable=true)
      */
     private $question11;
-    
+
      /**
      * @var string
      *
      * @ORM\Column(name="question12", type="string", length=1000, nullable=true)
      */
-    private $question12;	   
-  
+    private $question12;
+
     /**
      * @var string
      *
@@ -149,7 +149,7 @@ class Questionnaire
      *
      * @ORM\Column(name="question15", type="string", length=1000, nullable=true)
      */
-    private $question15;	   
+    private $question15;
 
     /**
      * @var string
@@ -162,8 +162,8 @@ class Questionnaire
      * @ORM\OneToMany(targetEntity="Testimonial",mappedBy="questionnaire")
      */
     private $testimonials;
-	
-    
+
+
 
     /**
      * @var string
@@ -171,13 +171,13 @@ class Questionnaire
      * @ORM\Column(name="testimonialData", type="string", length=1000, nullable=true)
      */
 	private $testimonialData;
-    
-   
-   
- 
-   
-   
-    
+
+
+
+
+
+
+
     /**
      * Get id
      *
@@ -187,6 +187,8 @@ class Questionnaire
     {
         return $this->id;
     }
+
+
 
     /**
      * Set createDate
@@ -225,7 +227,7 @@ class Questionnaire
 
         return $this;
     }
-    
+
 
 
     /**
@@ -237,15 +239,15 @@ class Questionnaire
     {
         return $this->slug;
     }
-    
-    
+
+
      /**
      * Set sluggroup
      *
      * @param string $sluggroup
      *
      * @return Questionnaire
-     */    
+     */
     public function setSluggroup($sluggroup)
     {
         $this->sluggroup = $sluggroup;
@@ -261,7 +263,7 @@ class Questionnaire
     public function getSluggroup()
     {
         return $this->sluggroup;
-    }    
+    }
 
     /**
      * Set roomNumber
@@ -539,8 +541,8 @@ class Questionnaire
         $this->question11 = $question11;
 
         return $this;
-    }    
-    
+    }
+
     /**
      * Get question11
      *
@@ -681,8 +683,8 @@ class Questionnaire
 
         return $this;
     }
-    
-    
+
+
     /**
      * Set questionSet
      *

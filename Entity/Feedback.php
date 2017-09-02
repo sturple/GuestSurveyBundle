@@ -36,19 +36,17 @@ class Feedback
     private $createDate;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="questionnaire_id", type="integer")
-     */
-    private $questionnaireId;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=true)
      */
     private $email;
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="address", type="string", length=255, nullable=true)
+     */
+    private $address;
     /**
      * @var string
      *
@@ -121,28 +119,29 @@ class Feedback
         return $this->createDate;
     }
 
+
     /**
-     * Set questionnaireId
+     * Set address
      *
-     * @param integer $questionnaireId
+     * @param string $address
      *
      * @return Feedback
      */
-    public function setQuestionnaireId($questionnaireId)
+    public function setAddress($address)
     {
-        $this->questionnaireId = $questionnaireId;
+        $this->address = $address;
 
         return $this;
     }
 
     /**
-     * Get questionnaireId
+     * Get address
      *
-     * @return int
+     * @return string
      */
-    public function getQuestionnaireId()
+    public function getAddress()
     {
-        return $this->questionnaireId;
+        return $this->address;
     }
 
     /**
@@ -202,8 +201,7 @@ class Feedback
      */
     public function setFieldData($fieldData)
     {
-        $this->fieldData = $fieldData;
-
+      $this->fieldData = is_array($fieldData) ? json_encode($fieldData) : $fieldData;
         return $this;
     }
 

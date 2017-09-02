@@ -5,7 +5,9 @@ namespace Fgms\Bundle\SurveyBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 class FeedbackType extends AbstractType
 {
     /**
@@ -15,11 +17,10 @@ class FeedbackType extends AbstractType
     {
         $builder
           ->add('name')
-          ->add('createDate')
-          ->add('questionnaireId')
           ->add('email')
           ->add('message')
-          ->add('fieldData');
+          ->add('address')
+          ->add('comment',SubmitType::class);
     }
 
     /**

@@ -50,7 +50,6 @@ class DefaultController extends Controller
         $feedback_entity->setCreateDate();
         $form = $this->createForm(FeedbackType::class,$feedback_entity);
         $param['form'] = $form->createView();
-        //$this->logger->warning('guest feedback data:: ' .print_R($form->getData(),true));
         $form->handleRequest(Request::createFromGlobals());
         if ($form->isValid()){
           $em = $this->getDoctrine()->getManager();
@@ -77,12 +76,7 @@ class DefaultController extends Controller
       $token = new \Fgms\Bundle\SurveyBundle\Utility\RandomTokenGenerator(128);
       $param = $this->getConfiguration($slug,$group);
       $room = $this->request->query->has('room') ? $this->request->query->get('room') : 'none';
-      if ($this->has('request')){
-          $form = $this->getForm($slug,$group,$room);
-      }
-      else {
-          $form = $this->getFormSymfony3($slug,$group,$room);
-      }
+      $form = $this->getForm($slug,$group,$room);
       $form->handleRequest($this->request);
       if ($form->isValid()){
           $em = $this->getDoctrine()->getManager();
@@ -226,41 +220,49 @@ class DefaultController extends Controller
      */
     public function downloadcsvAction($slug,$group=false)
     {
-        //$param = $this->getConfiguration($slug, $group);
-
-        $repository = $this->getDoctrine()->getRepository('FgmsSurveyBundle:Questionnaire');
         $sluggroup = ($group != false) ? $group : '';
-        $query = $repository->createQueryBuilder('q')
-            ->where('q.slug = :slug AND q.sluggroup = :sluggroup' )
-            ->setParameters(array('slug' =>$slug, 'sluggroup' =>$sluggroup))
-            ->orderBy('q.createDate','ASC')
-            ->getQuery();
+        $em  = $this->getDoctrine()->getManager();
+        $query = $em->createQueryBuilder()
+          ->from('FgmsSurveyBundle:Questionnaire', 'q')
+          ->select("q")
+          ->addselect("f")
+          ->leftJoin('FgmsSurveyBundle:Feedback', 'f', 'WITH', "q.feedbackId=f.id")
+          ->where('q.slug = :slug AND q.sluggroup = :sluggroup' )
+          ->setParameters(array('slug' =>$slug, 'sluggroup' =>$sluggroup))
+          ->orderBy('q.createDate','ASC')
+          ->getQuery();
+
         $response = new StreamedResponse();
         $response->setCallback(function() use ($query){
             $handle = fopen('php://output', 'w+');
-            fputcsv($handle, array('Survey#','Date', 'Time','Group','Property','Room','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q14','Q15'),',');
-            foreach ($query->getResult() as $item){
-                fputcsv($handle, array($item->getId(),
-                                       $item->getCreateDate()->format('F j, Y'),
-                                       $item->getCreateDate()->format('h:i A'),
-                                       $item->getSluggroup(),
-                                       $item->getSlug(),
-                                       $item->getRoomNumber(),
-                                       $item->getQuestion1(),
-                                       $item->getQuestion2(),
-                                       $item->getQuestion3(),
-                                       $item->getQuestion4(),
-                                       $item->getQuestion5(),
-                                       $item->getQuestion6(),
-                                       $item->getQuestion7(),
-                                       $item->getQuestion8(),
-                                       $item->getQuestion9(),
-                                       $item->getQuestion10(),
-                                       $item->getQuestion11(),
-                                       $item->getQuestion12(),
-                                       $item->getQuestion13(),
-                                       $item->getQuestion14(),
-                                       $item->getQuestion15()
+            fputcsv($handle, array('Survey#','Date', 'Time','Group','Property','Room','Name','Email','Address','Message','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q14','Q15'),',');
+            foreach ($query->getResult(\Doctrine\ORM\Query::HYDRATE_SCALAR) as $item){
+                $room = ( preg_match('/_([0-9]+)_/', $item['q_roomNumber'], $matches) ) ? '' : $item['q_roomNumber'];
+                fputcsv($handle, array($item['q_id'],
+                                       $item['q_createDate']->format('F j, Y'),
+                                       $item['q_createDate']->format('h:i A'),
+                                       $item['q_sluggroup'],
+                                       $item['q_slug'],
+                                       $room,
+                                       $item['f_name'],
+                                       $item['f_email'],
+                                       $item['f_address'],
+                                       $item['f_message'],
+                                       $item['q_question1'],
+                                       $item['q_question2'],
+                                       $item['q_question3'],
+                                       $item['q_question4'],
+                                       $item['q_question5'],
+                                       $item['q_question6'],
+                                       $item['q_question7'],
+                                       $item['q_question8'],
+                                       $item['q_question9'],
+                                       $item['q_question10'],
+                                       $item['q_question11'],
+                                       $item['q_question12'],
+                                       $item['q_question13'],
+                                       $item['q_question14'],
+                                       $item['q_question15']
                         ));
             }
             fclose($handle);
@@ -272,6 +274,7 @@ class DefaultController extends Controller
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition( ResponseHeaderBag::DISPOSITION_ATTACHMENT, $slug. '-export.csv'));
         $response->prepare(Request::createFromGlobals());
         return $response;
+
     }
 
     /**
@@ -407,12 +410,30 @@ class DefaultController extends Controller
             $emailParam['subject'] = ($form == false) ? 'Test - ' .$emailParam['subject'] : $emailParam['subject'];
             if ($emailFlag){
                 $item['answer'] = $data;
-                $item['roomNumber'] = $room;
+
+                $matches = null;
+                if ( preg_match('/_([0-9]+)_/', $room, $matches) ){
+                  if (!empty($matches[1])){
+                    $feedback_id = intval($matches[1]);
+                    if ($feedback_id > 0){
+                      $feedback_repo = $this->getDoctrine()->getRepository('FgmsSurveyBundle:Feedback');
+                      $row = $feedback_repo->findOneById($feedback_id);
+                      $item['client_email'] = $row->getEmail();
+                      $item['client_name'] = $row->getName();
+                    }
+
+                  }
+                }
+                else {
+                  $item['roomNumber'] = $room;
+                }
 
                 $item['title'] = strip_tags($item['title']);
                 // adds webmaster to bcc
                 $item['email']['recipient']['bcc'] = isset($item['email']['recipient']['bcc']) ? array_merge($item['email']['recipient']['bcc'],array('webmaster@fifthgeardev.com')) : array('webmaster@fifthgeardev.com');
                 $emailParam['recipient'] = $item['email']['recipient'];
+
+                $this->logger->warning('SENDEMAIL:: '. print_R($item,true));
                 $combined_array = array_merge($this->param, array('item'=>$item));
                 $this->sendEmail($emailParam, $combined_array,'email-notification');
             }
@@ -576,15 +597,6 @@ class DefaultController extends Controller
 
     }
 
-
-    /**
-     * Gets the form to display for survey
-     *
-     * @param string $property is the property slug
-     * @param string $roomNumber is the room number
-     * @param array $questions this is an array of all the questions
-     * @return form
-     */
     private function getForm($slug,$group, $roomNumber='none', $set="Default")
     {
         $questionObject = new Questionnaire();
@@ -594,37 +606,12 @@ class DefaultController extends Controller
         $questionObject->setQuestionSet($set);
         if ($questionObject->getRoomNumber() == null){
             $questionObject->setRoomNumber($roomNumber);
-        }
-        $form = $this->createFormBuilder($questionObject, array('csrf_protection' => true))
-            ->add('question1','hidden')
-            ->add('question2','hidden')
-            ->add('question3','hidden')
-            ->add('question4','hidden')
-            ->add('question5','hidden')
-            ->add('question6','hidden')
-            ->add('question7','hidden')
-            ->add('question8','hidden')
-            ->add('question9','hidden')
-            ->add('question10','hidden')
-            ->add('question11','hidden')
-            ->add('question12','hidden')
-            ->add('question13','hidden')
-            ->add('question14','hidden')
-            ->add('question15','hidden')
-            ->add('testimonialData','hidden')
-            ->getForm();
-        return $form;
-    }
-
-    private function getFormSymfony3($slug,$group, $roomNumber='none', $set="Default")
-    {
-        $questionObject = new Questionnaire();
-        $questionObject->setCreateDate();
-        $questionObject->setSlug($slug);
-        $questionObject->setSluggroup($group);
-        $questionObject->setQuestionSet($set);
-        if ($questionObject->getRoomNumber() == null){
-            $questionObject->setRoomNumber($roomNumber);
+            $matches = null;
+            if ( preg_match('/_([0-9]+)_/', $roomNumber, $matches) ) {
+              if (!empty($matches[1])){
+                $questionObject->setFeedbackId(intval($matches[1]));
+              }
+            }
         }
         $form = $this->createFormBuilder($questionObject, array('csrf_protection' => true))
             ->add('question1',HiddenType::class)

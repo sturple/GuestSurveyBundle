@@ -1,6 +1,8 @@
 {{config.email.text.title}}
 {{config.email.text.subtitle}}
-Room # {{item.roomNumber|default('None')}}
+{% if item.roomNumber | default(false) %}Room # {{item.roomNumber}}{% endif %}
+{% if item.client_name | default(false) %}Name {{item.client_name }}{% endif %}
+{% if item.client_email | default(false) %}Name {{item.client_email }}{% endif %}
 Date {{item.createDate|default('now')|date('M d, Y')}}
 Time {{item.createDate|default('now')|date('H:i')}}
 Question: {{item.title|default('No Question')|raw}}

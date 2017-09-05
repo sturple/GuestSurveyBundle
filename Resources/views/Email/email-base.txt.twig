@@ -7,10 +7,9 @@ Question: {{item.title|default('No Question')}}
 {% if data.answer > 0 %}
 Message: {{item.answer |default('--answer missing--')}}
 {% else %}
-Response: {{item.answer| default('--answer missing--')}} {%if item.type == 'rating'%}out of 5{%endif%} 
+Response: {{item.answer| default('--answer missing--')}} {%if item.type == 'rating'%}out of 5{%endif%}
 {% endif %}
 
 {{property.name}}
-{{property.contact.address}}, {{property.contact.province}}, {{property.contact.country}}
-{{property.contact.phone}}| TF: {{property.contact.tollfree}} | {{property.contact.email}} | {{property.contact.website}}
- 
+{{property.contact.address}}{% if property.contact.province|default(false) %}, {{property.contact.province}}{% endif %}, {{property.contact.country}}
+{{property.contact.phone}}{% if property.contact.tollfree|default(false) %} | TF: {{property.contact.tollfree}}{% endif %} | {{property.contact.email}} | {{property.contact.website}}

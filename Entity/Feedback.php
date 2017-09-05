@@ -24,7 +24,7 @@ class Feedback
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
 
@@ -38,7 +38,7 @@ class Feedback
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255, nullable=true)
+     * @ORM\Column(name="email", type="string", length=255)
      */
     private $email;
     /**

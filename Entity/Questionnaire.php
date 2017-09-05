@@ -172,7 +172,13 @@ class Questionnaire
      */
 	private $testimonialData;
 
+  /**
+   * @var integer
+   *
+   * @ORM\Column(name="feedbackId", type="integer", nullable=true)
 
+   */
+  private $feedbackId;
 
 
 
@@ -188,6 +194,29 @@ class Questionnaire
         return $this->id;
     }
 
+    /**
+     * Get feedbackId
+     *
+     * @return integer
+     */
+    public function getFeedbackId()
+    {
+        return $this->feedbackId;
+    }
+
+    /**
+     * Set feedbackId
+     *
+     * @param \integer $feedbackId
+     *
+     * @return Questionnaire
+     */
+     
+    public function setFeedbackId($feedbackId)
+    {
+      $this->feedbackId = $feedbackId;
+      return $this;
+    }
 
 
     /**
